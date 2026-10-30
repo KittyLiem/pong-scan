@@ -1,0 +1,61 @@
+artifactRefs:
+- src/app/core/auth/auth.service.ts
+- src/app/core/auth/auth.service.spec.ts
+- src/app/account-access/account-access.component.ts
+- src/app/account-access/account-access.component.html
+- src/app/account-access/account-access.component.scss
+- src/app/account-access/account-access.component.spec.ts
+- src/app/app.routes.ts
+- src/app/app.config.ts
+- src/app/app.ts
+- src/app/app.html
+- src/app/app.spec.ts
+- reports/build/frontend/slice-01-accounttoegang.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 20000
+errors: []
+finishedAt: '2026-10-13T14:24:50Z'
+gates:
+- check: local-type-check
+  command: npx npm run build
+  evidence: Initial compile found TS2729 in account-access form initialization; dependency
+    initialization was corrected.
+  exitCode: 1
+  outcome: failed_then_fixed
+- check: local-type-check-retry
+  command: npx npm run build
+  evidence: Angular production bundle generated successfully; only the existing Sass
+    import deprecation warning remained.
+  exitCode: 0
+  outcome: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile@1.2.0
+- conformanceLock@1.0.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: interfaceContractSubset supplied for slice-01-accounttoegang
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-01-accounttoegang
+startedAt: '2026-10-13T14:24:30Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Implemented the public /start account-access page, registerMember and createSession
+  clients, in-memory bearer session state, Problem Details errors, application shell,
+  navigation, route wiring, and isolated tests.
+warnings:
+- The stack profile maps typeCheck to the full build command; that mapped command
+  was used as the local preflight.
+- Unit tests and lint were not run locally on this first-pass build to keep implementation
+  verification lightweight; Frontend Check remains authoritative.
+- Organization creation, model loading, and scan creation are referenced by the page
+  goals but are outside this slice's owned operations. Their controls remain visibly
+  disabled rather than invoking unowned APIs.
+- The desired scan route is preserved from the session response when safe, but its
+  destination page is owned by a later slice.
+- The build emits an existing Sass @import deprecation warning from src/styles.scss.

@@ -1,0 +1,111 @@
+artifactRefs:
+- reports/check/frontend/slice-06-scan-aanmaken.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 70000
+errors: []
+finishedAt: '2026-10-13T16:01:10.000Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/scan-overview/scan-overview.component.spec.ts
+      reason: representative slice test coverage and createScan behavior
+    - path: src/app/scan-overview/scan-overview.component.ts
+      reason: route page and createScan operation implementation
+    - path: src/app/account-access/account-access.component.ts
+      reason: route page and first-scan createScan entry point
+    - path: src/app/account-access/account-access.component.html
+      reason: route page structural parity
+    missingPaths: []
+    verifiedPaths:
+    - src/app/scan-overview/scan-overview.component.spec.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavLabels:
+    - Aanmelden
+    - Afmelden
+    - Scanoverzicht
+    expectedRoutePaths:
+    - /start
+    - /scans
+    observedNavLabels:
+    - Aanmelden
+    - Afmelden
+    - Scanoverzicht
+    observedRoutePaths:
+    - /start
+    - /scans
+    routesPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    pages:
+    - outcome: visible headings, forms, fields, and actions meet threshold structure
+      route: /start
+      templatePath: src/app/account-access/account-access.component.html
+    - outcome: visible headings, controls, cards/list structure, and actions meet
+        threshold structure
+      route: /scans
+      templatePath: src/app/scan-overview/scan-overview.component.ts
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: pass
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    appConfigPath: src/app/app.config.ts
+    authServicePath: src/app/core/auth/auth.service.ts
+    outcome: bearer token is held in an in-memory signal; no localStorage or sessionStorage
+      persistence observed
+  gateId: GATE_AUTH_STORAGE
+  status: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    testFilesPassed: 10
+    testsPassed: 29
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: pass
+inputRefs:
+- frontendSliceContext
+- frontendAppRoot
+- frontendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-06-scan-aanmaken
+startedAt: '2026-10-13T16:00:00.000Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Sass @import deprecation warning from src/styles.scss during build and test.
+- Vite native config-loader compatibility warning during test.

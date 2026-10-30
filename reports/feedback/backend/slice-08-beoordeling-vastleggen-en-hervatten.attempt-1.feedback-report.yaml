@@ -1,0 +1,116 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runBackendCheck
+stream: backend
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+attemptNumber: 1
+status: fail
+startedAt: runtime timestamp unavailable
+finishedAt: runtime timestamp unavailable
+durationMs: 97173
+inputRefs:
+  - backendSliceContext
+  - backendStackProfile
+  - conformanceLock
+  - buildOutput
+artifactRefs:
+  - reports/check/backend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.check-report.yaml
+  - reports/feedback/backend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+gates:
+  - gateId: GATE_TESTS
+    checkId: CHK_UNIT_TESTS
+    status: failed
+    evidence:
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+      suite: SaveAnswerBehaviorTest
+      test: saveAnswerRejectsStaleVersionWithProblemDetails
+      locationHint: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java:84
+      observed: HTTP 200 after resubmitting version 0 for an existing answer
+      expected: HTTP 409 Version conflict with application/problem+json
+      excerpt: Expected status code <409> but was <200>.
+warnings: []
+errors:
+  - gateId: GATE_TESTS
+    failureCategory: assertion_failure
+    evidence: stale-version protection is not enforced at the saveAnswer API boundary
+failureDomain: slice_local
+retryable: true
+failedGateIds: [GATE_TESTS]
+failedChecks: [CHK_UNIT_TESTS]
+reprocessHint: backend-build
+reprocessInputs:
+  sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_TESTS]
+  failedChecks: [CHK_UNIT_TESTS]
+  checkerSummary: GATE_TESTS failed after build, endpoint-security, persistence, behavior-evidence, and lint gates passed. The saveAnswer stale-version API scenario is user-observably wrong: an existing answer resubmitted with version 0 returns 200 instead of a 409 problem-details conflict.
+  gateFailureContext:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS]
+    primaryCommand: mvn -B -ntp -q test
+    notes: Compile/type-check-only verification is not a substitute for the failed unit-test command.
+  testFailures:
+    - file: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+      suite: SaveAnswerBehaviorTest
+      test: saveAnswerRejectsStaleVersionWithProblemDetails
+      locationHint: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java:84
+      assertionSummary: a stale version must be rejected with problem-details 409
+      observed: HTTP 200
+      expected: HTTP 409 Version conflict
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: saveAnswer accepts a stale version after the answer already exists.
+      rootCauseHypothesis: AnswerService's existing-answer version comparison is observing a version value that still accepts 0 after the initial save, so the persisted optimistic-version state and API conflict check are not aligned.
+      requiredOutcome: A second PUT using the stale version 0 must return HTTP 409 and application/problem+json; the current answer data must not be overwritten.
+      blocking: true
+      expected: HTTP 409 Version conflict
+      observed: HTTP 200
+  targets:
+    - suite: SaveAnswerBehaviorTest
+      test: saveAnswerRejectsStaleVersionWithProblemDetails
+      operation: PUT /v1/scans/{scanId}/answers/{questionId} (saveAnswer)
+      observed: existing answer accepted request version 0 with HTTP 200
+      expected: stale request version 0 is rejected with HTTP 409 Version conflict and application/problem+json
+      file: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+      locationHint: SaveAnswerBehaviorTest.java:84
+    - operation: saveAnswer version check
+      observed: AnswerService permits stale existing-answer request
+      expected: persisted current version must be compared correctly before mutation
+      file: src/main/java/com/example/answer/application/AnswerService.java
+      locationHint: save method existing-answer branch
+  editScope:
+    allowedEditPaths:
+      - src/main/java/com/example/answer/application/AnswerService.java
+      - src/main/java/com/example/answer/domain/AnswerEntity.java
+      - src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+    suspectPaths:
+      - path: src/main/java/com/example/answer/application/AnswerService.java
+        confidence: high
+      - path: src/main/java/com/example/answer/domain/AnswerEntity.java
+        confidence: medium
+    forbiddenOrOutOfScope:
+      - reports/**
+      - unrelated auth, organization, model, and scan APIs
+  buildAgentBrief:
+    - Run `mvn -B -ntp -q test` from backendAppRoot and confirm the SaveAnswerBehaviorTest stale-version failure matches the reported HTTP 200 versus expected 409 before editing.
+    - Read AnswerService.save, AnswerEntity version mapping, and SaveAnswerBehaviorTest before changing the existing-answer conflict path.
+    - Align persisted answer version state with the request comparison so a stale existing-answer version is rejected before answer fields are overwritten.
+    - Preserve the existing successful transition, bearer-401, durable persistence, and problem-details behavior.
+    - Re-run the required unit-test command and confirm saveAnswerRejectsStaleVersionWithProblemDetails returns 409.
+  nonGoals:
+    - Do not weaken or remove the stale-version assertion.
+    - Do not replace durable Panache persistence with in-memory state.
+    - Do not perform broad refactors or unrelated cleanup.

@@ -1,0 +1,105 @@
+artifactRefs:
+- reports/check/frontend/slice-10-maturiteitsscores-berekenen.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 19842
+errors: []
+finishedAt: null
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/scan-results/scan-results.component.ts
+      reason: slice component entry point
+    - path: src/app/scan-results/scan-results.component.html
+      reason: results-page structural and API-state review
+    - path: src/app/core/scans/scan-results.service.ts
+      reason: getResults API client review
+    - path: src/app/scan-results/scan-results.component.spec.ts
+      reason: representative slice-level coverage
+    missingPaths: []
+    verifiedPaths:
+    - src/app/scan-results/scan-results.component.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavigationLabel: Resultaten
+    expectedRoutePath: /scans/:scanId/results
+    observedNavigationLabel: Resultaten
+    observedRoutePath: scans/:scanId/results
+    routesConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedMinimums:
+      buttons: 3
+      fields: 2
+      headings: 6
+      sections: 2
+    observedMeaningfulStructure:
+      buttons: 5
+      fields: 3
+      headings: 11
+      sections: 5
+    templatePath: src/app/scan-results/scan-results.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: pass
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    result: JWT is held in an in-memory signal and used for an Authorization header;
+      no browser storage use observed.
+    reviewedPaths:
+    - src/app/core/auth/auth.service.ts
+    - src/app/core/scans/scan-results.service.ts
+  gateId: GATE_AUTH_STORAGE
+  status: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    durationMs: 7413
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    durationMs: 9512
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    summary: 12 test files and 43 tests passed.
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    durationMs: 2917
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: pass
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile@1.2.0
+- conformanceLock@1.0.0
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-10-maturiteitsscores-berekenen
+startedAt: null
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Angular Sass emitted a deprecation warning for src/styles.scss import syntax; it
+  did not fail the build.
+- Vitest emitted a future Vite config-loader compatibility warning; all tests passed.

@@ -1,0 +1,686 @@
+{
+  "schemaVersion" : "1",
+  "run" : {
+    "runId" : "child-U30W5O3jItwGGuY_bZcN7GzuQN4rBTydykqqV2_Pv04",
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "startedAt" : 1.791906348529649E9,
+    "finishedAt" : 1.7919073273096697E9,
+    "input" : {
+      "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5",
+      "sliceId" : "slice-06-scan-aanmaken",
+      "publishLineageId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145",
+      "attemptNumber" : 1
+    },
+    "recordedAt" : 1.791914217191E9
+  },
+  "steps" : {
+    "loadSliceInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063486114652E9,
+      "finishedAt" : 1.7919063486114652E9,
+      "attempts" : [ {
+        "attemptId" : "loadSliceInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063486114652E9,
+        "finishedAt" : 1.7919063486114652E9,
+        "agent" : false
+      } ]
+    },
+    "runEndpointParityPreGate" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919072867897406E9,
+      "finishedAt" : 1.7919072867897406E9,
+      "attempts" : [ {
+        "attemptId" : "runEndpointParityPreGate-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919072867897406E9,
+        "finishedAt" : 1.7919072867897406E9,
+        "agent" : false
+      } ]
+    },
+    "runSliceIntegrationCheckBoth" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919072871041622E9,
+      "finishedAt" : 1.7919072871041622E9,
+      "attempts" : [ {
+        "attemptId" : "runSliceIntegrationCheckBoth-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919072871041622E9,
+        "finishedAt" : 1.7919072871041622E9,
+        "agent" : true
+      } ]
+    },
+    "validateBackendSliceContextLock" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063489182954E9,
+      "finishedAt" : 1.7919063489182954E9,
+      "attempts" : [ {
+        "attemptId" : "validateBackendSliceContextLock-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063489182954E9,
+        "finishedAt" : 1.7919063489182954E9,
+        "agent" : false
+      } ]
+    },
+    "persistFrontendBuildArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791906699345178E9,
+      "finishedAt" : 1.791907108671892E9,
+      "attempts" : [ {
+        "attemptId" : "persistFrontendBuildArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791906699345178E9,
+        "finishedAt" : 1.791906699345178E9,
+        "agent" : false
+      }, {
+        "attemptId" : "persistFrontendBuildArtifacts-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791907108671892E9,
+        "finishedAt" : 1.791907108671892E9,
+        "agent" : false
+      } ]
+    },
+    "verifySliceContextLocksOnDisk" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063487959957E9,
+      "finishedAt" : 1.7919063487959957E9,
+      "attempts" : [ {
+        "attemptId" : "verifySliceContextLocksOnDisk-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063487959957E9,
+        "finishedAt" : 1.7919063487959957E9,
+        "agent" : false
+      } ]
+    },
+    "verifyBackendPersistedBuildReports" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919065399432666E9,
+      "finishedAt" : 1.791907047556915E9,
+      "attempts" : [ {
+        "attemptId" : "verifyBackendPersistedBuildReports-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919065399432666E9,
+        "finishedAt" : 1.7919065399432666E9,
+        "agent" : false
+      }, {
+        "attemptId" : "verifyBackendPersistedBuildReports-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791907047556915E9,
+        "finishedAt" : 1.791907047556915E9,
+        "agent" : false
+      } ]
+    },
+    "persistFrontendCheckArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791907286683444E9,
+      "finishedAt" : 1.791907286683444E9,
+      "attempts" : [ {
+        "attemptId" : "persistFrontendCheckArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791907286683444E9,
+        "finishedAt" : 1.791907286683444E9,
+        "agent" : false
+      } ]
+    },
+    "failBackendSliceContextLockInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "runFrontendBuild" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919064329307284E9,
+      "finishedAt" : 1.7919064329307284E9,
+      "attempts" : [ {
+        "attemptId" : "runFrontendBuild-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919064329307284E9,
+        "finishedAt" : 1.7919064329307284E9,
+        "agent" : true
+      } ]
+    },
+    "verifyFrontendPersistedBuildReports" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919066993910758E9,
+      "finishedAt" : 1.7919071087349553E9,
+      "attempts" : [ {
+        "attemptId" : "verifyFrontendPersistedBuildReports-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919066993910758E9,
+        "finishedAt" : 1.7919066993910758E9,
+        "agent" : false
+      }, {
+        "attemptId" : "verifyFrontendPersistedBuildReports-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919071087349553E9,
+        "finishedAt" : 1.7919071087349553E9,
+        "agent" : false
+      } ]
+    },
+    "failSliceContextInputsInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "validateBackendRuntimeInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063490157154E9,
+      "finishedAt" : 1.7919063490157154E9,
+      "attempts" : [ {
+        "attemptId" : "validateBackendRuntimeInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063490157154E9,
+        "finishedAt" : 1.7919063490157154E9,
+        "agent" : false
+      } ]
+    },
+    "failSliceStreamLockRelationsInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "validateBackendBuildResponse" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919064327616272E9,
+      "finishedAt" : 1.791907047257693E9,
+      "attempts" : [ {
+        "attemptId" : "validateBackendBuildResponse-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919064327616272E9,
+        "finishedAt" : 1.7919064327616272E9,
+        "agent" : false
+      }, {
+        "attemptId" : "validateBackendBuildResponse-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791907047257693E9,
+        "finishedAt" : 1.791907047257693E9,
+        "agent" : false
+      } ]
+    },
+    "runFrontendCheck" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919066994300425E9,
+      "finishedAt" : 1.7919072388402476E9,
+      "attempts" : [ {
+        "attemptId" : "runFrontendCheck-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "FAILED",
+        "startedAt" : 1.7919066994300425E9,
+        "finishedAt" : 1.7919066994300425E9,
+        "agent" : true,
+        "errorCode" : "STEP_SUCCESS_CLASSIFICATION_FAILED"
+      }, {
+        "attemptId" : "runFrontendCheck-2",
+        "attemptNumber" : 2,
+        "kind" : "REPAIR_VALIDATION",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919070476119463E9,
+        "finishedAt" : 1.7919072388402476E9,
+        "agent" : true
+      } ]
+    },
+    "runSliceIntegrationCheckBackendOnly" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "loadPersistedBackendSliceContext" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063488229368E9,
+      "finishedAt" : 1.7919063488229368E9,
+      "attempts" : [ {
+        "attemptId" : "loadPersistedBackendSliceContext-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063488229368E9,
+        "finishedAt" : 1.7919063488229368E9,
+        "agent" : false
+      } ]
+    },
+    "repairBackendBuild" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919067619769337E9,
+      "finishedAt" : 1.791906761978216E9,
+      "attempts" : [ {
+        "attemptId" : "repairBackendBuild-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919067619769337E9,
+        "finishedAt" : 1.791906761978216E9,
+        "agent" : true
+      } ]
+    },
+    "composeLoadedSliceContext" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791906348767873E9,
+      "finishedAt" : 1.791906348767873E9,
+      "attempts" : [ {
+        "attemptId" : "composeLoadedSliceContext-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791906348767873E9,
+        "finishedAt" : 1.791906348767873E9,
+        "agent" : false
+      } ]
+    },
+    "loadPersistedFrontendSliceContext" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063488591175E9,
+      "finishedAt" : 1.7919063488591175E9,
+      "attempts" : [ {
+        "attemptId" : "loadPersistedFrontendSliceContext-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063488591175E9,
+        "finishedAt" : 1.7919063488591175E9,
+        "agent" : false
+      } ]
+    },
+    "validateSliceContextInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063486992774E9,
+      "finishedAt" : 1.7919063486992774E9,
+      "attempts" : [ {
+        "attemptId" : "validateSliceContextInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063486992774E9,
+        "finishedAt" : 1.7919063486992774E9,
+        "agent" : false
+      } ]
+    },
+    "verifyFrontendBuildHandoffOnDisk" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791906699282127E9,
+      "finishedAt" : 1.7919071086012166E9,
+      "attempts" : [ {
+        "attemptId" : "verifyFrontendBuildHandoffOnDisk-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791906699282127E9,
+        "finishedAt" : 1.791906699282127E9,
+        "agent" : false
+      }, {
+        "attemptId" : "verifyFrontendBuildHandoffOnDisk-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919071086012166E9,
+        "finishedAt" : 1.7919071086012166E9,
+        "agent" : false
+      } ]
+    },
+    "verifyBackendBuildHandoffOnDisk" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919065398129175E9,
+      "finishedAt" : 1.7919070472978516E9,
+      "attempts" : [ {
+        "attemptId" : "verifyBackendBuildHandoffOnDisk-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919065398129175E9,
+        "finishedAt" : 1.7919065398129175E9,
+        "agent" : false
+      }, {
+        "attemptId" : "verifyBackendBuildHandoffOnDisk-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919070472978516E9,
+        "finishedAt" : 1.7919070472978516E9,
+        "agent" : false
+      } ]
+    },
+    "persistBackendBuildArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919065398528433E9,
+      "finishedAt" : 1.7919070473963478E9,
+      "attempts" : [ {
+        "attemptId" : "persistBackendBuildArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919065398528433E9,
+        "finishedAt" : 1.7919065398528433E9,
+        "agent" : false
+      }, {
+        "attemptId" : "persistBackendBuildArtifacts-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919070473963478E9,
+        "finishedAt" : 1.7919070473963478E9,
+        "agent" : false
+      } ]
+    },
+    "loadFrontendStackProfile" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919064328598151E9,
+      "finishedAt" : 1.7919064328598151E9,
+      "attempts" : [ {
+        "attemptId" : "loadFrontendStackProfile-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919064328598151E9,
+        "finishedAt" : 1.7919064328598151E9,
+        "agent" : false
+      } ]
+    },
+    "failFrontendRuntimeInputsInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "failSliceContextLocksMissing" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "failFrontendSliceContextLockInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "runBackendBuild" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791906349049882E9,
+      "finishedAt" : 1.791906349049882E9,
+      "attempts" : [ {
+        "attemptId" : "runBackendBuild-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791906349049882E9,
+        "finishedAt" : 1.791906349049882E9,
+        "agent" : true
+      } ]
+    },
+    "publishSliceBoth" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791907311674182E9,
+      "finishedAt" : 1.791907311674182E9,
+      "attempts" : [ {
+        "attemptId" : "publishSliceBoth-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791907311674182E9,
+        "finishedAt" : 1.791907311674182E9,
+        "agent" : false
+      } ]
+    },
+    "loadBackendStackProfile" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919063489719176E9,
+      "finishedAt" : 1.7919063489719176E9,
+      "attempts" : [ {
+        "attemptId" : "loadBackendStackProfile-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919063489719176E9,
+        "finishedAt" : 1.7919063489719176E9,
+        "agent" : false
+      } ]
+    },
+    "runBehaviorEvidencePreGate" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919065398969488E9,
+      "finishedAt" : 1.791907047495063E9,
+      "attempts" : [ {
+        "attemptId" : "runBehaviorEvidencePreGate-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919065398969488E9,
+        "finishedAt" : 1.7919065398969488E9,
+        "agent" : false
+      }, {
+        "attemptId" : "runBehaviorEvidencePreGate-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791907047495063E9,
+        "finishedAt" : 1.791907047495063E9,
+        "agent" : false
+      } ]
+    },
+    "failFrontendBuildResponseInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "validateSliceStreamLockRelations" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791906348733893E9,
+      "finishedAt" : 1.791906348733893E9,
+      "attempts" : [ {
+        "attemptId" : "validateSliceStreamLockRelations-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791906348733893E9,
+        "finishedAt" : 1.791906348733893E9,
+        "agent" : false
+      } ]
+    },
+    "persistBackendCheckArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791907238785573E9,
+      "finishedAt" : 1.791907238785573E9,
+      "attempts" : [ {
+        "attemptId" : "persistBackendCheckArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791907238785573E9,
+        "finishedAt" : 1.791907238785573E9,
+        "agent" : false
+      } ]
+    },
+    "composePrecomputedDiskVerification" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919072865950499E9,
+      "finishedAt" : 1.7919072865950499E9,
+      "attempts" : [ {
+        "attemptId" : "composePrecomputedDiskVerification-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919072865950499E9,
+        "finishedAt" : 1.7919072865950499E9,
+        "agent" : false
+      } ]
+    },
+    "failBackendRuntimeInputsInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "runBackendCheck" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.79190653998144E9,
+      "finishedAt" : 1.7919071087903528E9,
+      "attempts" : [ {
+        "attemptId" : "runBackendCheck-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "FAILED",
+        "startedAt" : 1.79190653998144E9,
+        "finishedAt" : 1.79190653998144E9,
+        "agent" : true,
+        "errorCode" : "STEP_SUCCESS_CLASSIFICATION_FAILED"
+      }, {
+        "attemptId" : "runBackendCheck-2",
+        "attemptNumber" : 2,
+        "kind" : "REPAIR_VALIDATION",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791906761978216E9,
+        "finishedAt" : 1.7919071087903528E9,
+        "agent" : true
+      } ]
+    },
+    "validateFrontendSliceContextLock" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919064328146489E9,
+      "finishedAt" : 1.7919064328146489E9,
+      "attempts" : [ {
+        "attemptId" : "validateFrontendSliceContextLock-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919064328146489E9,
+        "finishedAt" : 1.7919064328146489E9,
+        "agent" : false
+      } ]
+    },
+    "failBackendBuildResponseInvalid" : {
+      "status" : "SKIPPED",
+      "attempts" : [ ]
+    },
+    "repairFrontendBuild" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919067619777355E9,
+      "finishedAt" : 1.7919070476119463E9,
+      "attempts" : [ {
+        "attemptId" : "repairFrontendBuild-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919067619777355E9,
+        "finishedAt" : 1.7919070476119463E9,
+        "agent" : true
+      } ]
+    },
+    "persistSliceArtifactsBoth" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919073116131506E9,
+      "finishedAt" : 1.7919073116131506E9,
+      "attempts" : [ {
+        "attemptId" : "persistSliceArtifactsBoth-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919073116131506E9,
+        "finishedAt" : 1.7919073116131506E9,
+        "agent" : false
+      } ]
+    },
+    "validateSliceIntegrationCheckBothResponse" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919073115451117E9,
+      "finishedAt" : 1.7919073115451117E9,
+      "attempts" : [ {
+        "attemptId" : "validateSliceIntegrationCheckBothResponse-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919073115451117E9,
+        "finishedAt" : 1.7919073115451117E9,
+        "agent" : false
+      } ]
+    },
+    "validateFrontendRuntimeInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791906432893921E9,
+      "finishedAt" : 1.791906432893921E9,
+      "attempts" : [ {
+        "attemptId" : "validateFrontendRuntimeInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791906432893921E9,
+        "finishedAt" : 1.791906432893921E9,
+        "agent" : false
+      } ]
+    },
+    "completeRunBoth" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919073273096697E9,
+      "finishedAt" : 1.7919073273096697E9,
+      "attempts" : [ {
+        "attemptId" : "completeRunBoth-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919073273096697E9,
+        "finishedAt" : 1.7919073273096697E9,
+        "agent" : false
+      } ]
+    },
+    "validateFrontendBuildResponse" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919065397581275E9,
+      "finishedAt" : 1.7919071085352695E9,
+      "attempts" : [ {
+        "attemptId" : "validateFrontendBuildResponse-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919065397581275E9,
+        "finishedAt" : 1.7919065397581275E9,
+        "agent" : false
+      }, {
+        "attemptId" : "validateFrontendBuildResponse-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919071085352695E9,
+        "finishedAt" : 1.7919071085352695E9,
+        "agent" : false
+      } ]
+    }
+  },
+  "invalidations" : [ {
+    "causedByStepId" : "runBackendCheck",
+    "targetStepId" : "runBackendBuild",
+    "repairStepId" : "repairBackendBuild",
+    "invalidatedStepIds" : [ "persistBackendBuildArtifacts", "runBehaviorEvidencePreGate", "validateBackendBuildResponse", "verifyBackendBuildHandoffOnDisk", "verifyBackendPersistedBuildReports" ],
+    "createdAt" : 1.791906761978216E9
+  }, {
+    "causedByStepId" : "runFrontendCheck",
+    "targetStepId" : "runFrontendBuild",
+    "repairStepId" : "repairFrontendBuild",
+    "invalidatedStepIds" : [ "persistFrontendBuildArtifacts", "validateFrontendBuildResponse", "verifyFrontendBuildHandoffOnDisk", "verifyFrontendPersistedBuildReports" ],
+    "createdAt" : 1.7919070476119463E9
+  } ],
+  "childRuns" : [ ],
+  "terminalOutcome" : {
+    "kind" : "complete",
+    "stepId" : "completeRunBoth",
+    "reachedAt" : 1.7919073273096697E9
+  }
+}

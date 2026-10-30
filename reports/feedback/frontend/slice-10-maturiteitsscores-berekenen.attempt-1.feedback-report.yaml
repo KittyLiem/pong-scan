@@ -1,0 +1,94 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-10-maturiteitsscores-berekenen
+attemptNumber: 1
+status: fail
+startedAt: '2026-10-13T16:47:10.000Z'
+finishedAt: '2026-10-13T16:47:35.000Z'
+durationMs: 25000
+inputRefs:
+  - frontendSliceContext
+  - frontendStackProfile
+  - conformanceLock
+  - buildOutput
+artifactRefs:
+  - reports/check/frontend/slice-10-maturiteitsscores-berekenen.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-10-maturiteitsscores-berekenen.attempt-1.feedback-report.yaml
+provenance:
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+gates:
+  - gateId: GATE_LINT
+    checkId: CHK_LINT
+    status: fail
+    evidence:
+      commandRef: stack-profile.lint
+      resolvedCommand: npx npm run lint
+      workingDirectory: .
+      exitCode: 1
+      file: src/app/scan-results/scan-results.component.ts
+      locationHint: '32:7'
+      ruleId: '@typescript-eslint/no-unused-expressions'
+      excerpt: 'selected ? next.add(id) : next.delete(id);'
+warnings: []
+errors:
+  - gateId: GATE_LINT
+    failureCategory: slice_local
+    evidence:
+      observed: lint rejects the side-effect-only conditional expression in togglePriority
+      expected: explicit branch with a method invocation
+failureDomain: slice_local
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-10-maturiteitsscores-berekenen
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_LINT]
+  failedChecks: [CHK_LINT]
+  checkerSummary: 'GATE_LINT failed after build and all unit tests passed: the results page cannot satisfy the required lint gate because togglePriority uses a side-effect-only conditional expression.'
+  gateFailureContext:
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      commandRef: stack-profile.lint
+      resolvedCommand: npx npm run lint
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_LINT]
+    primaryCommand: npx npm run lint
+    notes: Type-check and verify commands are not substitutes for the test command when unit tests fail; unit tests already pass for this failure.
+  primaryFailures:
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      symptom: ESLint rejects a conditional expression used only for side effects.
+      observed: 'src/app/scan-results/scan-results.component.ts:32:7 reports @typescript-eslint/no-unused-expressions.'
+      expected: togglePriority updates the set with explicit executable statements while retaining selection behavior.
+      rootCauseHypothesis: The ternary selects next.add or next.delete without assigning its result, which violates the no-unused-expressions rule.
+      requiredOutcome: Replace the ternary with an explicit if/else method call; npx npm run lint exits 0 and selectedIds behavior remains unchanged.
+      blocking: true
+  targets:
+    - file: src/app/scan-results/scan-results.component.ts
+      locationHint: '32:7'
+      component: ScanResultsComponent
+      observed: 'selected ? next.add(id) : next.delete(id);'
+      expected: explicit if/else calling next.add(id) or next.delete(id)
+      ruleId: '@typescript-eslint/no-unused-expressions'
+  editScope:
+    allowedEditPaths:
+      - src/app/scan-results/scan-results.component.ts
+    suspectPaths: []
+    forbiddenOrOutOfScope:
+      - src/app/core/scans/scan-results.service.ts
+      - src/app/app.routes.ts
+      - generated/**
+  buildAgentBrief:
+    - Run npx npm run lint from frontendAppRoot and confirm the reported lint error in ScanResultsComponent.togglePriority before editing.
+    - In src/app/scan-results/scan-results.component.ts, replace the side-effect ternary at 32:7 with an explicit if/else that calls add or delete on the copied set.
+    - Preserve the existing selectedIds update semantics and re-run npx npm run lint.
+  nonGoals:
+    - Do not weaken or disable @typescript-eslint/no-unused-expressions.
+    - Do not alter API calls, route registration, auth storage, or unrelated UI structure.
+failedGateIds: [GATE_LINT]
+failedChecks: [CHK_LINT]

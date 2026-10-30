@@ -1,0 +1,121 @@
+artifactRefs:
+- reports/check/backend/slice-05-scanportfolio.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 70000
+errors: []
+finishedAt: '2026-10-13T15:44:10Z'
+gates:
+- evidence:
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/main/java/com/example/scan/api/ScanResource.java
+      reason: getScan handler and security enforcement for owned operation
+    - path: src/main/java/com/example/scan/api/ScanPortfolioResource.java
+      reason: listScans handler and security enforcement for owned operation
+    - path: src/test/java/com/example/scan/ScanResourceTest.java
+      reason: representative API and behavior-evidence test coverage
+    missingPaths: []
+    verifiedPaths:
+    - src/main/java/com/example/scan/api/ScanResource.java
+    - src/main/java/com/example/scan/api/ScanPortfolioResource.java
+    - src/test/java/com/example/scan/ScanResourceTest.java
+    - locks/behavior-decisions.lock.yaml
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    enforcementMarkers:
+    - ScanPortfolioResource.listScans: '@BearerAuthenticated; member principal read
+        from BearerAuthenticationFilter'
+    - ScanResource.getScan: '@BearerAuthenticated; member principal read from BearerAuthenticationFilter'
+    missingEnforcement: []
+    missingTests: []
+    protectedOperations:
+    - method: GET
+      operationId: listScans
+      path: /v1/organizations/{organizationId}/scans
+    - method: GET
+      operationId: getScan
+      path: /v1/scans/{scanId}
+    unauthorizedTests:
+    - ScanResourceTest.listScansRequiresBearer
+    - ScanResourceTest.getScanRequiresBearer
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    assessedScope: protected scan handlers and their service call path
+    result: No credential, token, or idempotency value is persisted or fingerprinted
+      by the slice handlers/service; no custom password digest is present in assessed
+      source.
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    accessStore: OrganizationEntity Panache ORM access check
+    durableOperations:
+    - listScans
+    - getScan
+    primaryStore: ScanEntity Panache ORM queries in ScanService
+    testRuntime: Flyway applied scan portfolio migration v6 on H2 PostgreSQL mode
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    evidenceSource: buildOutput.artifacts reports/build/backend/slice-05-scanportfolio.behavior-evidence.yaml
+    executedWith: CHK_UNIT_TESTS
+    mutationFieldRequirement: not applicable; all owned transitions are recompute
+    startsFrom: api-fixture
+    testFile: src/test/java/com/example/scan/ScanResourceTest.java
+    transitionIdsMatched:
+    - organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+    - organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+    - kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+    - beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+    - beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+    - beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    note: Full Maven test suite passed; H2/Flyway test initialization completed.
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext:slice-05-scanportfolio
+- buildOutput:attempt-2
+- conformanceLock:1.0.0
+- backendStackProfile:1.1.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-05-scanportfolio
+startedAt: '2026-10-13T15:43:00Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: OTLP exporter connection-refused warnings were emitted during tests, but
+    Maven exited 0 and no test failure resulted.
+  failureCategory: environment_warning
+  gateId: GATE_TESTS

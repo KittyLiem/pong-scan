@@ -1,0 +1,18 @@
+decisions: []
+transitions:
+- kind: recompute
+  mutatedFields:
+  - pdfBytes
+  operationId: exportScanPdf
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+  testMethod: exportScanPdfProducesPdfFromCompletedResult
+  transitionId: resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+- kind: recompute
+  mutatedFields:
+  - goalContextAfter
+  operationId: exportScanPdf
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+  testMethod: exportScanPdfIncludesPersistedGoalContext
+  transitionId: resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf

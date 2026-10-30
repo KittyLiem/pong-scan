@@ -1,0 +1,174 @@
+artifactRefs:
+- reports/integration/slices/slice-14-resultaten-exporteren.attempt-1.integration-check.yaml
+attemptNumber: 1
+contractAssessment:
+  auth: bearer-token
+  endpointParitySource: endpointParityPreGate
+  endpointParityValid: true
+  errorModel: problem-details
+  method: GET
+  operationId: exportScanPdf
+  pagination: not-applicable-single-resource-binary-export
+  path: /v1/scans/{scanId}/export
+  successMediaType: application/pdf
+  versioning: uri-versioned-v1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/results/api/ResultsExportResource.java
+        purpose: Verify operationId, GET v1 route, PDF response, UUID path parameter,
+          and bearer enforcement.
+      - path: backend/src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+        purpose: Verify Authorization header is passed to bearer-token verification.
+      - path: backend/src/main/java/com/example/organization/application/BearerTokenService.java
+        purpose: Verify Bearer credential parsing and unauthorized behavior.
+      - path: backend/src/main/java/com/example/account/api/ProblemMappers.java
+        purpose: Verify application/problem+json responses contain type, title, and
+          status.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify route_results binding and authenticated route guard.
+      - path: frontend/src/app/scan-results/scan-results.component.ts
+        purpose: Verify the primary export action invokes exportScanPdf and downloads
+          the PDF.
+      - path: frontend/src/app/scan-results/scan-results.component.html
+        purpose: Verify the scoped page hosts an implemented export primary action.
+      - path: frontend/src/app/core/scans/scan-results.service.ts
+        purpose: Verify GET /v1/scans/{scanId}/export, Blob handling, bearer header,
+          and Problem Details parsing.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/core/scans/scan-results.service.spec.ts
+      - app/frontend/src/app/core/scans/scan-results.service.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    note: Per-stream counterpart-disabled flags are correctly treated as ownership
+      metadata.
+    source: combinedSliceScope
+  upstreamChecks:
+    backendSignals:
+    - GATE_BUILD_HANDOFF passed with no missing paths.
+    - CHK_ENDPOINT_SECURITY, CHK_BUILD, CHK_UNIT_TESTS, and CHK_LINT passed.
+    - GATE_BEHAVIOR_EVIDENCE covered both owned transitions from api-fixture.
+    backendStatus: ok
+    frontendSignals:
+    - GATE_BUILD_HANDOFF passed with no missing paths.
+    - CHK_BUILD, CHK_UNIT_TESTS, and CHK_LINT passed.
+    frontendStatus: ok
+finishedAt: '2026-10-13T17:37:19Z'
+gates:
+- evidence:
+    findings:
+    - app.routes.ts maps /scans/:scanId/results to ScanResultsComponent under authenticatedGuard.
+    - ScanResultsComponent exposes the scoped export primary action and calls ScanResultsService.exportScanPdf.
+    - ScanResultsService issues GET /v1/scans/{scanId}/export with responseType blob
+      and an Authorization bearer header.
+    - The frontend parses Blob-based JSON failures into Problem Details fields type,
+      title, status, detail, and instance.
+    - URI versioning agrees with the required /v1 strategy; pagination and idempotency
+      do not apply to this singleton GET export.
+    payloadRefs:
+    - frontendSliceContext.contractSubset.operations[exportScanPdf]
+    - frontendSliceContext.uiScopeRef.pageBindings[route_results]
+    - interfaceContractSubset.operations[exportScanPdf]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    findings:
+    - ResultsExportResource exposes operationId exportScanPdf as GET /v1/scans/{scanId}/export.
+    - The path parameter is UUID-typed and the success response is application/pdf
+      backed by byte array output; no request or response DTO is required for the
+      binary operation.
+    - BearerAuthenticated and SecurityRequirement enforce the declared bearerAuth
+      scheme; BearerAuthenticationFilter reads Authorization.
+    - ProblemMappers returns application/problem+json with required type, title, and
+      status fields, and the backend security check observed a 401 Problem Details
+      response.
+    - URI versioning agrees with /v1; pagination and idempotency do not apply to this
+      singleton GET export.
+    payloadRefs:
+    - backendSliceContext.contractSubset.operations[exportScanPdf]
+    - interfaceContractSubset.operations[exportScanPdf]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    findings:
+    - endpointParityPreGate deterministically proves FE, BE, and contract parity for
+      GET /v1/scans/{scanId}/export.
+    - FE and BE agree on bearer Authorization transport, /v1 URI versioning, PDF success
+      representation, and Problem Details errors.
+    - Both upstream checks are ok and both precomputed disk verifications are valid
+      with empty missingPaths.
+    - At least one full integration anchor was read for each enabled stream.
+    payloadRefs:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - precomputedDiskVerification
+    - upstreamEvidence.frontendCheckOutput
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    findings:
+    - resultaten_exporteren.intern_resultaat__pdf_geexporteerd is covered by ResultsExportBehaviorTest.exportScanPdfProducesPdfFromCompletedResult
+      from api-fixture.
+    - resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf is
+      covered by ResultsExportBehaviorTest.exportScanPdfIncludesPersistedGoalContext
+      from api-fixture.
+    - The scoped UI page hosts exportScanPdf as a primary action and the component
+      implements the matching client invocation.
+    payloadRefs:
+    - backendSliceContext.behaviorSubset.transitions
+    - behaviorEvidencePreGate
+    - upstreamEvidence.backendCheckOutput.GATE_BEHAVIOR_EVIDENCE
+    - frontendSliceContext.uiScopeRef.pageBindings[route_results]
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- combinedSliceScope
+- interfaceContractSubset
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+- precomputedDiskVerification
+- endpointParityPreGate
+provenance:
+  apiChoiceLockRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsLockRevision: 1.0.0
+  contractRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-14-resultaten-exporteren
+startedAt: '2026-10-13T17:37:19Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Timing fields use the latest observed upstream completion timestamp because no wall-clock
+  capability was exposed to this agent; durationMs is therefore recorded as 0.
+- No separate e2e smoke report was produced; static anchors, deterministic endpoint
+  parity, upstream tests, and transition evidence were sufficient for this integration
+  check.

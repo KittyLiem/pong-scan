@@ -1,0 +1,311 @@
+{
+  "schemaVersion" : "1",
+  "run" : {
+    "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5",
+    "workflowId" : "vs-phase-5-execution",
+    "status" : "SUCCEEDED",
+    "startedAt" : 1.791901250557665E9,
+    "finishedAt" : 1.7919132955161269E9,
+    "input" : {
+      "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5",
+      "publishLineageId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145"
+    },
+    "recordedAt" : 1.791914217591E9
+  },
+  "steps" : {
+    "persistExecutionArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919132954724083E9,
+      "finishedAt" : 1.7919132954724083E9,
+      "attempts" : [ {
+        "attemptId" : "persistExecutionArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919132954724083E9,
+        "finishedAt" : 1.7919132954724083E9,
+        "agent" : false
+      } ]
+    },
+    "loadExecutionInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012511013713E9,
+      "finishedAt" : 1.7919012511013713E9,
+      "attempts" : [ {
+        "attemptId" : "loadExecutionInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012511013713E9,
+        "finishedAt" : 1.7919012511013713E9,
+        "agent" : false
+      } ]
+    },
+    "composeBatchSummary" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919132952981477E9,
+      "finishedAt" : 1.7919132952981477E9,
+      "attempts" : [ {
+        "attemptId" : "composeBatchSummary-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919132952981477E9,
+        "finishedAt" : 1.7919132952981477E9,
+        "agent" : false
+      } ]
+    },
+    "composeSliceQueue" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012524815946E9,
+      "finishedAt" : 1.7919012524815946E9,
+      "attempts" : [ {
+        "attemptId" : "composeSliceQueue-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012524815946E9,
+        "finishedAt" : 1.7919012524815946E9,
+        "agent" : false
+      } ]
+    },
+    "completeRun" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919132955161269E9,
+      "finishedAt" : 1.7919132955161269E9,
+      "attempts" : [ {
+        "attemptId" : "completeRun-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919132955161269E9,
+        "finishedAt" : 1.7919132955161269E9,
+        "agent" : false
+      } ]
+    },
+    "verifyManifestExpectedLocks" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012523511689E9,
+      "finishedAt" : 1.7919012523511689E9,
+      "attempts" : [ {
+        "attemptId" : "verifyManifestExpectedLocks-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012523511689E9,
+        "finishedAt" : 1.7919012523511689E9,
+        "agent" : false
+      } ]
+    },
+    "executeSlices" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791901252683555E9,
+      "finishedAt" : 1.791901252683555E9,
+      "attempts" : [ {
+        "attemptId" : "executeSlices-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791901252683555E9,
+        "finishedAt" : 1.791901252683555E9,
+        "agent" : false
+      } ]
+    },
+    "composeTransitionCoverage" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919132953923643E9,
+      "finishedAt" : 1.7919132953923643E9,
+      "attempts" : [ {
+        "attemptId" : "composeTransitionCoverage-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919132953923643E9,
+        "finishedAt" : 1.7919132953923643E9,
+        "agent" : false
+      } ]
+    },
+    "loadSliceContextManifest" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012520413306E9,
+      "finishedAt" : 1.7919012520413306E9,
+      "attempts" : [ {
+        "attemptId" : "loadSliceContextManifest-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012520413306E9,
+        "finishedAt" : 1.7919012520413306E9,
+        "agent" : false
+      } ]
+    },
+    "validateManifestRelations" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012522827864E9,
+      "finishedAt" : 1.7919012522827864E9,
+      "attempts" : [ {
+        "attemptId" : "validateManifestRelations-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012522827864E9,
+        "finishedAt" : 1.7919012522827864E9,
+        "agent" : false
+      } ]
+    },
+    "validateSliceContextManifest" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012521595757E9,
+      "finishedAt" : 1.7919012521595757E9,
+      "attempts" : [ {
+        "attemptId" : "validateSliceContextManifest-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012521595757E9,
+        "finishedAt" : 1.7919012521595757E9,
+        "agent" : false
+      } ]
+    },
+    "decideSliceContextManifestRequirement" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012519514244E9,
+      "finishedAt" : 1.7919012519514244E9,
+      "attempts" : [ {
+        "attemptId" : "decideSliceContextManifestRequirement-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012519514244E9,
+        "finishedAt" : 1.7919012519514244E9,
+        "agent" : false
+      } ]
+    },
+    "validateBuildPlan" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919012517520533E9,
+      "finishedAt" : 1.7919012517520533E9,
+      "attempts" : [ {
+        "attemptId" : "validateBuildPlan-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919012517520533E9,
+        "finishedAt" : 1.7919012517520533E9,
+        "agent" : false
+      } ]
+    }
+  },
+  "invalidations" : [ ],
+  "childRuns" : [ {
+    "runId" : "child-KhIVUOb6wNj93a3o7VVRP9_hL2BKycq4hUIkG43yshg",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 0,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-01-accounttoegang"
+  }, {
+    "runId" : "child-N48Mn6EP01U_N_4-8OZglItp-Nnlfw-asLeZkDBYhnY",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 1,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-02-organisatiecontext-en-scanrechten"
+  }, {
+    "runId" : "child-_cqUsw_a2bX4ASnesbJtxmw1NKQ77odUlxtFHurM964",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 2,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-03-datavolwassenheidsmodel"
+  }, {
+    "runId" : "child-JZlo84oXS5W49fHRr4xCZOTsIN20M56qD8_KNz94iMM",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 3,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-04-adminomgeving-en-scaninhoudbeheer"
+  }, {
+    "runId" : "child-YDbHO7qXOE1xqOLH8J88_b0cEkqY5QTFYzdcJQvwF2k",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 4,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-05-scanportfolio"
+  }, {
+    "runId" : "child-U30W5O3jItwGGuY_bZcN7GzuQN4rBTydykqqV2_Pv04",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 5,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-06-scan-aanmaken"
+  }, {
+    "runId" : "child-p3_ex-1HmVHm83c2Yxus40E8qbiXf87QszJFs2vl68s",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 6,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-07-kennisgebieden-selecteren"
+  }, {
+    "runId" : "child-Yko5eZGgyQYG7Uscd8LTagfeWCH6olIuNjdqJynYU9Q",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 7,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-08-beoordeling-vastleggen-en-hervatten"
+  }, {
+    "runId" : "child-GkQnmYxnOun4WJ6ELp4pZP0peNRwY9dNWdfevd7Rc7I",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 8,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-09-beoordelingsinhoud-voltooien"
+  }, {
+    "runId" : "child-hk7N48V6TBnPcHt3yDBH_9xgPldwcGyyhfTXtuwM5GI",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 9,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-10-maturiteitsscores-berekenen"
+  }, {
+    "runId" : "child-skiSWgGgRp7nMVjnGrtLctyg5pcxX8eq6lT8WdXByFQ",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 10,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-11-organisatiedoelen-en-prioriteiten"
+  }, {
+    "runId" : "child-Iqk2onedCEjN53sXlR8Wcb3dng24ra7aW-1b40EiI9M",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 11,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-12-resultaatinzichten-en-doelcontext"
+  }, {
+    "runId" : "child-M6TaWX54FqhI9H9DoYSM7uXvmpkeWbsg4cf1hMa7KmM",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 12,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-13-ontwikkelprioriteiten-selecteren"
+  }, {
+    "runId" : "child-SHFEmHOgu2mxHucykoRrIerff7IkZVFadKXztAhdiQQ",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 13,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-14-resultaten-exporteren"
+  }, {
+    "runId" : "child-vgCCJspJFLoSel3_s7QQ7THmkUQZMxyjx5FHlRRoPC8",
+    "invokingStepId" : "executeSlices",
+    "itemIndex" : 14,
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "sliceId" : "slice-15-afgeronde-beoordeling-verfijnen"
+  } ],
+  "terminalOutcome" : {
+    "kind" : "complete",
+    "stepId" : "completeRun",
+    "reachedAt" : 1.7919132955161269E9
+  }
+}

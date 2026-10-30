@@ -1,0 +1,54 @@
+artifactRefs:
+- src/main/java/com/example/scan/api/ScanResource.java
+- src/main/java/com/example/scan/api/ScanPortfolioResource.java
+- src/test/java/com/example/scan/ScanResourceTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-05-scanportfolio.behavior-evidence.yaml
+- reports/build/backend/slice-05-scanportfolio.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 69430
+errors: []
+finishedAt: '2026-10-13T15:42:18.392Z'
+gates:
+- command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight completed successfully.
+  exitCode: 0
+  id: LOCAL_TYPE_CHECK
+  status: passed
+- command: mvn -B -ntp -q -Dtest=ScanResourceTest test
+  evidence: Intermediate same-class method mapping left listScans unavailable and
+    caused four expected-route assertions to receive 404; implementation was revised
+    to a top-level resource.
+  exitCode: 1
+  id: LOCAL_TARGETED_TEST_INITIAL
+  status: failed
+- command: mvn -B -ntp -q -Dtest=ScanResourceTest test
+  evidence: All 10 ScanResourceTest tests passed, including exact OpenAPI portfolio-path,
+    bearer-security, pagination, access-control, and scan-resume coverage.
+  exitCode: 0
+  id: LOCAL_TARGETED_TEST_FINAL
+  status: passed
+inputRefs:
+- backendSliceContext:slice-05-scanportfolio
+- interfaceContractSubset:listScans,getScan
+- reprocessInputs:GATE_ENDPOINT_PARITY,GATE_SLICE_INTEGRATION
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-05-scanportfolio
+startedAt: '2026-10-13T15:41:08.962Z'
+status: ok
+stepId: repairBackendBuildFromIntegration
+stream: backend
+summary: Fixed the endpoint-parity failure by replacing the nested listScans resource
+  declaration, which was detected as /v1/scans/{scanId}/v1/organizations/{organizationId}/scans,
+  with a top-level bearer-protected resource at the exact contract path /v1/organizations/{organizationId}/scans.
+  Added an OpenAPI path regression assertion.
+warnings:
+- The supplied repair attemptNumber was 1; it was normalized to attempt 2 because
+  repair passes must not reuse attempt 1.
+- The full unit-test suite was not run; verification was limited to compile preflight
+  and the directly implicated ScanResourceTest suite.
+- Formal endpoint-parity and slice-integration gates remain owned by Backend Check.

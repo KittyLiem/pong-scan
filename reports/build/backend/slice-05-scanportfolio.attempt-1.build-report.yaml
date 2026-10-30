@@ -1,0 +1,41 @@
+artifactRefs:
+- src/main/java/com/example/scan/domain/ScanEntity.java
+- src/main/java/com/example/scan/api/ScanDtos.java
+- src/main/java/com/example/scan/application/ScanService.java
+- src/main/java/com/example/scan/api/ScanResource.java
+- src/main/resources/db/migration/V6__scan_portfolio.sql
+- src/test/java/com/example/scan/ScanResourceTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-05-scanportfolio.behavior-evidence.yaml
+- reports/build/backend/slice-05-scanportfolio.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 19429
+errors: []
+finishedAt: '2026-03-12T10:00:20Z'
+gates:
+- check: local-type-check
+  command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight completed successfully after the final source
+    update.
+  exitCode: 0
+  status: passed
+inputRefs:
+- interfaceContractSubset@slice-05-scanportfolio
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- conformanceLock@1.0.0
+- backendStackProfile@1.1.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-05-scanportfolio
+startedAt: '2026-03-12T10:00:00Z'
+status: completed
+stepId: runBackendBuild
+stream: backend
+warnings:
+- The full unit-test suite was not run during this implementation pass because first-pass
+  local verification defaults to the compile-focused typeCheck command; Backend Check
+  retains formal test-gate authority.

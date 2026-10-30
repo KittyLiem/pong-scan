@@ -1,0 +1,320 @@
+{
+  "schemaVersion" : "1",
+  "run" : {
+    "runId" : "child-skiSWgGgRp7nMVjnGrtLctyg5pcxX8eq6lT8WdXByFQ",
+    "workflowId" : "vs-phase-5-slice",
+    "status" : "SUCCEEDED",
+    "startedAt" : 1.7919107160080004E9,
+    "finishedAt" : 1.7919108790807693E9,
+    "input" : {
+      "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5",
+      "sliceId" : "slice-11-organisatiedoelen-en-prioriteiten",
+      "publishLineageId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145",
+      "attemptNumber" : 1
+    },
+    "recordedAt" : 1.791914217395E9
+  },
+  "steps" : {
+    "persistSliceArtifactsFrontendOnly" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919108630219557E9,
+      "finishedAt" : 1.7919108630219557E9,
+      "attempts" : [ {
+        "attemptId" : "persistSliceArtifactsFrontendOnly-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919108630219557E9,
+        "finishedAt" : 1.7919108630219557E9,
+        "agent" : false
+      } ]
+    },
+    "verifySliceContextLocksOnDisk" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107163439612E9,
+      "finishedAt" : 1.7919107163439612E9,
+      "attempts" : [ {
+        "attemptId" : "verifySliceContextLocksOnDisk-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107163439612E9,
+        "finishedAt" : 1.7919107163439612E9,
+        "agent" : false
+      } ]
+    },
+    "persistFrontendBuildArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791910790839077E9,
+      "finishedAt" : 1.791910790839077E9,
+      "attempts" : [ {
+        "attemptId" : "persistFrontendBuildArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791910790839077E9,
+        "finishedAt" : 1.791910790839077E9,
+        "agent" : false
+      } ]
+    },
+    "validateFrontendBuildResponse" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107907542827E9,
+      "finishedAt" : 1.7919107907542827E9,
+      "attempts" : [ {
+        "attemptId" : "validateFrontendBuildResponse-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107907542827E9,
+        "finishedAt" : 1.7919107907542827E9,
+        "agent" : false
+      } ]
+    },
+    "loadFrontendStackProfile" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791910716440246E9,
+      "finishedAt" : 1.791910716440246E9,
+      "attempts" : [ {
+        "attemptId" : "loadFrontendStackProfile-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791910716440246E9,
+        "finishedAt" : 1.791910716440246E9,
+        "agent" : false
+      } ]
+    },
+    "runFrontendCheck" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107909244325E9,
+      "finishedAt" : 1.7919107909244325E9,
+      "attempts" : [ {
+        "attemptId" : "runFrontendCheck-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107909244325E9,
+        "finishedAt" : 1.7919107909244325E9,
+        "agent" : true
+      } ]
+    },
+    "validateSliceContextInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107162402003E9,
+      "finishedAt" : 1.7919107162402003E9,
+      "attempts" : [ {
+        "attemptId" : "validateSliceContextInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107162402003E9,
+        "finishedAt" : 1.7919107162402003E9,
+        "agent" : false
+      } ]
+    },
+    "validateSliceIntegrationCheckFrontendOnlyResponse" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919108629904156E9,
+      "finishedAt" : 1.7919108629904156E9,
+      "attempts" : [ {
+        "attemptId" : "validateSliceIntegrationCheckFrontendOnlyResponse-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919108629904156E9,
+        "finishedAt" : 1.7919108629904156E9,
+        "agent" : false
+      } ]
+    },
+    "validateFrontendSliceContextLock" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791910716410751E9,
+      "finishedAt" : 1.791910716410751E9,
+      "attempts" : [ {
+        "attemptId" : "validateFrontendSliceContextLock-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791910716410751E9,
+        "finishedAt" : 1.791910716410751E9,
+        "agent" : false
+      } ]
+    },
+    "verifyFrontendPersistedBuildReports" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107908865E9,
+      "finishedAt" : 1.7919107908865E9,
+      "attempts" : [ {
+        "attemptId" : "verifyFrontendPersistedBuildReports-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107908865E9,
+        "finishedAt" : 1.7919107908865E9,
+        "agent" : false
+      } ]
+    },
+    "composeLoadedSliceContext" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791910716304244E9,
+      "finishedAt" : 1.791910716304244E9,
+      "attempts" : [ {
+        "attemptId" : "composeLoadedSliceContext-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791910716304244E9,
+        "finishedAt" : 1.791910716304244E9,
+        "agent" : false
+      } ]
+    },
+    "publishSliceFrontendOnly" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791910863059003E9,
+      "finishedAt" : 1.791910863059003E9,
+      "attempts" : [ {
+        "attemptId" : "publishSliceFrontendOnly-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791910863059003E9,
+        "finishedAt" : 1.791910863059003E9,
+        "agent" : false
+      } ]
+    },
+    "completeRunFrontendOnly" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919108790807693E9,
+      "finishedAt" : 1.7919108790807693E9,
+      "attempts" : [ {
+        "attemptId" : "completeRunFrontendOnly-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919108790807693E9,
+        "finishedAt" : 1.7919108790807693E9,
+        "agent" : false
+      } ]
+    },
+    "verifyFrontendBuildHandoffOnDisk" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107907976642E9,
+      "finishedAt" : 1.7919107907976642E9,
+      "attempts" : [ {
+        "attemptId" : "verifyFrontendBuildHandoffOnDisk-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107907976642E9,
+        "finishedAt" : 1.7919107907976642E9,
+        "agent" : false
+      } ]
+    },
+    "loadPersistedFrontendSliceContext" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107163724806E9,
+      "finishedAt" : 1.7919107163724806E9,
+      "attempts" : [ {
+        "attemptId" : "loadPersistedFrontendSliceContext-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107163724806E9,
+        "finishedAt" : 1.7919107163724806E9,
+        "agent" : false
+      } ]
+    },
+    "loadSliceInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107161144745E9,
+      "finishedAt" : 1.7919107161144745E9,
+      "attempts" : [ {
+        "attemptId" : "loadSliceInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107161144745E9,
+        "finishedAt" : 1.7919107161144745E9,
+        "agent" : false
+      } ]
+    },
+    "persistFrontendCheckArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791910842597938E9,
+      "finishedAt" : 1.791910842597938E9,
+      "attempts" : [ {
+        "attemptId" : "persistFrontendCheckArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791910842597938E9,
+        "finishedAt" : 1.791910842597938E9,
+        "agent" : false
+      } ]
+    },
+    "runSliceIntegrationCheckFrontendOnly" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919108426356986E9,
+      "finishedAt" : 1.7919108426356986E9,
+      "attempts" : [ {
+        "attemptId" : "runSliceIntegrationCheckFrontendOnly-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919108426356986E9,
+        "finishedAt" : 1.7919108426356986E9,
+        "agent" : true
+      } ]
+    },
+    "validateSliceStreamLockRelations" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107162683544E9,
+      "finishedAt" : 1.7919107162683544E9,
+      "attempts" : [ {
+        "attemptId" : "validateSliceStreamLockRelations-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107162683544E9,
+        "finishedAt" : 1.7919107162683544E9,
+        "agent" : false
+      } ]
+    },
+    "validateFrontendRuntimeInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107164714367E9,
+      "finishedAt" : 1.7919107164714367E9,
+      "attempts" : [ {
+        "attemptId" : "validateFrontendRuntimeInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107164714367E9,
+        "finishedAt" : 1.7919107164714367E9,
+        "agent" : false
+      } ]
+    },
+    "runFrontendBuild" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919107165492003E9,
+      "finishedAt" : 1.7919107165492003E9,
+      "attempts" : [ {
+        "attemptId" : "runFrontendBuild-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919107165492003E9,
+        "finishedAt" : 1.7919107165492003E9,
+        "agent" : true
+      } ]
+    }
+  },
+  "invalidations" : [ ],
+  "childRuns" : [ ],
+  "terminalOutcome" : {
+    "kind" : "complete",
+    "stepId" : "completeRunFrontendOnly",
+    "reachedAt" : 1.7919108790807693E9
+  }
+}

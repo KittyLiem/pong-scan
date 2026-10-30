@@ -1,0 +1,154 @@
+artifactRefs:
+- reports/integration/slices/slice-02-organisatiecontext-en-scanrechten.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/organization/api/OrganizationResource.java
+        purpose: Verify createOrganization route, operation ID, bearer enforcement,
+          idempotency header, and 201 response.
+      - path: backend/src/main/java/com/example/organization/api/OrganizationDtos.java
+        purpose: Verify request and response DTO fields against the contract subset.
+      - path: backend/src/test/java/com/example/organization/OrganizationResourceTest.java
+        purpose: Verify protected endpoint behavior, problem-details response, idempotency,
+          and owned-transition coverage from an API fixture.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/main/java/com/example/organization/api/OrganizationDtos.java
+      - app/backend/src/main/java/com/example/organization/api/OrganizationResource.java
+      - app/backend/src/test/java/com/example/organization/OrganizationResourceTest.java
+    frontend:
+      anchorReadVerifiedPaths:
+      - frontend/src/app/core/organization/organization.service.ts
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify the scoped /start page and post-success /scans route.
+      - path: frontend/src/app/account-access/account-access.component.ts
+        purpose: Verify the hosted createOrganization primary action and success navigation.
+      - path: frontend/src/app/core/organization/organization.service.ts
+        purpose: Verify request path, DTOs, bearer authorization, idempotency header,
+          and problem-details parsing.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/app.routes.ts
+      - app/frontend/src/app/account-access/account-access.component.ts
+      - app/frontend/src/app/scan-overview/scan-overview.component.ts
+      - app/frontend/src/app/scan-overview/scan-overview.component.spec.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    source: combinedSliceScope
+  endpointParity:
+    method: POST
+    operationId: createOrganization
+    path: /v1/organizations
+    source: endpointParityPreGate
+    valid: true
+  upstreamChecks:
+    backendStatus: ok
+    frontendStatus: ok
+    requiredChecks:
+      CHK_BUILD: passed
+      CHK_ENDPOINT_SECURITY: passed
+      CHK_FRONTEND_AUTH_STORAGE: passed
+      CHK_LINT: passed
+      CHK_UNIT_TESTS: passed
+finishedAt: '2026-10-13T14:37:38.000Z'
+gates:
+- evidence:
+    findings:
+    - OrganizationService posts to /v1/organizations using the contract request and
+      response fields.
+    - The protected call attaches Authorization and required X-Idempotency-Key headers.
+    - HttpErrorResponse payloads are normalized as problem-details fields type, title,
+      status, detail, and instance.
+    - AccountAccessComponent hosts the createOrganization action and navigates to
+      /scans after success.
+    - URI versioning uses /v1; pagination is not applicable to this POST operation.
+    payloadRefs:
+    - frontendSliceContext.contractSubset.operations[createOrganization]
+    - frontendSliceContext.uiScopeRef.pageBindings[route_auth_start]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    findings:
+    - OrganizationResource exposes POST /v1/organizations with operationId createOrganization.
+    - BearerAuthenticated and SecurityRequirement enforce the declared bearer scheme.
+    - X-Idempotency-Key is a nonblank operation header and the request/response DTO
+      fields align with the subset.
+    - The resource returns 201 and backend checks prove application/problem+json with
+      required problem-details fields for authentication failure.
+    - URI versioning uses /v1; pagination is not applicable to this POST operation.
+    payloadRefs:
+    - backendSliceContext.contractSubset.operations[createOrganization]
+    - backendSliceContext.behaviorSubset.transitions
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    findings:
+    - Deterministic endpoint parity proves FE and BE agree on POST /v1/organizations.
+    - FE and BE agree on bearer authorization, X-Idempotency-Key, DTO fields, 201
+      response shape, URI versioning, and problem-details errors.
+    - Both stream checks passed build, unit-test, and lint gates; claimed implementation
+      handoffs are present on disk.
+    payloadRefs:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - interfaceContractSubset
+    - upstreamEvidence.frontendCheckOutput
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    findings:
+    - The owned transition is covered by OrganizationResourceTest#createOrganizationActivatesOrganizationContext
+      starting from api-fixture.
+    - The scoped UI page hosts createOrganization and AccountAccessComponent invokes
+      OrganizationService.create as its primary organization action.
+    payloadRefs:
+    - backendSliceContext.behaviorSubset.transitions[organisatiecontext_en_scanrechten.organisatiecontext_ontbreekt__organisatiecontext_actief]
+    - behaviorEvidencePreGate
+    - upstreamEvidence.backendCheckOutput.GATE_BEHAVIOR_EVIDENCE
+    - frontendSliceContext.uiScopeRef.pageBindings[route_auth_start]
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- combinedSliceScope
+- interfaceContractSubset
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  backendBuildAttempt: 1
+  conformanceRevision: 1.0.0
+  contractRevision: interface-subset:unversioned; api-choice:1.0.0; contract-decisions:1.0.0
+  frontendBuildAttempt: 2
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-02-organisatiecontext-en-scanrechten
+startedAt: '2026-10-13T14:37:38.000Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- This is a static integration assessment; no separate live E2E smoke report was produced.
+- Report timestamps use the latest observed upstream check completion instant because
+  no runtime clock capability was exposed.

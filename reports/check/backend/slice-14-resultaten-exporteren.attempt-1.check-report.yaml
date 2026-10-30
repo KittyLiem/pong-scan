@@ -1,0 +1,125 @@
+artifactRefs:
+- reports/check/backend/slice-14-resultaten-exporteren.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 92000
+errors: []
+finishedAt: '2026-10-13T17:36:26Z'
+gates:
+- evidence:
+    buildReportPersistenceVerified: true
+    buildReportRef: reports/build/backend/slice-14-resultaten-exporteren.attempt-2.build-report.yaml
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      reason: representative slice API behavior test for exportScanPdf and unauthorized
+        coverage
+    missingPaths: []
+    verifiedPaths:
+    - src/test/java/com/example/results/ResultsExportBehaviorTest.java
+    - locks/behavior-decisions.lock.yaml
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    missingEnforcement: []
+    missingTests: []
+    observed401Tests:
+    - assertion: GET without bearer token returns 401 application/problem+json
+      file: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      method: exportScanPdfRequiresBearerAuthentication
+    protectedOperations:
+    - method: GET
+      operationId: exportScanPdf
+      path: /v1/scans/{scanId}/export
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    observed: API fixture submits credentials only to registration/session endpoints
+      and does not persist or fingerprint them in the slice test.
+    scope: export slice test handoff
+    unsafeCredentialHandlingObserved: []
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    databaseEnabled: postgresql
+    durableOperation: exportScanPdf
+    exercisedPersistence: test suite starts Flyway H2 PostgreSQL-mode test database,
+      creates persisted model entities, and verifies exported PDF contains persisted
+      goal context.
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    evidenceSource: buildOutput.artifacts reports/build/backend/slice-14-resultaten-exporteren.behavior-evidence.yaml
+    testSuiteExecuted: true
+    transitions:
+    - id: resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+      kind: recompute
+      mutatedFields:
+      - pdfBytes
+      operationId: exportScanPdf
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      testMethod: exportScanPdfProducesPdfFromCompletedResult
+    - id: resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf
+      kind: recompute
+      mutatedFields:
+      - goalContextAfter
+      operationId: exportScanPdf
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      testMethod: exportScanPdfIncludesPersistedGoalContext
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    executedSliceTests:
+    - ResultsExportBehaviorTest.exportScanPdfProducesPdfFromCompletedResult
+    - ResultsExportBehaviorTest.exportScanPdfIncludesPersistedGoalContext
+    - ResultsExportBehaviorTest.exportScanPdfRequiresBearerAuthentication
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendAppRoot
+- conformanceLock
+- backendStackProfile
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-14-resultaten-exporteren
+startedAt: '2026-10-13T17:34:54Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: OTLP exporter connection to localhost:4317 was unavailable during tests;
+    Maven test command exited 0.
+  failureCategory: environment_warning
+  gateId: GATE_TESTS
+- evidence: Flyway warned that H2 2.4.240 is newer than its latest verified H2 version;
+    migrations and tests completed.
+  failureCategory: tool_warning
+  gateId: GATE_TESTS

@@ -1,0 +1,122 @@
+<div class="mx-auto w-full max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+  <section class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+    <div class="max-w-2xl">
+      @if (organizations.current(); as organization) {
+        <p class="mb-2 text-sm font-semibold text-secondary-color">{{ organization.name }}</p>
+      }
+      <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Scanoverzicht</h1>
+      <p class="mt-2 text-sm leading-6 text-secondary-color sm:text-base">Bekijk de voortgang van alle volwassenheidsscans, hervat een onvoltooide scan of open de resultaten van een afgeronde scan.</p>
+    </div>
+    <button type="button" class="btn btn-primary h-11 shrink-0" aria-controls="nieuwe-scan" [attr.aria-expanded]="showCreate()" (click)="toggleCreate()">
+      <span aria-hidden="true">+</span> Nieuwe scan
+    </button>
+  </section>
+
+  @if (showCreate()) {
+    <section id="nieuwe-scan" class="card mt-6 p-5" aria-labelledby="nieuwe-scan-titel">
+      <h2 id="nieuwe-scan-titel" class="text-lg font-semibold">Nieuwe scan aanmaken</h2>
+      <form class="mt-4 grid gap-4 md:grid-cols-2" [formGroup]="createForm" (ngSubmit)="createScan()" novalidate>
+        <div>
+          <label for="scan-name" class="form-label">Naam van de scan <span aria-hidden="true">*</span></label>
+          <input id="scan-name" formControlName="name" class="form-control" required
+            [attr.aria-invalid]="showError(createForm.controls.name, submitted())" aria-describedby="scan-name-error" />
+          <app-field-error fieldId="scan-name-error" [control]="createForm.controls.name" [submitted]="submitted()" />
+        </div>
+        <div>
+          <label for="scan-period" class="form-label">Beoordelingsperiode <span aria-hidden="true">*</span></label>
+          <input id="scan-period" formControlName="assessmentPeriod" class="form-control" required
+            [attr.aria-invalid]="showError(createForm.controls.assessmentPeriod, submitted())" aria-describedby="scan-period-hint scan-period-error" />
+          <p id="scan-period-hint" class="form-hint">bijv. 2026, Q2 2026 of H1 2026</p>
+          <app-field-error fieldId="scan-period-error" [control]="createForm.controls.assessmentPeriod" [submitted]="submitted()"
+            patternMessage="Gebruik een jaar, kwartaal of halfjaar: bijv. 2026, Q2 2026 of H1 2026." />
+        </div>
+        <div class="flex flex-wrap gap-3 md:col-span-2">
+          <button type="submit" class="btn btn-primary" [disabled]="creating()">{{ creating() ? 'Scan aanmaken…' : 'Scan aanmaken' }}</button>
+          <button type="button" class="btn btn-secondary" (click)="toggleCreate()">Annuleren</button>
+        </div>
+      </form>
+      @if (createProblem(); as p) {
+        <div class="alert-error mt-4" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+      }
+    </section>
+  }
+
+  @if (loaded() && scans().length > 0) {
+    <section class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Samenvatting">
+      <div class="card p-5">
+        <p class="text-sm font-medium text-secondary-color">Geladen scans</p>
+        <p class="mt-2 text-3xl font-bold">{{ scans().length }}</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-sm font-medium text-secondary-color">Afgerond</p>
+        <p class="mt-2 text-3xl font-bold">{{ completedCount() }}</p>
+      </div>
+    </section>
+  }
+
+  <section class="card mt-8 overflow-hidden" aria-labelledby="scans-titel" [attr.aria-busy]="loading()">
+    <div class="border-b border-border p-4 sm:p-5">
+      <h2 id="scans-titel" class="text-lg font-semibold">Volwassenheidsscans</h2>
+      <p class="mt-1 text-sm text-secondary-color">Gesorteerd op laatst gewijzigd</p>
+    </div>
+
+    @if (loading()) {
+      <p class="p-5" role="status">Scans laden…</p>
+    } @else if (loadProblem() && !loaded()) {
+      <div class="p-5">
+        <div class="alert-error" role="alert"><strong>{{ loadProblem()!.title }}</strong>@if (loadProblem()!.detail) { <p>{{ loadProblem()!.detail }}</p> }</div>
+        <button type="button" class="btn btn-secondary mt-3" (click)="load()">Opnieuw proberen</button>
+      </div>
+    } @else if (loaded() && scans().length === 0) {
+      <div class="p-8 text-center">
+        <p class="font-semibold">Nog geen scans binnen de organisatie</p>
+        <p class="mt-1 text-sm text-secondary-color">Start een eerste scan om de datavolwassenheid te beoordelen.</p>
+        @if (!showCreate()) {
+          <button type="button" class="btn btn-primary mt-4" (click)="toggleCreate()">Eerste scan starten</button>
+        }
+      </div>
+    } @else {
+      <div class="hidden gap-3 bg-tertiary-bg px-5 py-3 text-xs font-semibold uppercase tracking-wide text-secondary-color md:grid md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1.2fr)_auto]" aria-hidden="true">
+        <span>Naam</span><span>Status</span><span>Voortgang</span><span>Laatst gewijzigd</span><span>Afgerond</span><span class="w-32"></span>
+      </div>
+      <ul class="divide-y divide-border" aria-label="Scans">
+        @for (scan of scans(); track scan.id) {
+          <li class="grid gap-3 p-4 sm:p-5 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1.2fr)_auto] md:items-center" data-testid="scan-row">
+            <div>
+              <p class="font-semibold">{{ scan.name }}</p>
+              <p class="mt-1 text-xs text-secondary-color">
+                Periode {{ scan.assessmentPeriod }}
+                @if (scan.revision > 1) { · Revisie {{ scan.revision }} }
+              </p>
+            </div>
+            <div>
+              <span class="sr-only">Status: </span>
+              <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold" [class]="badgeClass(scan)">{{ statusLabel(scan.status) }}</span>
+            </div>
+            <div class="flex min-w-32 items-center gap-3">
+              <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg" role="progressbar" [attr.aria-valuenow]="progress(scan)" aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="'Voortgang ' + scan.name">
+                <div class="h-full rounded-full" [class.bg-success]="scan.status === 'completed'" [class.bg-info]="scan.status !== 'completed'" [style.width.%]="progress(scan)"></div>
+              </div>
+              <span class="w-10 text-right text-xs font-semibold">{{ progress(scan) }}%</span>
+            </div>
+            <div class="text-sm text-secondary-color"><span class="sr-only">Laatst gewijzigd: </span>{{ formatDateTime(scan.updatedAt) }}</div>
+            <div class="text-xs text-secondary-color">
+              @if (scan.completedAt) { Afgerond {{ formatDateTime(scan.completedAt) }} }
+            </div>
+            <div class="md:text-right">
+              <a class="btn btn-secondary" [routerLink]="actionLink(scan)">{{ actionLabel(scan) }}<span class="sr-only">: {{ scan.name }}</span> <span aria-hidden="true">→</span></a>
+            </div>
+          </li>
+        }
+      </ul>
+      <div class="border-t border-border p-4" aria-live="polite">
+        @if (loadProblem(); as p) {
+          <div class="alert-error mb-3" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+        }
+        @if (nextCursor()) {
+          <button type="button" class="btn btn-secondary" [disabled]="loadingMore()" (click)="loadMore()">{{ loadingMore() ? 'Laden…' : 'Meer laden' }}</button>
+        }
+      </div>
+    }
+  </section>
+</div>

@@ -1,0 +1,113 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-02-organisatiecontext-en-scanrechten
+attemptNumber: 1
+status: fail
+startedAt: 2026-10-13T14:35:00Z
+finishedAt: 2026-10-13T14:35:00Z
+durationMs: 0
+inputRefs:
+  checkReport: reports/check/frontend/slice-02-organisatiecontext-en-scanrechten.attempt-1.check-report.yaml
+artifactRefs:
+  - reports/check/frontend/slice-02-organisatiecontext-en-scanrechten.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-02-organisatiecontext-en-scanrechten.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+failedGateIds: [GATE_APP_SHELL_NAV, GATE_LINT]
+failedChecks: [CHK_UI_SHELL_NAV, CHK_LINT]
+errors:
+  - gateId: GATE_APP_SHELL_NAV
+    failureCategory: contract_ui_behavior
+    evidence:
+      observed: submitOrganization navigates to /scans but app.routes.ts has no /scans route and wildcard redirects to /start.
+      expected: a valid organization context reaches scan overview.
+      rootCauseHypothesis: scan-overview route was not registered while the success handler was added.
+      requiredOutcome: Register or preserve a concrete /scans route that renders scan overview after organization creation.
+  - gateId: GATE_LINT
+    failureCategory: lint
+    evidence:
+      file: src/app/account-access/account-access.component.ts
+      locationHint: '67:14'
+      rule: '@typescript-eslint/no-unused-vars'
+      observed: _session callback parameter is unused.
+      expected: lint exits zero.
+      rootCauseHypothesis: session result is intentionally unused but remains named in callback.
+      requiredOutcome: Remove or use the callback parameter without weakening lint rules.
+warnings:
+  - Build and unit-test gates passed; test command reported 4 files and 10 tests passed.
+reprocessHint: frontend-build
+reprocessInputs:
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_APP_SHELL_NAV, GATE_LINT]
+  failedChecks: [CHK_UI_SHELL_NAV, CHK_LINT]
+  checkerSummary: GATE_APP_SHELL_NAV failed because organization creation navigates to an unregistered scan-overview route, then GATE_LINT failed on one unused callback parameter; the user is returned to /start instead of reaching scan overview.
+  gateFailureContext:
+    - gateId: GATE_APP_SHELL_NAV
+      checkId: CHK_UI_SHELL_NAV
+      commandRef: deterministic-ui-shell-nav
+      resolvedCommand: deterministic source review
+      exitCode: 1
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      commandRef: stack-profile.lint
+      resolvedCommand: npx npm run lint
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_LINT]
+    primaryCommand: npx npm run lint
+    notes: Type-check and verify are not substitutes for the test command when unit tests fail; unit tests passed on this attempt.
+  primaryFailures:
+    - gateId: GATE_APP_SHELL_NAV
+      checkId: CHK_UI_SHELL_NAV
+      symptom: Organization creation calls navigateByUrl('/scans'), but the router only declares /start and a wildcard redirect.
+      observed: Navigation resolves to the wildcard redirect and returns to /start.
+      expected: Valid organization context reaches the scan overview.
+      rootCauseHypothesis: The scan overview route was not registered with the new success flow.
+      requiredOutcome: Add or restore the concrete scan overview route and preserve successful navigation to it.
+      blocking: true
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      symptom: Lint rejects an unused _session callback parameter.
+      observed: account-access.component.ts:67:14 violates @typescript-eslint/no-unused-vars.
+      expected: npx npm run lint exits zero.
+      rootCauseHypothesis: The callback does not consume the session value.
+      requiredOutcome: Remove the unused parameter or use it meaningfully without changing lint configuration.
+      blocking: true
+  targets:
+    - route: /scans
+      file: src/app/app.routes.ts
+      component: AccountAccessComponent
+      observed: no registered /scans route; wildcard redirects to /start.
+      expected: scan overview route is reachable after createOrganization.
+    - file: src/app/account-access/account-access.component.ts
+      locationHint: '67:14'
+      observed: _session unused.
+      expected: no @typescript-eslint/no-unused-vars violation.
+  editScope:
+    allowedEditPaths:
+      - src/app/app.routes.ts
+      - src/app/account-access/account-access.component.ts
+    suspectPaths:
+      - path: src/app/account-access/account-access.component.spec.ts
+        confidence: medium
+      - path: src/app/scan-overview/**
+        confidence: medium
+    forbiddenOrOutOfScope:
+      - reports/**
+      - src/app/core/organization/organization.service.ts
+  buildAgentBrief:
+    - From frontendAppRoot, run `npx npm run lint` first and confirm the reported unused-parameter failure before editing.
+    - Read src/app/app.routes.ts and src/app/account-access/account-access.component.ts; confirm successful organization creation targets /scans while no /scans route is registered.
+    - Register or restore the concrete scan-overview route needed for the documented success transition, using existing scan-overview code if present; update the focused component test if route configuration requires coverage.
+    - Remove or correctly consume the unused _session callback parameter without changing lint rules.
+    - Re-run `npx npm run lint` and the focused/full test command after the narrow repair.
+  nonGoals:
+    - Do not weaken lint configuration or suppress the rule.
+    - Do not remove organization creation or replace the scan-overview transition with a redirect to /start.
+    - Do not refactor unrelated authentication, shared UI, or generated code.

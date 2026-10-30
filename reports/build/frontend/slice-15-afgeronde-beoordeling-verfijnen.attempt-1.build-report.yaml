@@ -1,0 +1,48 @@
+artifactRefs:
+- src/app/scan-results/scan-results.component.ts
+- src/app/scan-results/scan-results.component.html
+- src/app/scan-results/scan-results.component.spec.ts
+- reports/build/frontend/slice-15-afgeronde-beoordeling-verfijnen.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 7639
+errors: []
+finishedAt: '2026-10-13T17:39:53.868Z'
+gates:
+- command: npx npm run build
+  evidence: Angular production build completed successfully; bundle generation produced
+    main and styles assets.
+  exitCode: 0
+  name: local-type-check
+  status: passed
+inputRefs:
+  contractOperationIds: []
+  frontendAppRoot: .
+  mockupRefs:
+  - mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+  - mockups/app-shell.lock.html
+  referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interface subset supplied without a revision
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-15-afgeronde-beoordeling-verfijnen
+startedAt: '2026-10-13T17:39:46.229Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added a confirmation and guidance panel for refining a completed assessment,
+  preserving the existing API-backed results UI and directing users to the assessment
+  with refine=true. Added a standalone component test for the interaction and route.
+warnings:
+- The slice behavior lock leaves the final policy for changing completed scans undecided
+  (dec-005). The UI therefore presents a new revision as the recommended workflow
+  and explicitly warns that the definitive processing depends on the selected revision
+  workflow.
+- The stack profile typeCheck command maps to the full build command; it was used
+  as the local compile preflight.
+- Unit tests were added but the full test command was not run on this first build
+  attempt; Frontend Check retains formal unit-test gate authority.
+- The build emitted the existing Sass @import deprecation warning for src/styles.scss.

@@ -1,0 +1,150 @@
+artifactRefs:
+- reports/integration/slices/slice-01-accounttoegang.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/account/api/AccountResource.java
+        purpose: verify operation IDs, methods, versioned routes, status codes, and
+          required idempotency header
+      - path: backend/src/main/java/com/example/account/api/AccountDtos.java
+        purpose: verify request, response, session, and problem DTOs
+      - path: backend/src/main/java/com/example/account/api/ProblemMappers.java
+        purpose: verify application/problem+json response production
+      - path: backend/src/test/java/com/example/account/AccountResourceTest.java
+        purpose: verify API fixtures and both owned behavior transitions
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/pom.xml
+      - app/backend/src/main/java/com/example/account/domain/MemberEntity.java
+      - app/backend/src/main/java/com/example/account/domain/SessionEntity.java
+      - app/backend/src/main/java/com/example/account/application/AccountException.java
+      - app/backend/src/main/java/com/example/account/application/AccountService.java
+      - app/backend/src/main/java/com/example/account/api/AccountDtos.java
+      - app/backend/src/main/java/com/example/account/api/AccountResource.java
+      - app/backend/src/main/java/com/example/account/api/ProblemMappers.java
+      - app/backend/src/main/java/com/example/account/api/CorrelationIdFilter.java
+      - app/backend/src/main/resources/application.properties
+      - app/backend/src/main/resources/db/migration/V2__account_access.sql
+      - app/backend/src/test/java/com/example/account/AccountResourceTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: verify route_auth_start is exposed at /start
+      - path: frontend/src/app/account-access/account-access.component.ts
+        purpose: verify the scoped page invokes registerMember and createSession
+      - path: frontend/src/app/core/auth/auth.service.ts
+        purpose: verify versioned HTTP calls, DTO handling, idempotency headers, bearer-token
+          handling, and problem-details parsing
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/app.ts
+      - app/frontend/src/app/core/auth/auth.service.ts
+  dualStreamAuthority: combinedSliceScope
+  endpointParity:
+    operations:
+    - registerMember
+    - createSession
+    source: endpointParityPreGate
+    valid: true
+  policyAlignment:
+    auth: scoped registration and session-creation operations are public; createSession
+      returns and frontend retains a Bearer token in memory
+    errors: frontend parses and backend emits problem-details fields type, title,
+      and status
+    idempotency: both POST operations use X-Idempotency-Key in frontend and backend
+    pagination: not applicable because no scoped collection GET operation exists
+    versioning: URI-versioned /v1 paths agree across contract, frontend, and backend
+  upstreamChecks:
+    backendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    backendStatus: ok
+    frontendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_FRONTEND_AUTH_STORAGE
+    frontendStatus: ok
+finishedAt: not-captured
+gates:
+- evidence:
+  - frontendSliceContext.contractSubset.operationIds contains registerMember and createSession
+  - frontendSliceContext.uiScopeRef.pageBindings route_auth_start owns both operations
+  - frontend/src/app/app.routes.ts maps /start to AccountAccessComponent
+  - frontend/src/app/account-access/account-access.component.ts invokes registration
+    and session creation as primary UI actions
+  - frontend/src/app/core/auth/auth.service.ts posts to /v1/auth/registrations and
+    /v1/auth/sessions with X-Idempotency-Key and parses problem-details
+  - upstreamEvidence.frontendCheckOutput status is ok and its build, test, lint, auth-storage,
+    route, and handoff gates passed
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+  - backendSliceContext.contractSubset.operationIds contains registerMember and createSession
+  - backend/src/main/java/com/example/account/api/AccountResource.java exposes POST
+    /v1/auth/registrations and POST /v1/auth/sessions with matching operation IDs
+    and required X-Idempotency-Key
+  - backend/src/main/java/com/example/account/api/AccountDtos.java matches scoped
+    request and response fields
+  - backend/src/main/java/com/example/account/api/ProblemMappers.java emits application/problem+json
+    with required fields
+  - upstreamEvidence.backendCheckOutput status is ok and its build, test, lint, endpoint-security,
+    persistence, behavior, and handoff gates passed
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+  - combinedSliceScope enables both streams; opposing stream-local scope flags are
+    expected ownership metadata
+  - endpointParityPreGate.valid is true for registerMember and createSession
+  - FE and BE agree on /v1 versioning, POST routes, DTO fields, 201 responses, X-Idempotency-Key,
+    Bearer session output, and problem-details errors
+  - precomputedDiskVerification is valid for both streams with no missing paths
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+  - backendSliceContext.behaviorSubset owns accounttoegang.niet_aangemeld__aangemeld
+    and accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+  - behaviorEvidencePreGate.valid is true and verifies both transition IDs
+  - backend/src/test/java/com/example/account/AccountResourceTest.java provides api-fixture
+    tests for both createSession transitions
+  - route_auth_start hosts createSession as a primary action and AccountAccessComponent
+    invokes the client call
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- interfaceContractSubset
+- conformanceLock:1.0.0
+- apiChoiceLock:1.0.0
+- contractDecisionsLock:1.0.0
+- combinedSliceScope
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: inline-subset-no-revision
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-01-accounttoegang
+startedAt: not-captured
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Upstream frontend checks reported non-blocking Sass and Vitest compatibility warnings.
+- Upstream backend tests reported a non-blocking OTLP localhost connection warning.

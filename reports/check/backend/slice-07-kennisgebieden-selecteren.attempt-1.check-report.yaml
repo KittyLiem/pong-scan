@@ -1,0 +1,123 @@
+artifactRefs:
+- reports/check/backend/slice-07-kennisgebieden-selecteren.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 120000
+errors: []
+finishedAt: '2026-10-13T16:08:00Z'
+gates:
+- evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/main/java/com/example/scan/api/ScanResource.java
+      reason: updateScan operation handler and protected-endpoint enforcement
+    - path: src/main/java/com/example/scan/api/ScanDtos.java
+      reason: updateScan request and response DTO validation
+    - path: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+      reason: representative API coverage, unauthorized assertion, and transition
+        methods
+    - path: src/main/java/com/example/scan/application/ScanService.java
+      reason: updateScan persistence and credential-fingerprint review
+    missingPaths: []
+    verifiedPaths:
+    - src/main/java/com/example/scan/api/ScanDtos.java
+    - src/main/java/com/example/scan/api/ScanResource.java
+    - src/main/java/com/example/scan/application/ScanService.java
+    - src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+    - locks/behavior-decisions.lock.yaml
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    enforcementMarkers:
+    - src/main/java/com/example/scan/api/ScanResource.java: '@BearerAuthenticated
+        and request member identity'
+    missingEnforcement: []
+    missingTests: []
+    protectedOperations:
+    - method: PATCH
+      operationId: updateScan
+      path: /v1/scans/{scanId}
+    unauthorizedTests:
+    - src/test/java/com/example/scan/ScanUpdateBehaviorTest.java: updateRequiresBearerAndUsesProblemDetails
+        asserts PATCH 401 application/problem+json
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    finding: SHA-256 is used only for idempotency key and request fingerprint hashes;
+      no raw credential, token, or secret is persisted by the slice update path.
+    reviewedPath: src/main/java/com/example/scan/application/ScanService.java
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    inMemoryPrimaryStore: false
+    operationId: updateScan
+    persistenceMarkers:
+    - ScanEntity Panache lookup and persistAndFlush
+    - ModelDomainEntity and OrganizationEntity database queries
+    - '@Transactional update and completed-scan revision paths'
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    behaviorEvidenceRef: reports/build/backend/slice-07-kennisgebieden-selecteren.behavior-evidence.yaml
+    evidenceValidation: all transition operationIds and kinds match updateScan/mutation;
+      each declared method is present, uses api-fixture setup, and declares mutatedFields.
+    suiteExecution: CHK_UNIT_TESTS exited 0 for the full Maven test suite.
+    testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+    transitionIds:
+    - kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+    - kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+    - kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+    - organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+    - organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+    - organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+    - afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+    - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendAppRoot
+- backendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-07-kennisgebieden-selecteren
+startedAt: '2026-10-13T16:06:00Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: OpenTelemetry exporter logged local collector connection-refused warnings;
+    Maven test gate exited 0.
+  failureCategory: non_blocking_runtime_warning
+  gateId: GATE_TESTS

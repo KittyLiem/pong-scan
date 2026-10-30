@@ -1,0 +1,135 @@
+{
+  "schemaVersion" : "1",
+  "run" : {
+    "runId" : "child-nlJeWcMkkcXGguGUUwOcmGc0OCB2G3AZF_8VRBVE8Ds",
+    "workflowId" : "vs-phase-4-slice-compile",
+    "status" : "SUCCEEDED",
+    "startedAt" : 1.7919011598764887E9,
+    "finishedAt" : 1.791901187419121E9,
+    "input" : {
+      "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p4"
+    },
+    "recordedAt" : 1.791914217333E9
+  },
+  "steps" : {
+    "extractContractSubset" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919011599030094E9,
+      "finishedAt" : 1.7919011599030094E9,
+      "attempts" : [ {
+        "attemptId" : "extractContractSubset-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919011599030094E9,
+        "finishedAt" : 1.7919011599030094E9,
+        "agent" : false
+      } ]
+    },
+    "runSliceContextCompiler" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.79190115993235E9,
+      "finishedAt" : 1.79190115993235E9,
+      "attempts" : [ {
+        "attemptId" : "runSliceContextCompiler-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.79190115993235E9,
+        "finishedAt" : 1.79190115993235E9,
+        "agent" : true
+      } ]
+    },
+    "extractUiSubset" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919011599138756E9,
+      "finishedAt" : 1.7919011599138756E9,
+      "attempts" : [ {
+        "attemptId" : "extractUiSubset-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919011599138756E9,
+        "finishedAt" : 1.7919011599138756E9,
+        "agent" : false
+      } ]
+    },
+    "validateCompilerResponse" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791901187291274E9,
+      "finishedAt" : 1.791901187291274E9,
+      "attempts" : [ {
+        "attemptId" : "validateCompilerResponse-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791901187291274E9,
+        "finishedAt" : 1.791901187291274E9,
+        "agent" : false
+      } ]
+    },
+    "normalizeCompilerArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791901187304524E9,
+      "finishedAt" : 1.791901187304524E9,
+      "attempts" : [ {
+        "attemptId" : "normalizeCompilerArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791901187304524E9,
+        "finishedAt" : 1.791901187304524E9,
+        "agent" : false
+      } ]
+    },
+    "persistCompilerArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919011873954759E9,
+      "finishedAt" : 1.7919011873954759E9,
+      "attempts" : [ {
+        "attemptId" : "persistCompilerArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919011873954759E9,
+        "finishedAt" : 1.7919011873954759E9,
+        "agent" : false
+      } ]
+    },
+    "validateCompilerArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791901187352731E9,
+      "finishedAt" : 1.791901187352731E9,
+      "attempts" : [ {
+        "attemptId" : "validateCompilerArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791901187352731E9,
+        "finishedAt" : 1.791901187352731E9,
+        "agent" : false
+      } ]
+    },
+    "completeCompile" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791901187419121E9,
+      "finishedAt" : 1.791901187419121E9,
+      "attempts" : [ {
+        "attemptId" : "completeCompile-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791901187419121E9,
+        "finishedAt" : 1.791901187419121E9,
+        "agent" : false
+      } ]
+    }
+  },
+  "invalidations" : [ ],
+  "childRuns" : [ ],
+  "terminalOutcome" : {
+    "kind" : "complete",
+    "stepId" : "completeCompile",
+    "reachedAt" : 1.791901187419121E9
+  }
+}

@@ -1,0 +1,47 @@
+artifactRefs:
+- src/main/java/com/example/organization/api/BearerAuthenticated.java
+- src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+- src/main/java/com/example/organization/api/OrganizationDtos.java
+- src/main/java/com/example/organization/api/OrganizationResource.java
+- src/main/java/com/example/organization/application/BearerTokenService.java
+- src/main/java/com/example/organization/application/OrganizationService.java
+- src/main/java/com/example/organization/domain/OrganizationEntity.java
+- src/main/resources/db/migration/V3__organizations.sql
+- src/test/java/com/example/organization/OrganizationResourceTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-02-organisatiecontext-en-scanrechten.behavior-evidence.yaml
+- reports/build/backend/slice-02-organisatiecontext-en-scanrechten.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 8425
+errors: []
+finishedAt: '2026-03-12T10:00:08.425Z'
+gates:
+- check: typeCheck
+  command: mvn -B -ntp -q -DskipTests compile
+  durationMs: 8425
+  evidence: Compile-focused preflight completed with no output.
+  exitCode: 0
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-02-organisatiecontext-en-scanrechten
+startedAt: '2026-03-12T10:00:00Z'
+status: completed
+stepId: runBackendBuild
+stream: backend
+warnings:
+- Unit tests were not run locally because this first-pass build used the stack profile's
+  cheap compile preflight; Backend Check owns formal CHK_UNIT_TESTS execution.
+- The behavior initial-state text uses the Dutch value 'actief', while the authoritative
+  response schema requires status enum value 'active'; the implementation follows
+  the operation schema.

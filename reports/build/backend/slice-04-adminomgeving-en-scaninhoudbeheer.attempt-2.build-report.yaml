@@ -1,0 +1,69 @@
+artifactRefs:
+- src/test/java/com/example/admin/AdminContentBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-04-adminomgeving-en-scaninhoudbeheer.behavior-evidence.yaml
+- reports/build/backend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 101000
+errors: []
+evidence:
+  addressedFailure: GATE_ENDPOINT_SECURITY lacked unauthorized assertions for protected
+    admin operations.
+  coveredOperations:
+  - GET /v1/admin/domains
+  - POST /v1/admin/domains
+  - PATCH /v1/admin/domains/{domainId}
+  - PATCH /v1/admin/questions/{questionId}
+  - POST /v1/admin/questions/{questionId}/options
+  - PATCH /v1/admin/options/{optionId}
+  inspectedPaths:
+  - src/main/java/com/example/admin/api/AdminContentResource.java
+  - src/main/java/com/example/organization/api/BearerAuthenticated.java
+  - src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+  testMethod: AdminContentBehaviorTest#allProtectedAdminOperationsRejectUnauthenticatedRequests
+finishedAt: '2026-10-13T15:11:00Z'
+gates:
+- authoritative: false
+  command: mvn -B -ntp -q test
+  durationMs: 43842
+  evidence: Authenticated happy-path and behavior-transition baseline passed before
+    editing.
+  exitCode: 0
+  id: LOCAL_TEST_BASELINE
+  scope: full backend unit-test suite before repair
+  status: passed
+- authoritative: false
+  command: mvn -B -ntp -q test
+  durationMs: 45596
+  evidence: AdminContentBehaviorTest now executes all six unauthenticated method/path
+    combinations with statusCode(401); the full suite completed successfully.
+  exitCode: 0
+  id: LOCAL_TEST_REPRO
+  scope: full backend unit-test suite after endpoint-security repair
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+startedAt: '2026-10-13T15:09:19Z'
+status: ok
+stepId: repairBackendBuild
+stream: backend
+summary: Repaired GATE_ENDPOINT_SECURITY evidence by adding explicit 401 assertions
+  for listAdminDomains, createAdminDomain, updateAdminDomain, updateAdminQuestion,
+  createAnswerOption, and updateAnswerOption. AdminContentResource retains class-level
+  @BearerAuthenticated enforcement through BearerAuthenticationFilter.
+warnings:
+- The test runtime logged non-blocking OTLP exporter connection-refused warnings because
+  no local collector was running.
+- Local verification is diagnostic; Backend Check remains authoritative for GATE_ENDPOINT_SECURITY.

@@ -1,0 +1,129 @@
+artifactRefs:
+- reports/check/backend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 55074
+errors: []
+finishedAt: '2026-10-13T16:23:21.822Z'
+gates:
+- evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/main/java/com/example/answer/application/AnswerService.java
+      reason: saveAnswer service implementation and persistence/version behavior
+    - path: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+      reason: representative API and behavior-transition coverage
+    - path: src/main/java/com/example/answer/api/AnswerResource.java
+      reason: saveAnswer operation handler and security enforcement
+    - path: src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+      reason: protected-operation authentication binding
+    missingPaths: []
+    verifiedPaths:
+    - src/main/java/com/example/answer/application/AnswerService.java
+    - src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    enforcementMarkers:
+    - AnswerResource: '@BearerAuthenticated, @SecurityRequirement(bearerAuth)'
+    - BearerAuthenticationFilter: '@Provider, @BearerAuthenticated, tokens.verify(Authorization)'
+    missingEnforcement: []
+    missingTests: []
+    protectedOperations:
+    - method: PUT
+      operationId: saveAnswer
+      path: /v1/scans/{scanId}/answers/{questionId}
+    unauthorizedTests:
+    - SaveAnswerBehaviorTest.saveAnswerRequiresBearerAndReturnsProblemDetails: PUT
+        returns 401 application/problem+json
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    observed: AnswerService persists answer fields only; no credential, token, or
+      idempotency fingerprint fields are handled. Authentication delegates to BearerTokenService
+      verification through BearerAuthenticationFilter.
+    scope: protected saveAnswer path
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    observed: AnswerService uses Panache entity lookup/count and persistAndFlush for
+      AnswerEntity and ScanEntity; no in-memory primary store observed.
+    operationId: saveAnswer
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    evidenceSource: buildOutput.artifacts reports/build/backend/slice-08-beoordeling-vastleggen-en-hervatten.behavior-evidence.yaml
+    testFile: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+    transitions:
+    - id: beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+      kind: mutation
+      mutatedFields:
+      - status
+      operationId: saveAnswer
+      startsFrom: api-fixture
+      test: SaveAnswerBehaviorTest.saveAnswerMovesConceptScanIntoExecution
+    - id: beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+      kind: mutation
+      mutatedFields:
+      - optionId
+      - explanation
+      - evidenceReferences
+      operationId: saveAnswer
+      startsFrom: api-fixture
+      test: SaveAnswerBehaviorTest.saveAnswerPersistsPreviouslyUnansweredQuestionData
+    - id: beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+      kind: mutation
+      mutatedFields:
+      - progress
+      operationId: saveAnswer
+      startsFrom: api-fixture
+      test: SaveAnswerBehaviorTest.saveAnswerAfterResumeUpdatesQuestionDataAndProgress
+    unitSuiteExitCode: 0
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext:saveAnswer
+- buildOutput:attempt-2
+- conformanceLock:1.0.0
+- backendStackProfile:1.1.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+startedAt: '2026-10-13T16:22:54.516Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: Non-blocking OpenTelemetry export connection-refused warnings for localhost:4317
+    occurred during tests; Maven test exited 0.
+  failureCategory: runtime_warning
+  gateId: GATE_TESTS

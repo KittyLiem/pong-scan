@@ -1,0 +1,57 @@
+name: pong-data-maturity-scan
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pong}
+      POSTGRES_USER: ${POSTGRES_USER:-pong}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Stel POSTGRES_PASSWORD in via .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  backend:
+    build: ./app/backend
+    environment:
+      APP_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-pong}
+      APP_DB_USERNAME: ${POSTGRES_USER:-pong}
+      APP_DB_PASSWORD: ${POSTGRES_PASSWORD:?Stel POSTGRES_PASSWORD in via .env}
+      ACCOUNT_LOGIN_MAX_FAILURES: ${ACCOUNT_LOGIN_MAX_FAILURES:-5}
+      ACCOUNT_LOGIN_WINDOW: ${ACCOUNT_LOGIN_WINDOW:-PT15M}
+      SCAN_QUOTA_MAX_PER_ORGANIZATION: ${SCAN_QUOTA_MAX_PER_ORGANIZATION:-50}
+      SCAN_QUOTA_MAX_PER_DAY: ${SCAN_QUOTA_MAX_PER_DAY:-20}
+      ACCOUNT_TOKEN_SECRET: ${ACCOUNT_TOKEN_SECRET:?Stel ACCOUNT_TOKEN_SECRET in via .env}
+      # Optioneel: maakt bij het starten een beheerdersaccount aan (alleen als het e-mailadres nog niet bestaat).
+      ACCOUNT_BOOTSTRAP_ADMIN_IDENTIFIER: ${ACCOUNT_BOOTSTRAP_ADMIN_IDENTIFIER:-}
+      ACCOUNT_BOOTSTRAP_ADMIN_PASSWORD: ${ACCOUNT_BOOTSTRAP_ADMIN_PASSWORD:-}
+      APP_ALLOW_INSECURE_LOCAL_DEFAULTS: ${APP_ALLOW_INSECURE_LOCAL_DEFAULTS:-false}
+      # Standaard zonder demodata; start-lokaal.sh kiest db/migration,db/demo.
+      APP_FLYWAY_LOCATIONS: ${APP_FLYWAY_LOCATIONS:-db/migration}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /q/health/ready HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    restart: unless-stopped
+
+  frontend:
+    build: ./app/frontend
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  db-data:

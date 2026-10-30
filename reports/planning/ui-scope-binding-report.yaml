@@ -1,0 +1,75 @@
+emptyOverlayBindings:
+- bindingKind: route-only
+  pageKey: Maturity beoordeling
+  sliceId: slice-11-organisatiedoelen-en-prioriteiten
+- bindingKind: route-only
+  pageKey: Scanresultaten en ontwikkelprioriteiten
+  sliceId: slice-12-resultaatinzichten-en-doelcontext
+- bindingKind: route-only
+  pageKey: Scanresultaten en ontwikkelprioriteiten
+  sliceId: slice-15-afgeronde-beoordeling-verfijnen
+invocationKind: initial
+pageCoverage:
+- coveredBySlices:
+  - slice-01-accounttoegang
+  - slice-02-organisatiecontext-en-scanrechten
+  - slice-03-datavolwassenheidsmodel
+  - slice-06-scan-aanmaken
+  pageKey: Aanmelden en organisatie starten
+  routeId: route_auth_start
+- coveredBySlices:
+  - slice-05-scanportfolio
+  - slice-06-scan-aanmaken
+  - slice-07-kennisgebieden-selecteren
+  pageKey: Scanoverzicht
+  routeId: route_scan_overview
+- coveredBySlices:
+  - slice-03-datavolwassenheidsmodel
+  - slice-04-adminomgeving-en-scaninhoudbeheer
+  - slice-05-scanportfolio
+  - slice-07-kennisgebieden-selecteren
+  - slice-08-beoordeling-vastleggen-en-hervatten
+  - slice-09-beoordelingsinhoud-voltooien
+  - slice-11-organisatiedoelen-en-prioriteiten
+  pageKey: Maturity beoordeling
+  routeId: route_assessment
+- coveredBySlices:
+  - slice-10-maturiteitsscores-berekenen
+  - slice-12-resultaatinzichten-en-doelcontext
+  - slice-13-ontwikkelprioriteiten-selecteren
+  - slice-14-resultaten-exporteren
+  - slice-15-afgeronde-beoordeling-verfijnen
+  pageKey: Scanresultaten en ontwikkelprioriteiten
+  routeId: route_results
+referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p4
+selfCheck:
+  candidateTopLevelMapping: true
+  contractScopeSubsetOfPreBinder: true
+  everyFrontendSliceHasPageBinding: true
+  slicesArrayPresent: true
+status: ok
+summary:
+  boundSliceCount: 15
+  contractScopeWidened: false
+  coveredProductPageCount: 4
+  frontendEnabledSliceCount: 15
+  productPageCount: 4
+  sliceCount: 15
+versionSourceAllowances:
+- commandOperationId: updateScan
+  pageKey: Scanoverzicht
+  readOperationId: getScan
+  sliceId: slice-07-kennisgebieden-selecteren
+- commandOperationId: saveAnswer
+  pageKey: Maturity beoordeling
+  readOperationId: getScan
+  sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+- commandOperationId: completeScan
+  pageKey: Maturity beoordeling
+  readOperationId: getScan
+  sliceId: slice-09-beoordelingsinhoud-voltooien
+- commandOperationId: saveDevelopmentPriorities
+  pageKey: Scanresultaten en ontwikkelprioriteiten
+  readOperationId: getScan
+  sliceId: slice-13-ontwikkelprioriteiten-selecteren

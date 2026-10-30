@@ -1,0 +1,68 @@
+decisions:
+- choice: Bedrijfstak is optioneel bij het aanmaken van een organisatie, omdat alleen
+    name contractueel verplicht is; aangeleverde waarden worden wel duurzaam opgeslagen.
+  unspecifiedId: asm-007
+- choice: Trend- en benchmarkhistorie blijven buiten scope; iedere duurzaam opgeslagen
+    scan blijft afzonderlijk opvraagbaar.
+  unspecifiedId: asm-009
+- choice: Kennisgebiedselectie is onderdeel van de Maturity-beoordeling; een lege
+    selectie houdt de scan in conceptstatus.
+  unspecifiedId: asm-014
+- choice: Voortgang is het begrensde percentage volledig beantwoorde verplichte vragen
+    (0 tot en met 100), duurzaam opgeslagen en bij lezen gevalideerd.
+  unspecifiedId: dec-010
+- choice: Bewijs ondersteunt beveiligde bestandsreferenties en HTTPS-links; binaire
+    inhoud valt buiten de scanportfoliorespons.
+  unspecifiedId: dec-011
+- choice: Afronding vereist voor iedere verplichte vraag zowel een score als een niet-lege
+    toelichting.
+  unspecifiedId: dec-002
+transitions:
+- kind: recompute
+  mutatedFields:
+  - status
+  operationId: listScans
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanResourceTest.java
+  testMethod: inaccessibleOrganizationBlocksPortfolio
+  transitionId: organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+- kind: recompute
+  mutatedFields:
+  - items
+  operationId: listScans
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanResourceTest.java
+  testMethod: authenticatedOrganizationListsAccessiblePortfolio
+  transitionId: organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+- kind: recompute
+  mutatedFields:
+  - status
+  operationId: getScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanResourceTest.java
+  testMethod: missingDomainSelectionKeepsContinuationBlocked
+  transitionId: kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+- kind: recompute
+  mutatedFields:
+  - status
+  operationId: getScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanResourceTest.java
+  testMethod: savedConceptCanBeResumed
+  transitionId: beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+- kind: recompute
+  mutatedFields:
+  - status
+  operationId: getScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanResourceTest.java
+  testMethod: interruptedInProgressScanCanBeResumed
+  transitionId: beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+- kind: recompute
+  mutatedFields:
+  - progress
+  operationId: getScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanResourceTest.java
+  testMethod: missingRequiredContentBlocksCompletion
+  transitionId: beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd

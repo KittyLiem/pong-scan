@@ -1,0 +1,43 @@
+artifactRefs:
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.html
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-11-organisatiedoelen-en-prioriteiten.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 7244
+errors: []
+finishedAt: '2026-10-13T16:59:42.244Z'
+gates:
+- command: npx npm run build
+  evidence: Angular production build completed successfully; application bundle generated.
+  exitCode: 0
+  id: LOCAL_TYPE_CHECK
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile@1.2.0
+- conformanceLock@1.0.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-11-organisatiedoelen-en-prioriteiten
+startedAt: '2026-10-13T16:59:35.000Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added optional, repeatable organization-goal and priority editing to the
+  existing maturity assessment context form, preserving the route and API integration
+  owned by earlier slices.
+warnings:
+- Used the profile's typeCheck command for lightweight local preflight. Formal build,
+  lint, and unit-test gates remain owned by Frontend Check.
+- The build emitted the pre-existing Sass @import deprecation warning for src/styles.scss;
+  this slice did not modify global styling configuration.
+- No slice-owned OpenAPI operations were declared. The implementation therefore reuses
+  the existing scan context update integration and does not introduce endpoint paths
+  or HTTP behavior.

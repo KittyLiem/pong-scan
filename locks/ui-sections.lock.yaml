@@ -1,0 +1,248 @@
+auxiliaryItems:
+- exists: true
+  id: app-shell
+  outline:
+    counts:
+      buttons: 1
+      cards: 0
+      fields: 0
+      formLabels: 0
+      forms: 0
+      headings: 0
+      images: 0
+      links: 4
+      navLabels: 3
+      sections: 0
+    formLabels: &id001 []
+    headings: *id001
+    majorSectionSlugs: []
+    navLabels:
+    - Privacy
+    - Ondersteuning
+    - Contact
+  path: mockups/app-shell.lock.html
+  sourceItem:
+    id: app-shell
+    path: mockups/app-shell.lock.html
+- exists: true
+  id: project-context
+  outline:
+    counts:
+      buttons: 0
+      cards: 0
+      fields: 0
+      formLabels: 0
+      forms: 0
+      headings: 0
+      images: 0
+      links: 0
+      navLabels: 0
+      sections: 0
+    formLabels: *id001
+    headings: *id001
+    majorSectionSlugs: *id001
+    navLabels: *id001
+  path: mockups/project_context.lock.md
+  sourceItem:
+    id: project-context
+    path: mockups/project_context.lock.md
+items:
+- exists: true
+  id: Aanmelden en organisatie starten
+  outline:
+    counts:
+      buttons: 4
+      cards: 0
+      fields: 18
+      formLabels: 18
+      forms: 1
+      headings: 2
+      images: 0
+      links: 0
+      navLabels: 0
+      sections: 1
+    formLabels:
+    - Naam
+    - Zakelijk e-mailadres
+    - Wachtwoord
+    - Organisatienaam
+    - Sector
+    - Data Ethics
+    - Data Governance
+    - Data Architecture
+    - Data Modeling & Design
+    - Data Storage & Operations
+    - Data Security
+    - Data Integration & Operability
+    - Document & Content Management
+    - Reference & Master Data
+    - Data Warehousing & BI
+    - Metadata Management
+    - Data Quality
+    - Ik ga akkoord met de voorwaarden en het privacybeleid.
+    headings:
+    - Start met de data maturity scan
+    - Aanmelden en organisatie starten
+    majorSectionSlugs:
+    - start-met-de-data-maturity-scan
+    - aanmelden-en-organisatie-starten
+    navLabels: *id001
+  path: mockups/aanmelden-en-organisatie-starten.lock.html
+  sourceItem:
+    description: Toegangspunt voor gebruikers om in te loggen en hun eerste organisatiecontext
+      te starten.
+    goals:
+    - Inloggen of een account aanmaken
+    - Organisatienaam en basiscontext vastleggen
+    - Een eerste maturity scan starten
+    - Gebruiker naar het scanoverzicht leiden
+    key: Aanmelden en organisatie starten
+- exists: true
+  id: Scanoverzicht
+  outline:
+    counts:
+      buttons: 5
+      cards: 3
+      fields: 2
+      formLabels: 1
+      forms: 0
+      headings: 5
+      images: 0
+      links: 0
+      navLabels: 0
+      sections: 3
+    formLabels:
+    - Alle statussen Concept Afgerond
+    headings:
+    - Scanoverzicht
+    - Maturity scans
+    - Organisatiebrede nulmeting 2025
+    - Data maturity scan 2024
+    - Governance verdiepingsscan
+    majorSectionSlugs:
+    - scanoverzicht
+    - maturity-scans
+    - organisatiebrede-nulmeting-2025
+    - data-maturity-scan-2024
+    - governance-verdiepingsscan
+    navLabels: *id001
+  path: mockups/scanoverzicht.lock.html
+  sourceItem:
+    description: Centrale pagina voor het aanmaken, hervatten, bekijken en beheren
+      van maturity scans binnen de organisatie.
+    goals:
+    - Alle scans met status, voortgang en laatste wijziging bekijken
+    - Een nieuwe scan aanmaken met naam en beoordelingsperiode
+    - Een conceptscan hervatten
+    - Een afgeronde scan openen en beheren
+    key: Scanoverzicht
+- exists: true
+  id: Maturity beoordeling
+  outline:
+    counts:
+      buttons: 13
+      cards: 0
+      fields: 7
+      formLabels: 7
+      forms: 1
+      headings: 3
+      images: 0
+      links: 0
+      navLabels: 7
+      sections: 2
+    formLabels:
+    - 0 — Niet beoordeeld / uitgesloten Geen maturiteitsscore De vraag kan niet worden
+      beoordeeld of is aantoonbaar niet van toepassing op de organisatie.
+    - 1 — Initieel / Ad hoc Datakwaliteit wordt incidenteel onderzocht, meestal pas
+      wanneer problemen ontstaan.
+    - 2 — Herhaalbaar Enkele teams voeren terugkerende controles uit, maar een organisatiebrede
+      aanpak ontbreekt.
+    - 3 — Gedefinieerd Voor kritieke datasets zijn kwaliteitsregels, verantwoordelijken
+      en vaste controles vastgelegd.
+    - 4 — Beheerst Kwaliteitsmetingen worden centraal gevolgd en afwijkingen leiden
+      aantoonbaar tot verbeteracties.
+    - 5 — Geoptimaliseerd Datakwaliteit wordt proactief, grotendeels geautomatiseerd
+      en continu verbeterd.
+    - Onderbouwing
+    headings:
+    - Maturity beoordeling
+    - Voortgang
+    - In hoeverre wordt de kwaliteit van kritieke data structureel bewaakt?
+    majorSectionSlugs:
+    - maturity-beoordeling
+    - voortgang
+    - in-hoeverre-wordt-de-kwaliteit-van-kritieke-data-structureel-bewaakt
+    navLabels:
+    - Datastrategie 8/8
+    - Datakwaliteit 3/8
+    - Governance 2/8
+    - Technologie 1/8
+    - Processen 1/8
+    - Vaardigheden 1/7
+    - Besluitvorming 1/8
+  path: mockups/maturity-beoordeling.lock.html
+  sourceItem:
+    description: Gestructureerde invulflow waarin de gebruiker per datavolwassenheidsdomein
+      vragen beantwoordt en onderbouwing vastlegt.
+    goals:
+    - Vragen beantwoorden voor strategie, kwaliteit, governance, technologie, processen,
+      vaardigheden en datagedreven besluitvorming
+    - Per vraag een score, toelichting en eventueel bewijs vastleggen
+    - Voortgang per domein zien
+    - Tussentijds opslaan en later verdergaan
+    - De beoordeling afronden voor resultaatberekening
+    key: Maturity beoordeling
+- exists: true
+  id: Scanresultaten en ontwikkelprioriteiten
+  outline:
+    counts:
+      buttons: 5
+      cards: 6
+      fields: 4
+      formLabels: 0
+      forms: 0
+      headings: 11
+      images: 0
+      links: 0
+      navLabels: 0
+      sections: 3
+    formLabels: *id001
+    headings:
+    - Scanresultaten en ontwikkelprioriteiten
+    - 3,2 / 5
+    - Scores per domein
+    - Wat valt op?
+    - Sterktes om op voort te bouwen
+    - Belangrijkste ontwikkelgaps
+    - Aanbevolen ontwikkelprioriteiten
+    - Benoem data-eigenaren en leg besluitrechten vast
+    - Start monitoring voor kritieke data-elementen
+    - Ontwikkel een rolgericht datavaardighedenprogramma
+    - Koppel data-initiatieven aan meetbare organisatiedoelen
+    majorSectionSlugs:
+    - scanresultaten-en-ontwikkelprioriteiten
+    - 3-2-5
+    - scores-per-domein
+    - wat-valt-op
+    - sterktes-om-op-voort-te-bouwen
+    - belangrijkste-ontwikkelgaps
+    - aanbevolen-ontwikkelprioriteiten
+    - benoem-data-eigenaren-en-leg-besluitrechten-vast
+    - start-monitoring-voor-kritieke-data-elementen
+    - ontwikkel-een-rolgericht-datavaardighedenprogramma
+    - koppel-data-initiatieven-aan-meetbare-organisatiedoelen
+    navLabels: *id001
+  path: mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+  sourceItem:
+    description: Resultaatweergave die scores per domein vertaalt naar inzichtelijke
+      ontwikkelpunten en geprioriteerde vervolgstappen.
+    goals:
+    - Totale maturiteitsscore en domeinscores bekijken
+    - Sterktes, gaps en concrete ontwikkelpunten begrijpen
+    - Prioriteiten selecteren op impact en urgentie
+    - Resultaten en actieoverzicht delen of exporteren
+    - Terugkeren naar de beoordeling om antwoorden te verfijnen
+    key: Scanresultaten en ontwikkelprioriteiten
+revision: 1.0.0
+rootDir: app/frontend
+source: html-outlines

@@ -1,0 +1,205 @@
+<div class="mx-auto w-full max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Beheer scaninhoud</h1>
+      <p class="mt-1 max-w-3xl text-sm text-secondary-color">Beheer kennisgebieden, vragen en antwoordopties voor nieuwe scans. Wijzigingen hebben geen invloed op bestaande scans; inhoud wordt niet verwijderd maar kan buiten gebruik worden gesteld.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="editDomain()">+ Nieuw kennisgebied</button>
+  </header>
+
+  <div aria-live="polite">
+    @if (notice(); as text) { <p class="alert-success mt-4" role="status">{{ text }}</p> }
+  </div>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+    <section aria-labelledby="domains-list-heading">
+      <h2 id="domains-list-heading" class="sr-only">Kennisgebieden</h2>
+      @if (loading() && !loaded()) {
+        <p role="status">Kennisgebieden laden…</p>
+      } @else if (loadProblem() && !loaded()) {
+        <div class="alert-error" role="alert"><strong>{{ loadProblem()!.title }}</strong>@if (loadProblem()!.detail) { <p>{{ loadProblem()!.detail }}</p> }</div>
+        <button type="button" class="btn btn-secondary mt-3" (click)="load()">Opnieuw proberen</button>
+      } @else {
+        <ul class="space-y-4">
+          @for (domain of byOrder(domains()); track domain.id) {
+            <li class="card p-4" data-testid="admin-domain">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p class="font-semibold">{{ domain.order }}. {{ domain.name }}
+                    @if (domain.required) { <span class="ml-2 rounded-full bg-tertiary-bg px-2 py-0.5 text-xs">Verplicht</span> }
+                    <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-semibold" [class]="domain.active ? 'bg-success-bg-subtle text-success-text-emphasis' : 'bg-tertiary-bg text-secondary-color'">{{ domain.active ? 'Actief' : 'Inactief' }}</span>
+                  </p>
+                  @if (domain.description) { <p class="mt-1 text-sm text-secondary-color">{{ domain.description }}</p> }
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" class="btn btn-secondary" (click)="editDomain(domain)">Wijzigen<span class="sr-only"> {{ domain.name }}</span></button>
+                  <button type="button" class="btn btn-secondary" (click)="editQuestion(domain)">+ Vraag<span class="sr-only"> in {{ domain.name }}</span></button>
+                </div>
+              </div>
+              <details class="mt-3">
+                <summary class="cursor-pointer text-sm font-medium">{{ domain.questions?.length ?? 0 }} vragen</summary>
+                <ul class="mt-3 space-y-3">
+                  @for (question of byOrder(domain.questions); track question.id) {
+                    <li class="rounded-md border border-border bg-body-bg p-3">
+                      <div class="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p class="font-medium">{{ question.order }}. {{ question.title }}
+                            <span class="ml-1 text-xs" [class]="question.active ? 'text-success-text-emphasis' : 'text-secondary-color'">({{ question.active ? 'actief' : 'inactief' }})</span>
+                          </p>
+                          <p class="text-sm text-secondary-color">{{ question.text }}</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                          <button type="button" class="btn btn-secondary" (click)="editQuestion(domain, question)">Wijzigen<span class="sr-only"> vraag {{ question.title }}</span></button>
+                          <button type="button" class="btn btn-secondary" (click)="editOption(domain, question)">+ Optie<span class="sr-only"> bij {{ question.title }}</span></button>
+                        </div>
+                      </div>
+                      <ul class="mt-2 space-y-1 text-sm">
+                        @for (option of byOrder(question.options); track option.id) {
+                          <li class="flex flex-wrap items-center justify-between gap-2 rounded bg-secondary-bg px-2 py-1">
+                            <span><strong>{{ option.score }}</strong> — {{ option.label }} @if (!option.available) { <em class="text-secondary-color">(buiten gebruik)</em> }</span>
+                            <button type="button" class="text-sm font-medium text-primary underline" (click)="editOption(domain, question, option)">Wijzigen<span class="sr-only"> optie {{ option.label }}</span></button>
+                          </li>
+                        } @empty {
+                          <li class="text-secondary-color">Geen antwoordopties voor deze vraag.</li>
+                        }
+                      </ul>
+                    </li>
+                  } @empty {
+                    <li class="text-sm text-secondary-color">Geen vragen binnen dit kennisgebied.</li>
+                  }
+                </ul>
+              </details>
+            </li>
+          } @empty {
+            <li class="card p-5 text-sm">Geen kennisgebieden beschikbaar.</li>
+          }
+        </ul>
+        @if (loadProblem() && loaded()) {
+          <div class="alert-error mt-3" role="alert"><strong>{{ loadProblem()!.title }}</strong></div>
+        }
+        @if (nextCursor()) {
+          <button type="button" class="btn btn-secondary mt-4" [disabled]="loading()" (click)="load(true)">{{ loading() ? 'Laden…' : 'Meer laden' }}</button>
+        }
+      }
+    </section>
+
+    <aside class="lg:sticky lg:top-6 lg:self-start" aria-live="polite">
+      @if (editor(); as e) {
+        <section class="card p-5" aria-labelledby="editor-heading">
+          <h2 id="editor-heading" class="text-lg font-semibold" tabindex="-1">{{ editorTitle() }}</h2>
+
+          @switch (e.kind) {
+            @case ('domain') {
+              <form class="mt-4 space-y-4" [formGroup]="domainForm" (ngSubmit)="save()" novalidate>
+                <div>
+                  <label for="domain-name" class="form-label">Naam</label>
+                  <input id="domain-name" class="form-control" formControlName="name" [attr.aria-invalid]="showError(domainForm.controls.name, submitted())" aria-describedby="domain-name-error" />
+                  <app-field-error fieldId="domain-name-error" [control]="domainForm.controls.name" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="domain-description" class="form-label">Beschrijving</label>
+                  <textarea id="domain-description" rows="3" class="form-control" formControlName="description" aria-describedby="domain-description-error"></textarea>
+                  <app-field-error fieldId="domain-description-error" [control]="domainForm.controls.description" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="domain-order" class="form-label">Volgorde</label>
+                  <input id="domain-order" type="number" min="0" step="1" class="form-control" formControlName="order" [attr.aria-invalid]="showError(domainForm.controls.order, submitted())" aria-describedby="domain-order-error" />
+                  <app-field-error fieldId="domain-order-error" [control]="domainForm.controls.order" [submitted]="submitted()" />
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="domain-active" type="checkbox" class="h-5 w-5" formControlName="active" />
+                  <label for="domain-active" class="text-sm font-medium">Actief (beschikbaar voor nieuwe scans)</label>
+                </div>
+                <ng-container *ngTemplateOutlet="actions" />
+              </form>
+            }
+            @case ('question') {
+              <form class="mt-4 space-y-4" [formGroup]="questionForm" (ngSubmit)="save()" novalidate>
+                @if (e.question) {
+                  <div>
+                    <label for="question-domain" class="form-label">Kennisgebied</label>
+                    <select id="question-domain" class="form-control" formControlName="domainId">
+                      @for (domain of byOrder(domains()); track domain.id) { <option [value]="domain.id">{{ domain.name }}</option> }
+                    </select>
+                  </div>
+                }
+                <div>
+                  <label for="question-title" class="form-label">Titel</label>
+                  <input id="question-title" class="form-control" formControlName="title" [attr.aria-invalid]="showError(questionForm.controls.title, submitted())" aria-describedby="question-title-error" />
+                  <app-field-error fieldId="question-title-error" [control]="questionForm.controls.title" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="question-text" class="form-label">Vraagtekst</label>
+                  <textarea id="question-text" rows="3" class="form-control" formControlName="text" [attr.aria-invalid]="showError(questionForm.controls.text, submitted())" aria-describedby="question-text-error"></textarea>
+                  <app-field-error fieldId="question-text-error" [control]="questionForm.controls.text" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="question-explanation" class="form-label">Uitgebreide toelichting (optioneel)</label>
+                  <textarea id="question-explanation" rows="3" class="form-control" formControlName="explanation" aria-describedby="question-explanation-error"></textarea>
+                  <app-field-error fieldId="question-explanation-error" [control]="questionForm.controls.explanation" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="question-order" class="form-label">Volgorde</label>
+                  <input id="question-order" type="number" min="0" step="1" class="form-control" formControlName="order" [attr.aria-invalid]="showError(questionForm.controls.order, submitted())" aria-describedby="question-order-error" />
+                  <app-field-error fieldId="question-order-error" [control]="questionForm.controls.order" [submitted]="submitted()" />
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="question-active" type="checkbox" class="h-5 w-5" formControlName="active" aria-describedby="question-active-hint" />
+                  <label for="question-active" class="text-sm font-medium">Actief</label>
+                </div>
+                <p id="question-active-hint" class="form-hint">Een actieve vraag heeft minimaal één beschikbare antwoordoptie nodig.</p>
+                <ng-container *ngTemplateOutlet="actions" />
+              </form>
+            }
+            @case ('option') {
+              <form class="mt-4 space-y-4" [formGroup]="optionForm" (ngSubmit)="save()" novalidate>
+                <div>
+                  <label for="option-score" class="form-label">Score (0–5)</label>
+                  <input id="option-score" type="number" min="0" max="5" step="1" class="form-control" formControlName="score" [attr.aria-invalid]="showError(optionForm.controls.score, submitted())" aria-describedby="option-score-error" />
+                  <app-field-error fieldId="option-score-error" [control]="optionForm.controls.score" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="option-label" class="form-label">Label</label>
+                  <input id="option-label" class="form-control" formControlName="label" [attr.aria-invalid]="showError(optionForm.controls.label, submitted())" aria-describedby="option-label-error" />
+                  <app-field-error fieldId="option-label-error" [control]="optionForm.controls.label" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="option-description" class="form-label">Beschrijving (optioneel)</label>
+                  <textarea id="option-description" rows="2" class="form-control" formControlName="description" aria-describedby="option-description-error"></textarea>
+                  <app-field-error fieldId="option-description-error" [control]="optionForm.controls.description" [submitted]="submitted()" />
+                </div>
+                <div>
+                  <label for="option-order" class="form-label">Volgorde</label>
+                  <input id="option-order" type="number" min="0" step="1" class="form-control" formControlName="order" [attr.aria-invalid]="showError(optionForm.controls.order, submitted())" aria-describedby="option-order-error" />
+                  <app-field-error fieldId="option-order-error" [control]="optionForm.controls.order" [submitted]="submitted()" />
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="option-available" type="checkbox" class="h-5 w-5" formControlName="available" />
+                  <label for="option-available" class="text-sm font-medium">Beschikbaar</label>
+                </div>
+                <ng-container *ngTemplateOutlet="actions" />
+              </form>
+            }
+          }
+
+          @if (editorProblem(); as p) {
+            <div class="alert-error mt-4" role="alert">
+              <strong>{{ p.title }}</strong>
+              @if (p.detail) { <p>{{ p.detail }}</p> }
+              @if (p.errors.length) { <ul class="mt-1 list-disc pl-5 text-sm">@for (err of p.errors; track $index) { <li>{{ err.message }}</li> }</ul> }
+            </div>
+          }
+        </section>
+      } @else {
+        <div class="card p-5 text-sm text-secondary-color">Kies <strong>Wijzigen</strong> of een <strong>+</strong>-actie om inhoud te beheren.</div>
+      }
+    </aside>
+  </div>
+</div>
+
+<ng-template #actions>
+  <div class="flex flex-wrap gap-3 pt-2">
+    <button type="submit" class="btn btn-primary" [disabled]="saving()">{{ saving() ? 'Opslaan…' : 'Opslaan' }}</button>
+    <button type="button" class="btn btn-secondary" (click)="cancel()">Annuleren</button>
+  </div>
+</ng-template>

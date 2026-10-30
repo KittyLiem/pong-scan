@@ -1,0 +1,13 @@
+decisions:
+- choice: Bedrijfstak is optioneel bij het aanmaken van een organisatie, omdat alleen
+    name contractueel verplicht is; aangeleverde waarden worden wel duurzaam opgeslagen.
+  unspecifiedId: asm-007
+transitions:
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: createOrganization
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/organization/OrganizationResourceTest.java
+  testMethod: createOrganizationActivatesOrganizationContext
+  transitionId: organisatiecontext_en_scanrechten.organisatiecontext_ontbreekt__organisatiecontext_actief

@@ -1,0 +1,796 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState:
+  - fields:
+      active: unspecified
+    operationId: createAdminDomain
+  - fields:
+      available: unspecified
+    operationId: createAnswerOption
+  scenarios: []
+  transitions:
+  - from: kennisgebied actief
+    id: adminomgeving_en_scaninhoudbeheer.kennisgebied_actief__kennisgebied_inactief
+    kind: mutation
+    operationId: updateAdminDomain
+    to: kennisgebied inactief
+  - from: vraag actief
+    id: adminomgeving_en_scaninhoudbeheer.vraag_actief__vraag_inactief
+    kind: mutation
+    operationId: updateAdminQuestion
+    to: vraag inactief
+  - from: antwoordoptie beschikbaar
+    id: adminomgeving_en_scaninhoudbeheer.antwoordoptie_beschikbaar__antwoordoptie_buiten_gebruik
+    kind: mutation
+    operationId: updateAnswerOption
+    to: antwoordoptie buiten gebruik
+  - from: antwoordoptie buiten gebruik
+    id: adminomgeving_en_scaninhoudbeheer.antwoordoptie_buiten_gebruik__antwoordoptie_beschikbaar
+    kind: mutation
+    operationId: updateAnswerOption
+    to: antwoordoptie beschikbaar
+  - from: vraag zonder uitleg
+    id: adminomgeving_en_scaninhoudbeheer.vraag_zonder_uitleg__vraag_met_uitleg
+    kind: mutation
+    operationId: updateAdminQuestion
+    to: vraag met uitleg
+  unspecified:
+  - id: asm-011
+    text: De adminomgeving is voor traceerbaarheid aan Maturity beoordeling gekoppeld
+      omdat geen afzonderlijke adminpagina bestaat.
+capabilityId: adminomgeving_en_scaninhoudbeheer
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: adminomgeving_en_scaninhoudbeheer
+    operationIds:
+    - listAdminDomains
+    - createAdminDomain
+    - updateAdminDomain
+    - updateAdminQuestion
+    - createAnswerOption
+    - updateAnswerOption
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - listAdminDomains
+  - createAdminDomain
+  - updateAdminDomain
+  - updateAdminQuestion
+  - createAnswerOption
+  - updateAnswerOption
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/admin/domains
+    method: GET
+    operationId: listAdminDomains
+    parameters:
+    - in: query
+      name: cursor
+      required: false
+      schema:
+        type:
+        - string
+        - 'null'
+      x-ref: '#/components/parameters/Cursor'
+    - in: query
+      name: pageSize
+      required: false
+      schema:
+        default: 20
+        maximum: 100
+        minimum: 1
+        type: integer
+      x-ref: '#/components/parameters/PageSize'
+    path: /v1/admin/domains
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                items:
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/DomainWrite'
+                    - properties:
+                        id:
+                          format: uuid
+                          type: string
+                        questions:
+                          items:
+                            $ref: '#/components/schemas/Question'
+                          type: array
+                      required:
+                      - id
+                      - questions
+                      type: object
+                    x-ref: '#/components/schemas/Domain'
+                  type: array
+                nextCursor:
+                  type:
+                  - string
+                  - 'null'
+              required:
+              - items
+              type: object
+              x-ref: '#/components/schemas/DomainCollection'
+        description: Managed maturity domains
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  - apiBasePath: ''
+    fullPath: /v1/admin/domains
+    method: POST
+    operationId: createAdminDomain
+    parameters:
+    - in: header
+      name: X-Idempotency-Key
+      required: true
+      schema:
+        minLength: 1
+        type: string
+      x-ref: '#/components/parameters/IdempotencyKey'
+    path: /v1/admin/domains
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              active:
+                type: boolean
+              description:
+                type: string
+              name:
+                type: string
+              order:
+                type: integer
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - name
+            - order
+            - active
+            - version
+            type: object
+            x-ref: '#/components/schemas/DomainWrite'
+      required: true
+    responses:
+      '201':
+        content:
+          application/json:
+            schema:
+              allOf:
+              - properties:
+                  active:
+                    type: boolean
+                  description:
+                    type: string
+                  name:
+                    type: string
+                  order:
+                    type: integer
+                  version:
+                    minimum: 0
+                    type: integer
+                required:
+                - name
+                - order
+                - active
+                - version
+                type: object
+                x-ref: '#/components/schemas/DomainWrite'
+              - properties:
+                  id:
+                    format: uuid
+                    type: string
+                  questions:
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/QuestionWrite'
+                      - properties:
+                          id:
+                            format: uuid
+                            type: string
+                          options:
+                            items:
+                              $ref: '#/components/schemas/AnswerOption'
+                            type: array
+                        required:
+                        - id
+                        - options
+                        type: object
+                      x-ref: '#/components/schemas/Question'
+                    type: array
+                required:
+                - id
+                - questions
+                type: object
+              x-ref: '#/components/schemas/Domain'
+        description: Domain created
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  - apiBasePath: ''
+    fullPath: /v1/admin/domains/{domainId}
+    method: PATCH
+    operationId: updateAdminDomain
+    parameters:
+    - in: path
+      name: domainId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/DomainId'
+    path: /v1/admin/domains/{domainId}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              active:
+                type: boolean
+              description:
+                type: string
+              name:
+                type: string
+              order:
+                type: integer
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - name
+            - order
+            - active
+            - version
+            type: object
+            x-ref: '#/components/schemas/DomainWrite'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              allOf:
+              - properties:
+                  active:
+                    type: boolean
+                  description:
+                    type: string
+                  name:
+                    type: string
+                  order:
+                    type: integer
+                  version:
+                    minimum: 0
+                    type: integer
+                required:
+                - name
+                - order
+                - active
+                - version
+                type: object
+                x-ref: '#/components/schemas/DomainWrite'
+              - properties:
+                  id:
+                    format: uuid
+                    type: string
+                  questions:
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/QuestionWrite'
+                      - properties:
+                          id:
+                            format: uuid
+                            type: string
+                          options:
+                            items:
+                              $ref: '#/components/schemas/AnswerOption'
+                            type: array
+                        required:
+                        - id
+                        - options
+                        type: object
+                      x-ref: '#/components/schemas/Question'
+                    type: array
+                required:
+                - id
+                - questions
+                type: object
+              x-ref: '#/components/schemas/Domain'
+        description: Domain updated
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  - apiBasePath: ''
+    fullPath: /v1/admin/questions/{questionId}
+    method: PATCH
+    operationId: updateAdminQuestion
+    parameters:
+    - in: path
+      name: questionId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/QuestionId'
+    path: /v1/admin/questions/{questionId}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              active:
+                type: boolean
+              domainId:
+                format: uuid
+                type: string
+              explanation:
+                type: string
+              order:
+                type: integer
+              text:
+                type: string
+              title:
+                type: string
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - domainId
+            - title
+            - text
+            - order
+            - active
+            - version
+            type: object
+            x-ref: '#/components/schemas/QuestionWrite'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              allOf:
+              - properties:
+                  active:
+                    type: boolean
+                  domainId:
+                    format: uuid
+                    type: string
+                  explanation:
+                    type: string
+                  order:
+                    type: integer
+                  text:
+                    type: string
+                  title:
+                    type: string
+                  version:
+                    minimum: 0
+                    type: integer
+                required:
+                - domainId
+                - title
+                - text
+                - order
+                - active
+                - version
+                type: object
+                x-ref: '#/components/schemas/QuestionWrite'
+              - properties:
+                  id:
+                    format: uuid
+                    type: string
+                  options:
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/AnswerOptionWrite'
+                      - properties:
+                          id:
+                            format: uuid
+                            type: string
+                        required:
+                        - id
+                        type: object
+                      x-ref: '#/components/schemas/AnswerOption'
+                    type: array
+                required:
+                - id
+                - options
+                type: object
+              x-ref: '#/components/schemas/Question'
+        description: Question updated
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  - apiBasePath: ''
+    fullPath: /v1/admin/questions/{questionId}/options
+    method: POST
+    operationId: createAnswerOption
+    parameters:
+    - in: path
+      name: questionId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/QuestionId'
+    - in: header
+      name: X-Idempotency-Key
+      required: true
+      schema:
+        minLength: 1
+        type: string
+      x-ref: '#/components/parameters/IdempotencyKey'
+    path: /v1/admin/questions/{questionId}/options
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              available:
+                type: boolean
+              description:
+                type: string
+              label:
+                type: string
+              order:
+                type: integer
+              score:
+                maximum: 5
+                minimum: 0
+                type: integer
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - score
+            - label
+            - order
+            - available
+            - version
+            type: object
+            x-ref: '#/components/schemas/AnswerOptionWrite'
+      required: true
+    responses:
+      '201':
+        content:
+          application/json:
+            schema:
+              allOf:
+              - properties:
+                  available:
+                    type: boolean
+                  description:
+                    type: string
+                  label:
+                    type: string
+                  order:
+                    type: integer
+                  score:
+                    maximum: 5
+                    minimum: 0
+                    type: integer
+                  version:
+                    minimum: 0
+                    type: integer
+                required:
+                - score
+                - label
+                - order
+                - available
+                - version
+                type: object
+                x-ref: '#/components/schemas/AnswerOptionWrite'
+              - properties:
+                  id:
+                    format: uuid
+                    type: string
+                required:
+                - id
+                type: object
+              x-ref: '#/components/schemas/AnswerOption'
+        description: Answer option created
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  - apiBasePath: ''
+    fullPath: /v1/admin/options/{optionId}
+    method: PATCH
+    operationId: updateAnswerOption
+    parameters:
+    - in: path
+      name: optionId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/OptionId'
+    path: /v1/admin/options/{optionId}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              available:
+                type: boolean
+              description:
+                type: string
+              label:
+                type: string
+              order:
+                type: integer
+              score:
+                maximum: 5
+                minimum: 0
+                type: integer
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - score
+            - label
+            - order
+            - available
+            - version
+            type: object
+            x-ref: '#/components/schemas/AnswerOptionWrite'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              allOf:
+              - properties:
+                  available:
+                    type: boolean
+                  description:
+                    type: string
+                  label:
+                    type: string
+                  order:
+                    type: integer
+                  score:
+                    maximum: 5
+                    minimum: 0
+                    type: integer
+                  version:
+                    minimum: 0
+                    type: integer
+                required:
+                - score
+                - label
+                - order
+                - available
+                - version
+                type: object
+                x-ref: '#/components/schemas/AnswerOptionWrite'
+              - properties:
+                  id:
+                    format: uuid
+                    type: string
+                required:
+                - id
+                type: object
+              x-ref: '#/components/schemas/AnswerOption'
+        description: Answer option updated
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - adminomgeving_en_scaninhoudbeheer.kennisgebied_actief__kennisgebied_inactief
+      - adminomgeving_en_scaninhoudbeheer.vraag_actief__vraag_inactief
+      - adminomgeving_en_scaninhoudbeheer.antwoordoptie_beschikbaar__antwoordoptie_buiten_gebruik
+      - adminomgeving_en_scaninhoudbeheer.antwoordoptie_buiten_gebruik__antwoordoptie_beschikbaar
+      - adminomgeving_en_scaninhoudbeheer.vraag_zonder_uitleg__vraag_met_uitleg
+    capabilityId: adminomgeving_en_scaninhoudbeheer
+    contractScopeRef:
+      capabilityKey: adminomgeving_en_scaninhoudbeheer
+      operationIds:
+      - listAdminDomains
+      - createAdminDomain
+      - updateAdminDomain
+      - updateAdminQuestion
+      - createAnswerOption
+      - updateAnswerOption
+    dependsOnSlices:
+    - slice-01-accounttoegang
+    - slice-03-datavolwassenheidsmodel
+    sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+    sliceIndex: 3
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - listAdminDomains
+        - createAdminDomain
+        - updateAdminDomain
+        - updateAdminQuestion
+        - createAnswerOption
+        - updateAnswerOption
+        pageKey: Maturity beoordeling
+        routeId: route_assessment
+      pageKeys:
+      - Maturity beoordeling
+      routeIds:
+      - route_assessment
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+sliceType: paired-api

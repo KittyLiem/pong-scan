@@ -1,0 +1,52 @@
+artifactRefs:
+- src/test/java/com/example/scan/ResultsBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-10-maturiteitsscores-berekenen.behavior-evidence.yaml
+- reports/build/backend/slice-10-maturiteitsscores-berekenen.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 20461
+errors: []
+finishedAt: '2026-03-12T10:00:20.461Z'
+gates:
+- checkId: CHK_BUILD
+  command: mvn -B -ntp -q -DskipTests package
+  durationMs: 20461
+  evidence: The mapped package command completed with exit code 0. This is diagnostic
+    build-step evidence, not a formal Backend Check decision.
+  exitCode: 0
+  scope: local-preflight
+  status: passed-local-preflight
+- checkId: GATE_BUILD_HANDOFF
+  evidence: Both non-report artifact references were successfully read from backendAppRoot
+    using src/test/java/com/example/scan/ResultsBehaviorTest.java and locks/behavior-decisions.lock.yaml;
+    no app/backend prefix remains.
+  scope: path-normalization-preflight
+  status: passed-local-preflight
+inputRefs:
+- backendSliceContext
+- backendStackProfile@1.1.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- conformanceLock@1.0.0
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-10-maturiteitsscores-berekenen
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: repairBackendBuild
+stream: backend
+summary: Corrected the failed handoff by emitting backend-root-relative implementation
+  references. Existing getResults behavior tests and decisions were preserved, and
+  behavior evidence was re-emitted.
+warnings:
+- Unit tests and lint were not rerun because reinjection identified only CHK_BUILD/GATE_BUILD_HANDOFF
+  path normalization, while the mandatory mapped package repro was executed. Backend
+  Check remains responsible for formal gates.
+- The implicated test and decisions lock were rewritten with their existing content
+  solely to preserve them and provide write-backed, backend-root-relative implementation
+  references; product behavior was not changed.

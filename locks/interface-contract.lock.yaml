@@ -1,0 +1,258 @@
+authoringTimestamp: '2026-03-12T10:00:00Z'
+contractArtifactFormat: openapi-3.1
+contractPath: locks/contracts/openapi.yaml
+interfaceModel: rest-openapi
+operationSemantics:
+  createAdminDomain:
+    initialState:
+      active: unspecified
+    initializes: true
+  createAnswerOption:
+    initialState:
+      available: unspecified
+    initializes: true
+  createOrganization:
+    initialState:
+      status: actief
+    initializes: true
+  createScan:
+    initialState:
+      progress: unspecified
+      status: concept
+    initializes: true
+  createSession:
+    initialState:
+      status: aangemeld
+    initializes: true
+  registerMember:
+    initialState:
+      status: unspecified
+    initializes: true
+provenance:
+  apiChoiceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  productProjectId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+  referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+revision: 1.0.0
+surface:
+  operationCount: 19
+  pathCount: 16
+  versionPrefix: /v1
+traceability:
+  capabilities:
+    accounttoegang:
+      executionKind: api-owning
+      operations:
+      - registerMember
+      - createSession
+      transitionBindings:
+      - kind: mutation
+        operationId: createSession
+        transitionId: accounttoegang.niet_aangemeld__aangemeld
+      - kind: mutation
+        operationId: createSession
+        transitionId: accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+    adminomgeving_en_scaninhoudbeheer:
+      executionKind: api-owning
+      operations:
+      - listAdminDomains
+      - createAdminDomain
+      - updateAdminDomain
+      - updateAdminQuestion
+      - createAnswerOption
+      - updateAnswerOption
+      transitionBindings:
+      - kind: mutation
+        operationId: updateAdminDomain
+        transitionId: adminomgeving_en_scaninhoudbeheer.kennisgebied_actief__kennisgebied_inactief
+      - kind: mutation
+        operationId: updateAdminQuestion
+        transitionId: adminomgeving_en_scaninhoudbeheer.vraag_actief__vraag_inactief
+      - kind: mutation
+        operationId: updateAnswerOption
+        transitionId: adminomgeving_en_scaninhoudbeheer.antwoordoptie_beschikbaar__antwoordoptie_buiten_gebruik
+      - kind: mutation
+        operationId: updateAnswerOption
+        transitionId: adminomgeving_en_scaninhoudbeheer.antwoordoptie_buiten_gebruik__antwoordoptie_beschikbaar
+      - kind: mutation
+        operationId: updateAdminQuestion
+        transitionId: adminomgeving_en_scaninhoudbeheer.vraag_zonder_uitleg__vraag_met_uitleg
+    afgeronde_beoordeling_verfijnen:
+      contextOperations:
+      - updateScan
+      - createScan
+      - saveAnswer
+      - completeScan
+      - getResults
+      executionKind: lifecycle-composite
+      operations: []
+      transitionBindings:
+      - kind: mutation
+        operationId: updateScan
+        transitionId: afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+      - kind: mutation
+        operationId: updateScan
+        transitionId: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+      - kind: mutation
+        operationId: createScan
+        transitionId: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+      - kind: mutation
+        operationId: completeScan
+        transitionId: afgeronde_beoordeling_verfijnen.opnieuw_in_beoordeling__opnieuw_afgerond
+      - kind: mutation
+        operationId: completeScan
+        transitionId: afgeronde_beoordeling_verfijnen.bestaande_resultaten__vervangen_geversioneerd_of_gekopieerd
+      - kind: recompute
+        operationId: getResults
+        transitionId: afgeronde_beoordeling_verfijnen.bestaande_doelprioriteiten__behouden_gekopieerd_of_opnieuw_te_beoordelen
+    beoordeling_vastleggen_en_hervatten:
+      executionKind: api-owning
+      operations:
+      - saveAnswer
+      transitionBindings:
+      - kind: mutation
+        operationId: saveAnswer
+        transitionId: beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+      - kind: mutation
+        operationId: saveAnswer
+        transitionId: beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+      - kind: recompute
+        operationId: getScan
+        transitionId: beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+      - kind: recompute
+        operationId: getScan
+        transitionId: beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+      - kind: mutation
+        operationId: saveAnswer
+        transitionId: beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+    beoordelingsinhoud_voltooien:
+      executionKind: api-owning
+      operations:
+      - completeScan
+      transitionBindings:
+      - kind: mutation
+        operationId: completeScan
+        transitionId: beoordelingsinhoud_voltooien.in_uitvoering__inhoud_compleet
+      - kind: mutation
+        operationId: completeScan
+        transitionId: beoordelingsinhoud_voltooien.inhoud_compleet__afgerond
+      - kind: recompute
+        operationId: getScan
+        transitionId: beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd
+    datavolwassenheidsmodel:
+      executionKind: api-owning
+      operations:
+      - getActiveModel
+      transitionBindings:
+      - kind: recompute
+        operationId: getActiveModel
+        transitionId: datavolwassenheidsmodel.beoordelingsmodel_niet_beschikbaar__beoordeling_geblokkeerd
+      - kind: recompute
+        operationId: getActiveModel
+        transitionId: datavolwassenheidsmodel.modelinhoud_beschikbaar__scan_kan_worden_gestart
+    kennisgebieden_selecteren:
+      executionKind: api-owning
+      operations:
+      - updateScan
+      transitionBindings:
+      - kind: mutation
+        operationId: updateScan
+        transitionId: kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+      - kind: mutation
+        operationId: updateScan
+        transitionId: kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+      - kind: recompute
+        operationId: getScan
+        transitionId: kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+      - kind: mutation
+        operationId: updateScan
+        transitionId: kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+    maturiteitsscores_berekenen:
+      executionKind: api-owning
+      operations:
+      - getResults
+      transitionBindings:
+      - kind: recompute
+        operationId: getResults
+        transitionId: maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+    ontwikkelprioriteiten_selecteren:
+      executionKind: api-owning
+      operations:
+      - saveDevelopmentPriorities
+      transitionBindings:
+      - kind: mutation
+        operationId: saveDevelopmentPriorities
+        transitionId: ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+      - kind: mutation
+        operationId: saveDevelopmentPriorities
+        transitionId: ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+    organisatiecontext_en_scanrechten:
+      executionKind: api-owning
+      operations:
+      - createOrganization
+      transitionBindings:
+      - kind: mutation
+        operationId: createOrganization
+        transitionId: organisatiecontext_en_scanrechten.organisatiecontext_ontbreekt__organisatiecontext_actief
+      - kind: recompute
+        operationId: listScans
+        transitionId: organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+      - kind: recompute
+        operationId: listScans
+        transitionId: organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+    organisatiedoelen_en_prioriteiten:
+      contextOperations:
+      - updateScan
+      - getResults
+      executionKind: ui-overlay
+      operations: []
+      transitionBindings:
+      - kind: mutation
+        operationId: updateScan
+        transitionId: organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+      - kind: mutation
+        operationId: updateScan
+        transitionId: organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+      - kind: mutation
+        operationId: updateScan
+        transitionId: organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+      - kind: recompute
+        operationId: getResults
+        transitionId: organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+    resultaatinzichten_en_doelcontext:
+      contextOperations:
+      - getResults
+      executionKind: lifecycle-composite
+      operations: []
+      transitionBindings:
+      - kind: recompute
+        operationId: getResults
+        transitionId: resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+      - kind: recompute
+        operationId: getResults
+        transitionId: resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+    resultaten_exporteren:
+      executionKind: api-owning
+      operations:
+      - exportScanPdf
+      transitionBindings:
+      - kind: recompute
+        operationId: exportScanPdf
+        transitionId: resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+      - kind: recompute
+        operationId: exportScanPdf
+        transitionId: resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf
+    scan_aanmaken:
+      executionKind: api-owning
+      operations:
+      - createScan
+      transitionBindings:
+      - kind: mutation
+        operationId: createScan
+        transitionId: scan_aanmaken.scan_bestaat_niet__concept
+    scanportfolio:
+      executionKind: api-owning
+      operations:
+      - listScans
+      - getScan
+      transitionBindings: []

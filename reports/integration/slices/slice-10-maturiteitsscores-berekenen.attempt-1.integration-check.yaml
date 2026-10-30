@@ -1,0 +1,166 @@
+artifactRefs:
+- reports/integration/slices/slice-10-maturiteitsscores-berekenen.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  contractPolicy:
+    auth: bearer token in Authorization header on frontend; bearer enforcement on
+      backend
+    errors: frontend parses type/title/status/detail/instance; backend unauthorized
+      behavior is tested as application/problem+json with type and status
+    idempotency: not applicable to GET getResults
+    interfaceModel: rest-openapi
+    pagination: not applicable to aggregate getResults operation; contract declares
+      no cursor collection parameters
+    versioning: uri-versioned /v1 on frontend and backend
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/results/api/ResultsResource.java
+        purpose: verify getResults REST route, operation id, UUID path parameter,
+          and bearer enforcement
+      - path: backend/src/main/java/com/example/results/api/ResultsDtos.java
+        purpose: verify response DTO fields and types against ScanResults contract
+      - path: backend/src/test/java/com/example/scan/ResultsBehaviorTest.java
+        purpose: verify all owned transitions start from an API fixture and exercise
+          getResults
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/test/java/com/example/scan/ResultsBehaviorTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: verify route_results binding and authenticated route guard
+      - path: frontend/src/app/scan-results/scan-results.component.ts
+        purpose: verify primary results-page action invokes getResults
+      - path: frontend/src/app/core/scans/scan-results.service.ts
+        purpose: verify GET path, response DTO, bearer authorization, and problem-details
+          parsing
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/scan-results/scan-results.component.ts
+  dualStreamAuthority: combinedSliceScope
+  dualStreamEnabled:
+    backend: true
+    frontend: true
+  endpointParity:
+    method: GET
+    operationId: getResults
+    path: /v1/scans/{scanId}/results
+    source: endpointParityPreGate
+    valid: true
+  upstreamChecks:
+    backendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    backendStatus: ok
+    frontendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_FRONTEND_AUTH_STORAGE
+    frontendStatus: ok
+finishedAt: null
+gates:
+- evidence:
+    observations:
+    - app.routes.ts binds scans/:scanId/results to ScanResultsComponent with authenticatedGuard.
+    - ScanResultsComponent invokes ScanResultsService.getResults for the route scanId
+      as the hosted primary action.
+    - ScanResultsService calls GET /v1/scans/{scanId}/results, attaches Authorization,
+      models the contract response, and parses problem-details fields.
+    - Frontend build, tests, lint, auth-storage, and handoff gates passed.
+    payloadRefs:
+    - frontendSliceContext.contractSubset.operations[getResults]
+    - frontendSliceContext.uiScopeRef.pageBindings[route_results]
+    - interfaceContractSubset.operations[getResults]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observations:
+    - ResultsResource exposes GET /v1/scans/{scanId}/results with operationId getResults
+      and bearer enforcement.
+    - ResultsDtos.ScanResults aligns on scanId, totalScore, domainScores, developmentPoints,
+      goals, and actionOverview.
+    - ResultsBehaviorTest proves bearer-protected success and application/problem+json
+      unauthorized behavior.
+    - Backend build, tests, lint, endpoint security, persistence wiring, and behavior-evidence
+      gates passed.
+    payloadRefs:
+    - backendSliceContext.contractSubset.operations[getResults]
+    - backendSliceContext.behaviorSubset.transitions
+    - interfaceContractSubset.operations[getResults]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observations:
+    - Deterministic endpoint parity passed for GET /v1/scans/{scanId}/results.
+    - FE and BE agree on operation id, method, URI version, path parameter, response
+      fields, bearer transport, and problem-details policy.
+    - Both stream checks are ok and deterministic disk verification reports no missing
+      paths.
+    - Opposing per-stream scope flags are treated as valid stream-local metadata;
+      combinedSliceScope establishes dual-stream integration.
+    payloadRefs:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - precomputedDiskVerification
+    - interfaceContractSubset
+    - upstreamEvidence
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    observations:
+    - All five owned recompute transitions are verified by behaviorEvidencePreGate.
+    - ResultsBehaviorTest contains a referenced API-fixture test for every owned transition
+      and invokes getResults.
+    - The scoped results page hosts getResults and ScanResultsComponent implements
+      the corresponding client call.
+    payloadRefs:
+    - backendSliceContext.behaviorSubset.transitions
+    - backendSliceContext.behaviorEvidencePreGate
+    - frontendSliceContext.uiScopeRef.pageBindings[route_results]
+    - upstreamEvidence.backendCheckOutput.gates[GATE_BEHAVIOR_EVIDENCE]
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- interfaceContractSubset
+- conformanceLock@1.0.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- combinedSliceScope
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interfaceContractSubset-provided-without-revision
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-10-maturiteitsscores-berekenen
+startedAt: null
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Frontend checks reported non-blocking Angular Sass and Vitest compatibility warnings.
+- Backend tests reported non-blocking OTLP exporter connection warnings while Maven
+  exited successfully.

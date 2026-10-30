@@ -1,0 +1,110 @@
+artifactRefs:
+- reports/integration/slices/slice-11-organisatiedoelen-en-prioriteiten.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  contractScope:
+    note: This UI-only slice owns no API operation; reuse of scan context integration
+      belongs to earlier slices.
+    operationIds: []
+    source: interfaceContractSubset
+  diskVerification:
+    backend:
+      contentReadPaths: []
+      existenceSource: not_enabled
+      missingPaths: []
+      verifiedPaths: []
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: verify route_assessment path, component binding, and authentication
+          guard
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+        purpose: verify optional repeatable goals, priority normalization, and save
+          action wiring
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.html
+        purpose: verify visible goal and priority controls on the scoped assessment
+          page
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+        purpose: verify optional and multiple-goal behavior coverage
+      existenceSource: upstream_check_handoff
+      missingPaths: []
+      verifiedPaths:
+      - frontend/src/app/app.routes.ts
+      - frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+      - frontend/src/app/maturity-assessment/maturity-assessment.component.html
+      - frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  upstreamChecks:
+    buildGate: passed
+    buildHandoffGate: passed
+    frontendStatus: ok
+    lintGate: passed
+    unitTestsGate: passed
+finishedAt: '2026-10-13T17:00:24.000Z'
+gates:
+- evidence:
+  - frontendSliceContext.scope.frontend.enabled is true and route_assessment is the
+    sole scoped route.
+  - frontendSliceContext.uiScopeRef.pageBindings declares route-only ownership with
+    no owned operation IDs.
+  - interfaceContractSubset.operationIds is empty, so no slice-owned HTTP client operation
+    is required.
+  - frontend/src/app/app.routes.ts binds scans/:scanId/assessment to MaturityAssessmentComponent
+    with authenticatedGuard.
+  - The component and template implement optional repeatable organization goals, high/medium/low
+    priorities, optional context, and a save action.
+  - upstreamEvidence.frontendCheckOutput reports passed build handoff, build, tests,
+    lint, route, shell, and structural parity gates.
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+  - frontendSliceContext.scope.backend.enabled is false.
+  - frontendSliceContext.sliceType is ui-only and interfaceContractSubset.operationIds
+    is empty.
+  - No backend implementation is owned or required by this integration variant.
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: skipped
+- evidence:
+  - The frontend-only UI slice has no owned FE-BE operation contract to reconcile.
+  - The scoped route and page implementation match frontendSliceContext.uiScopeRef
+    for route_assessment.
+  - Upstream frontend build and check outputs are ok, and GATE_BUILD_HANDOFF proves
+    the claimed implementation files with no missing paths.
+  - Full anchor reads confirm the persisted implementation and tests match the optional-goal
+    decision recorded in behaviorSubset.unspecified dec-016.
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+  - frontendSliceContext.behaviorSubset.transitions is empty.
+  - The transition coverage requirement therefore passes vacuously for this slice.
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- interfaceContractSubset
+- conformanceLock@1.0.0
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceEvaluation:
+  backendEnabled: false
+  frontendEnabled: true
+  ownedOperationIds: []
+  ownedTransitions: []
+  sliceType: ui-only
+sliceId: slice-11-organisatiedoelen-en-prioriteiten
+startedAt: '2026-10-13T17:00:24.000Z'
+status: ok
+stepId: runSliceIntegrationCheckFrontendOnly
+stream: integration
+warnings:
+- No apiChoiceLock or contractDecisionsLock was supplied; policy-specific checks were
+  skipped as permitted, while FE alignment used the slice context, empty contract
+  subset, upstream checks, and on-disk anchors.
+- behaviorSubset.unspecified still records dec-016 and asm-012; implementation follows
+  the recommended optional-goal context and embeds it in the existing assessment page
+  without creating a separate route.

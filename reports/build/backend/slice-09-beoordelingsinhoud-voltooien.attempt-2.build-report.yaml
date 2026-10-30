@@ -1,0 +1,43 @@
+artifactRefs:
+- src/main/java/com/example/scan/application/ScanService.java
+- src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+- reports/build/backend/slice-09-beoordelingsinhoud-voltooien.behavior-evidence.yaml
+- reports/build/backend/slice-09-beoordelingsinhoud-voltooien.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 72747
+errors: []
+finishedAt: '2026-10-13T16:38:07.194Z'
+gates:
+- command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight completed with no output and exit code 0.
+  exitCode: 0
+  id: LOCAL_TYPE_CHECK
+  status: passed
+- command: mvn -B -ntp -q test
+  evidence: Full mapped backend test command completed with exit code 0, including
+    ScanCompletionBehaviorTest. This is diagnostic evidence, not formal gate authority.
+  exitCode: 0
+  id: LOCAL_UNIT_TEST_DIAGNOSTIC
+  status: passed
+inputRefs:
+- interfaceContractSubset:completeScan
+- reprocessInputs:attempt-2
+- reports/integration/slices/slice-09-beoordelingsinhoud-voltooien.attempt-1.integration-check.yaml
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: api-choice-lock@1.0.0/contract-decisions-lock@1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-09-beoordelingsinhoud-voltooien
+startedAt: '2026-10-13T16:36:54.447Z'
+status: ok
+stepId: repairBackendBuildFromIntegration
+stream: backend
+summary: Addressed GATE_TRANSITION_COVERAGE by removing the collapsed in-progress-to-completed
+  mutation, asserting the exact two-stage completion flow, and asserting persisted
+  answer preservation during versioned completion.
+warnings:
+- The test runtime logged non-blocking OTLP exporter connection-refused warnings for
+  localhost:4317.
+- Formal CHK_SLICE_INTEGRATION and transition-coverage decisions remain owned by Backend
+  Check and integration checking.

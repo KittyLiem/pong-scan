@@ -1,0 +1,309 @@
+<div class="mx-auto w-full max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <header class="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+    <div class="max-w-3xl">
+      <div class="mb-3 flex flex-wrap items-center gap-2 text-sm text-secondary-color">
+        <span>Scanoverzicht</span>
+        <i class="fa-solid fa-chevron-right text-xs" aria-hidden="true"></i>
+        <span class="font-medium text-body-color">Resultaten</span>
+      </div>
+      <h1 class="text-4xl font-normal leading-tight text-body-color">Scanresultaten en ontwikkelprioriteiten</h1>
+      <p class="mt-3 max-w-2xl text-base leading-relaxed text-secondary-color">Bekijk waar Pong Consulting vandaag staat en kies de verbeterpunten die de meeste waarde opleveren voor de volgende fase van datavolwassenheid.</p>
+      <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-secondary-color">
+        <span class="inline-flex items-center gap-2"><i class="fa-regular fa-calendar" aria-hidden="true"></i>Afgerond op 18 november 2025</span>
+        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-users" aria-hidden="true"></i>12 respondenten</span>
+        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-circle-check text-success" aria-hidden="true"></i>Alle 7 domeinen beoordeeld</span>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <button type="button" class="rounded-lg border border-secondary-border-subtle bg-secondary-bg px-4 py-2 text-sm font-medium text-secondary-text-emphasis transition hover:bg-secondary-hover focus:outline-2 focus:outline-offset-2 focus:outline-focus">
+        <i class="fa-solid fa-pen-to-square mr-2" aria-hidden="true"></i>Beoordeling verfijnen
+      </button>
+      <button type="button" class="rounded-lg border border-secondary-border-subtle bg-secondary-bg px-4 py-2 text-sm font-medium text-secondary-text-emphasis transition hover:bg-secondary-hover focus:outline-2 focus:outline-offset-2 focus:outline-focus">
+        <i class="fa-solid fa-share-nodes mr-2" aria-hidden="true"></i>Delen
+      </button>
+      <button type="button" class="rounded-lg border border-secondary-border-subtle bg-secondary-bg px-4 py-2 text-sm font-medium text-secondary-text-emphasis transition hover:bg-secondary-hover focus:outline-2 focus:outline-offset-2 focus:outline-focus">
+        <i class="fa-solid fa-file-export mr-2" aria-hidden="true"></i>Exporteren
+      </button>
+    </div>
+  </header>
+
+  <section class="grid gap-6 lg:grid-cols-12" aria-labelledby="samenvatting-heading">
+    <div class="rounded-lg border border-border bg-secondary-bg p-6 shadow-sm lg:col-span-4">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-wide text-secondary-color">Totale maturiteit</p>
+          <h2 id="samenvatting-heading" class="mt-3 text-5xl font-normal leading-none text-body-color">3,2<span class="ml-1 text-2xl text-secondary-color">/ 5</span></h2>
+        </div>
+        <span class="inline-flex items-center justify-center rounded-full bg-primary-bg-subtle px-3 py-1 text-sm font-medium text-primary-text-emphasis">Niveau 3</span>
+      </div>
+      <p class="mt-4 text-xl font-semibold text-body-color">Gestructureerd</p>
+      <p class="mt-2 leading-relaxed text-secondary-color">Datagedreven werken is op meerdere plekken ingericht, maar nog niet organisatiebreed gestandaardiseerd of meetbaar geborgd.</p>
+      <div class="mt-6">
+        <div class="mb-2 flex items-center justify-between text-sm">
+          <span class="font-medium text-body-color">Op weg naar niveau 4</span>
+          <span class="text-secondary-color">40%</span>
+        </div>
+        <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg">
+          <div class="h-full w-2/5 rounded-full bg-primary"></div>
+        </div>
+      </div>
+      <div class="mt-6 border-t border-border pt-5">
+        <p class="text-sm font-medium text-body-color">Belangrijkste conclusie</p>
+        <p class="mt-2 text-sm leading-relaxed text-secondary-color">De grootste versnelling ontstaat door eigenaarschap voor data expliciet te maken en datakwaliteit structureel te meten.</p>
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-border bg-secondary-bg p-6 shadow-sm lg:col-span-8">
+      <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-2xl font-normal leading-tight text-body-color">Scores per domein</h2>
+          <p class="mt-1 text-sm text-secondary-color">Score op een schaal van 1 tot 5 ten opzichte van de vorige meting.</p>
+        </div>
+        <span class="inline-flex items-center gap-2 text-sm text-secondary-color"><span class="h-2.5 w-2.5 rounded-full bg-primary"></span>Huidige score</span>
+      </div>
+      <div class="space-y-5">
+        <div class="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem] sm:items-center">
+          <span class="text-sm font-medium text-body-color">Datastrategie</span>
+          <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-[72%] rounded-full bg-primary"></div></div>
+          <div class="flex items-center justify-between gap-2 sm:justify-end"><span class="font-semibold text-body-color">3,6</span><span class="text-xs font-medium text-success-text-emphasis"><i class="fa-solid fa-arrow-up mr-1" aria-hidden="true"></i>0,3</span></div>
+        </div>
+        <div class="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem] sm:items-center">
+          <span class="text-sm font-medium text-body-color">Datakwaliteit</span>
+          <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-[52%] rounded-full bg-primary"></div></div>
+          <div class="flex items-center justify-between gap-2 sm:justify-end"><span class="font-semibold text-body-color">2,6</span><span class="text-xs font-medium text-warning-text-emphasis">0,0</span></div>
+        </div>
+        <div class="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem] sm:items-center">
+          <span class="text-sm font-medium text-body-color">Governance</span>
+          <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-[48%] rounded-full bg-primary"></div></div>
+          <div class="flex items-center justify-between gap-2 sm:justify-end"><span class="font-semibold text-body-color">2,4</span><span class="text-xs font-medium text-error-text-emphasis"><i class="fa-solid fa-arrow-down mr-1" aria-hidden="true"></i>0,2</span></div>
+        </div>
+        <div class="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem] sm:items-center">
+          <span class="text-sm font-medium text-body-color">Technologie</span>
+          <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-[76%] rounded-full bg-primary"></div></div>
+          <div class="flex items-center justify-between gap-2 sm:justify-end"><span class="font-semibold text-body-color">3,8</span><span class="text-xs font-medium text-success-text-emphasis"><i class="fa-solid fa-arrow-up mr-1" aria-hidden="true"></i>0,4</span></div>
+        </div>
+        <div class="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem] sm:items-center">
+          <span class="text-sm font-medium text-body-color">Processen</span>
+          <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-[64%] rounded-full bg-primary"></div></div>
+          <div class="flex items-center justify-between gap-2 sm:justify-end"><span class="font-semibold text-body-color">3,2</span><span class="text-xs font-medium text-success-text-emphasis"><i class="fa-solid fa-arrow-up mr-1" aria-hidden="true"></i>0,1</span></div>
+        </div>
+        <div class="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem] sm:items-center">
+          <span class="text-sm font-medium text-body-color">Vaardigheden</span>
+          <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-[58%] rounded-full bg-primary"></div></div>
+          <div class="flex items-center justify-between gap-2 sm:justify-end"><span class="font-semibold text-body-color">2,9</span><span class="text-xs font-medium text-warning-text-emphasis">0,0</span></div>
+        </div>
+        <div class="grid gap-2 sm:grid-cols-[11rem_minmax(0,1fr)_4.5rem] sm:items-center">
+          <span class="text-sm font-medium text-body-color">Besluitvorming</span>
+          <div class="h-2.5 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-[74%] rounded-full bg-primary"></div></div>
+          <div class="flex items-center justify-between gap-2 sm:justify-end"><span class="font-semibold text-body-color">3,7</span><span class="text-xs font-medium text-success-text-emphasis"><i class="fa-solid fa-arrow-up mr-1" aria-hidden="true"></i>0,2</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-8" aria-labelledby="inzichten-heading">
+    <div class="mb-5">
+      <h2 id="inzichten-heading" class="text-2xl font-normal leading-tight text-body-color">Wat valt op?</h2>
+      <p class="mt-1 text-secondary-color">De belangrijkste sterktes en gaps achter de domeinscores.</p>
+    </div>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <article class="rounded-lg border border-border bg-secondary-bg p-6">
+        <div class="mb-5 flex items-center gap-3">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-success-bg-subtle text-success-text-emphasis"><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i></span>
+          <div>
+            <h3 class="text-lg font-semibold text-body-color">Sterktes om op voort te bouwen</h3>
+            <p class="text-sm text-secondary-color">3 sterke fundamenten</p>
+          </div>
+        </div>
+        <ul class="divide-y divide-border">
+          <li class="py-4 first:pt-0">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-semibold text-body-color">Schaalbaar technologieplatform</p>
+                <p class="mt-1 text-sm leading-relaxed text-secondary-color">De centrale dataomgeving ondersteunt hergebruik en gecontroleerde toegang tot databronnen.</p>
+              </div>
+              <span class="inline-flex shrink-0 items-center justify-center rounded-full bg-success-bg-subtle px-2 py-0.5 text-xs font-medium text-success-text-emphasis">3,8</span>
+            </div>
+          </li>
+          <li class="py-4">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-semibold text-body-color">Data in managementbesluiten</p>
+                <p class="mt-1 text-sm leading-relaxed text-secondary-color">Kernrapportages worden consequent gebruikt bij tactische en strategische besluitvorming.</p>
+              </div>
+              <span class="inline-flex shrink-0 items-center justify-center rounded-full bg-success-bg-subtle px-2 py-0.5 text-xs font-medium text-success-text-emphasis">3,7</span>
+            </div>
+          </li>
+          <li class="py-4 last:pb-0">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-semibold text-body-color">Gedeelde strategische ambitie</p>
+                <p class="mt-1 text-sm leading-relaxed text-secondary-color">Teams herkennen het belang van data en koppelen initiatieven steeds vaker aan organisatiedoelen.</p>
+              </div>
+              <span class="inline-flex shrink-0 items-center justify-center rounded-full bg-success-bg-subtle px-2 py-0.5 text-xs font-medium text-success-text-emphasis">3,6</span>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="rounded-lg border border-border bg-secondary-bg p-6">
+        <div class="mb-5 flex items-center gap-3">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-warning-bg-subtle text-warning-text-emphasis"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
+          <div>
+            <h3 class="text-lg font-semibold text-body-color">Belangrijkste ontwikkelgaps</h3>
+            <p class="text-sm text-secondary-color">3 onderwerpen vragen gerichte aandacht</p>
+          </div>
+        </div>
+        <ul class="divide-y divide-border">
+          <li class="py-4 first:pt-0">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-semibold text-body-color">Eigenaarschap is onvoldoende expliciet</p>
+                <p class="mt-1 text-sm leading-relaxed text-secondary-color">Besluiten over definities, toegang en kwaliteit blijven liggen doordat data-eigenaren niet formeel zijn aangewezen.</p>
+              </div>
+              <span class="inline-flex shrink-0 items-center justify-center rounded-full bg-error-bg-subtle px-2 py-0.5 text-xs font-medium text-error-text-emphasis">Governance</span>
+            </div>
+          </li>
+          <li class="py-4">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-semibold text-body-color">Datakwaliteit wordt reactief bewaakt</p>
+                <p class="mt-1 text-sm leading-relaxed text-secondary-color">Teams lossen fouten op zodra ze zichtbaar worden, maar kritieke datavelden hebben nog geen vaste normen of monitoring.</p>
+              </div>
+              <span class="inline-flex shrink-0 items-center justify-center rounded-full bg-warning-bg-subtle px-2 py-0.5 text-xs font-medium text-warning-text-emphasis">Kwaliteit</span>
+            </div>
+          </li>
+          <li class="py-4 last:pb-0">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-semibold text-body-color">Vaardigheden verschillen sterk per team</p>
+                <p class="mt-1 text-sm leading-relaxed text-secondary-color">Een beperkte groep experts draagt veel analyses, terwijl zelfstandig datagebruik nog niet breed genoeg is ontwikkeld.</p>
+              </div>
+              <span class="inline-flex shrink-0 items-center justify-center rounded-full bg-warning-bg-subtle px-2 py-0.5 text-xs font-medium text-warning-text-emphasis">Vaardigheden</span>
+            </div>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="mt-8" aria-labelledby="prioriteiten-heading">
+    <div class="rounded-lg border border-border bg-secondary-bg shadow-sm">
+      <div class="flex flex-col gap-4 border-b border-border p-6 lg:flex-row lg:items-start lg:justify-between">
+        <div class="max-w-3xl">
+          <div class="flex items-center gap-3">
+            <h2 id="prioriteiten-heading" class="text-2xl font-normal leading-tight text-body-color">Aanbevolen ontwikkelprioriteiten</h2>
+            <span class="inline-flex items-center justify-center rounded-full bg-primary-bg-subtle px-2 py-0.5 text-xs font-medium text-primary-text-emphasis">3 geselecteerd</span>
+          </div>
+          <p class="mt-2 leading-relaxed text-secondary-color">Selecteer de onderwerpen die in het actieoverzicht moeten komen. De volgorde is gebaseerd op impact, urgentie en onderlinge afhankelijkheden.</p>
+        </div>
+        <div class="flex shrink-0 items-center gap-2 text-sm text-secondary-color">
+          <i class="fa-solid fa-wand-magic-sparkles text-primary-text-emphasis" aria-hidden="true"></i>
+          Automatisch geprioriteerd
+        </div>
+      </div>
+
+      <div class="divide-y divide-border">
+        <article class="grid gap-5 p-6 lg:grid-cols-[2rem_minmax(0,1fr)_11rem_11rem] lg:items-center">
+          <input type="checkbox" checked class="h-5 w-5 cursor-pointer rounded border-border text-accent transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 checked:border-accent checked:bg-accent">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-semibold text-primary-text-emphasis">01</span>
+              <h3 class="text-lg font-semibold text-body-color">Benoem data-eigenaren en leg besluitrechten vast</h3>
+              <span class="inline-flex items-center justify-center rounded-full bg-error-bg-subtle px-2 py-0.5 text-xs font-medium text-error-text-emphasis">Nu starten</span>
+            </div>
+            <p class="mt-2 max-w-3xl text-sm leading-relaxed text-secondary-color">Wijs voor de belangrijkste datadomeinen een eigenaar en steward aan. Leg vast wie beslist over definities, kwaliteit en toegang.</p>
+            <p class="mt-3 text-sm font-medium text-body-color"><i class="fa-solid fa-bullseye mr-2 text-primary-text-emphasis" aria-hidden="true"></i>Eerste stap: organiseer binnen 30 dagen een eigenaarschapsworkshop.</p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Impact</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-success-bg-subtle px-3 py-1 text-sm font-medium text-success-text-emphasis">Hoog</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Inspanning</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-secondary-bg px-3 py-1 text-sm font-medium text-secondary-color ring-1 ring-border">Gemiddeld</span>
+          </div>
+        </article>
+
+        <article class="grid gap-5 p-6 lg:grid-cols-[2rem_minmax(0,1fr)_11rem_11rem] lg:items-center">
+          <input type="checkbox" checked class="h-5 w-5 cursor-pointer rounded border-border text-accent transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 checked:border-accent checked:bg-accent">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-semibold text-primary-text-emphasis">02</span>
+              <h3 class="text-lg font-semibold text-body-color">Start monitoring voor kritieke data-elementen</h3>
+              <span class="inline-flex items-center justify-center rounded-full bg-warning-bg-subtle px-2 py-0.5 text-xs font-medium text-warning-text-emphasis">Binnen 3 maanden</span>
+            </div>
+            <p class="mt-2 max-w-3xl text-sm leading-relaxed text-secondary-color">Selecteer de twintig meest bedrijfskritieke data-elementen en definieer per element een meetbare kwaliteitsnorm en herstelproces.</p>
+            <p class="mt-3 text-sm font-medium text-body-color"><i class="fa-solid fa-bullseye mr-2 text-primary-text-emphasis" aria-hidden="true"></i>Eerste stap: maak een shortlist met kritieke rapportages en bronvelden.</p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Impact</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-success-bg-subtle px-3 py-1 text-sm font-medium text-success-text-emphasis">Hoog</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Inspanning</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-warning-bg-subtle px-3 py-1 text-sm font-medium text-warning-text-emphasis">Hoog</span>
+          </div>
+        </article>
+
+        <article class="grid gap-5 p-6 lg:grid-cols-[2rem_minmax(0,1fr)_11rem_11rem] lg:items-center">
+          <input type="checkbox" checked class="h-5 w-5 cursor-pointer rounded border-border text-accent transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 checked:border-accent checked:bg-accent">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-semibold text-primary-text-emphasis">03</span>
+              <h3 class="text-lg font-semibold text-body-color">Ontwikkel een rolgericht datavaardighedenprogramma</h3>
+              <span class="inline-flex items-center justify-center rounded-full bg-info-bg-subtle px-2 py-0.5 text-xs font-medium text-info-text-emphasis">Binnen 6 maanden</span>
+            </div>
+            <p class="mt-2 max-w-3xl text-sm leading-relaxed text-secondary-color">Bepaal per functie welke datavaardigheden nodig zijn en combineer korte trainingen met toepassing op actuele werkvraagstukken.</p>
+            <p class="mt-3 text-sm font-medium text-body-color"><i class="fa-solid fa-bullseye mr-2 text-primary-text-emphasis" aria-hidden="true"></i>Eerste stap: voer een skills-inventarisatie uit voor drie sleutelrollen.</p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Impact</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-success-bg-subtle px-3 py-1 text-sm font-medium text-success-text-emphasis">Hoog</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Inspanning</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-secondary-bg px-3 py-1 text-sm font-medium text-secondary-color ring-1 ring-border">Gemiddeld</span>
+          </div>
+        </article>
+
+        <article class="grid gap-5 p-6 lg:grid-cols-[2rem_minmax(0,1fr)_11rem_11rem] lg:items-center">
+          <input type="checkbox" class="h-5 w-5 cursor-pointer rounded border-border text-accent transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 checked:border-accent checked:bg-accent">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-semibold text-secondary-color">04</span>
+              <h3 class="text-lg font-semibold text-body-color">Koppel data-initiatieven aan meetbare organisatiedoelen</h3>
+            </div>
+            <p class="mt-2 max-w-3xl text-sm leading-relaxed text-secondary-color">Maak voor ieder nieuw initiatief vooraf duidelijk welk organisatiedoel, besluit of proces meetbaar wordt verbeterd.</p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Impact</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-info-bg-subtle px-3 py-1 text-sm font-medium text-info-text-emphasis">Gemiddeld</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Inspanning</p>
+            <span class="mt-2 inline-flex items-center justify-center rounded-full bg-success-bg-subtle px-3 py-1 text-sm font-medium text-success-text-emphasis">Laag</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="flex flex-col gap-4 border-t border-border bg-tertiary-bg p-6 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-sm text-secondary-color"><span class="font-semibold text-body-color">3 prioriteiten</span> worden opgenomen in het actieoverzicht.</p>
+        <button type="button" class="rounded-lg bg-accent px-6 py-3 text-base font-medium text-accent-content transition hover:bg-accent-hover active:bg-accent-active focus:outline-2 focus:outline-offset-2 focus:outline-focus">
+          Prioriteiten opslaan<i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="mt-8 flex flex-col gap-4 rounded-lg border border-info-border-subtle bg-info-bg-subtle p-5 text-info-text-emphasis sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex items-start gap-3">
+      <i class="fa-solid fa-circle-info mt-1" aria-hidden="true"></i>
+      <div>
+        <p class="font-semibold">Meer context nodig?</p>
+        <p class="mt-1 text-sm leading-relaxed">Pas antwoorden of onderbouwingen aan en laat de resultaten opnieuw berekenen. Je huidige prioriteitselectie blijft bewaard.</p>
+      </div>
+    </div>
+    <button type="button" class="shrink-0 rounded-lg border border-secondary-border-subtle bg-secondary-bg px-4 py-2 text-sm font-medium text-secondary-text-emphasis transition hover:bg-secondary-hover focus:outline-2 focus:outline-offset-2 focus:outline-focus">Terug naar beoordeling</button>
+  </div>
+</div>

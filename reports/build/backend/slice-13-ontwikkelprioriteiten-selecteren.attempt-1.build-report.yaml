@@ -1,0 +1,41 @@
+artifactRefs:
+- src/main/java/com/example/priority/api/DevelopmentPriorityDtos.java
+- src/main/java/com/example/priority/api/DevelopmentPriorityResource.java
+- src/main/java/com/example/priority/application/DevelopmentPriorityService.java
+- src/main/java/com/example/priority/domain/DevelopmentPriorityEntity.java
+- src/main/resources/db/migration/V10__development_priorities.sql
+- src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-13-ontwikkelprioriteiten-selecteren.behavior-evidence.yaml
+- reports/build/backend/slice-13-ontwikkelprioriteiten-selecteren.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 10204
+errors: []
+finishedAt: '2026-03-12T10:00:10Z'
+gates:
+- check: local-type-check
+  command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused Maven preflight completed successfully in 10204 ms.
+  exitCode: 0
+  status: passed
+inputRefs:
+- backendSliceContext:inline
+- interfaceContractSubset:inline
+- apiChoiceLock:inline
+- contractDecisionsLock:inline
+- conformanceLock:inline
+- backendStackProfile:inline
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+warnings:
+- Automated behavior tests were added but not executed locally because first-pass
+  build verification defaults to the compile-focused typeCheck command; Backend Check
+  owns the formal unit-test gate.

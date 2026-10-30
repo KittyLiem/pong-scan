@@ -1,0 +1,44 @@
+artifactRefs:
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-09-beoordelingsinhoud-voltooien.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 33068
+errors: []
+finishedAt: '2026-10-13T16:33:56.585Z'
+gates:
+- checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 'Reproduced TS2345 in the ScanStub completion fixture: completed was incompatible
+    with the signal''s in-progress-only inferred type.'
+  exitCode: 1
+  localStatus: failed
+  phase: pre-fix-reproduction
+- checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 10 test files and 37 tests passed, including all 6 MaturityAssessmentComponent
+    tests.
+  exitCode: 0
+  localStatus: passed
+  phase: post-fix-verification
+inputRefs:
+- frontendSliceContext:slice-09-beoordelingsinhoud-voltooien
+- interfaceContractSubset:completeScan
+- reprocessInputs:CHK_UNIT_TESTS
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-09-beoordelingsinhoud-voltooien
+startedAt: '2026-10-13T16:33:23.517Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Widened the ScanStub fixture through the production Scan type. The completion
+  response with status completed is now accepted while optimistic-lock version and
+  optional-comment assertions remain intact.
+warnings:
+- Build and lint were not rerun because the authoritative repair scope required the
+  failed unit-test command and checker evidence reported those gates already passed.
+- The test run reported the existing Sass @import deprecation warning.
+- The test run reported an existing Vite native config-loader compatibility warning.

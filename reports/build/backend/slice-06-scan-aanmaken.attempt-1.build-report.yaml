@@ -1,0 +1,43 @@
+artifactRefs:
+- src/main/java/com/example/scan/api/ScanDtos.java
+- src/main/java/com/example/scan/api/ScanPortfolioResource.java
+- src/main/java/com/example/scan/application/ScanService.java
+- src/main/java/com/example/scan/domain/ScanEntity.java
+- src/main/resources/db/migration/V7__scan_creation.sql
+- src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-06-scan-aanmaken.behavior-evidence.yaml
+- reports/build/backend/slice-06-scan-aanmaken.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 9677
+errors: []
+finishedAt: '2026-03-12T10:00:09.677Z'
+gates:
+- checkId: LOCAL_TYPE_CHECK
+  command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight completed successfully in 9677 ms.
+  exitCode: 0
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-06-scan-aanmaken
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+summary: Added the exact POST /v1/organizations/{organizationId}/scans operation with
+  bearer enforcement, X-Idempotency-Key handling, active-model snapshot selection,
+  domain validation, durable concept-scan persistence, and transition evidence tests.
+warnings:
+- The full unit-test suite was not run during this build step because this was a first-pass
+  implementation; Backend Check owns formal CHK_UNIT_TESTS execution.

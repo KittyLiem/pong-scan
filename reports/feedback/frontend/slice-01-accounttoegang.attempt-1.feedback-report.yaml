@@ -1,0 +1,85 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-01-accounttoegang
+attemptNumber: 1
+status: fail
+startedAt: '2026-10-13T14:27:15Z'
+finishedAt: '2026-10-13T14:27:33Z'
+durationMs: 18000
+inputRefs: [frontendSliceContext, frontendStackProfile@1.2.0, conformanceLock@1.0.0, buildOutput]
+artifactRefs:
+  - reports/check/frontend/slice-01-accounttoegang.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-01-accounttoegang.attempt-1.feedback-report.yaml
+provenance:
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+gates:
+  - gateId: GATE_LINT
+    checkId: CHK_LINT
+    outcome: fail
+    evidence:
+      resolvedCommand: npx npm run lint
+      exitCode: 1
+      failures:
+        - {path: src/app/app.ts, locationHint: '12:15', rule: '@angular-eslint/prefer-inject'}
+        - {path: src/app/core/auth/auth.service.ts, locationHint: '30:15', rule: '@angular-eslint/prefer-inject'}
+warnings: []
+errors:
+  - gateId: GATE_LINT
+    failureCategory: slice_local
+    evidence: 'Lint rejects constructor parameter injection in App and AuthService.'
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-01-accounttoegang
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_LINT]
+  failedChecks: [CHK_LINT]
+  checkerSummary: 'GATE_LINT failed after build, tests, handoff, shell/navigation, structural parity, and auth-storage checks passed. The user-visible /start flow is otherwise validated; lint blocks delivery because App and AuthService use disallowed constructor injection.'
+  gateFailureContext:
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      commandRef: stack-profile.lint
+      resolvedCommand: npx npm run lint
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_LINT]
+    primaryCommand: npx npm run lint
+    notes: 'Run the mapped lint command; type-check and verify are not substitutes for the failing lint gate.'
+  primaryFailures:
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      symptom: 'ng lint exits 1 with two @angular-eslint/prefer-inject violations.'
+      rootCauseHypothesis: 'The newly delivered root component and auth service retain constructor parameter injection instead of Angular inject() fields.'
+      requiredOutcome: 'Both files use inject() for their dependencies and npx npm run lint exits 0 without changing account-access behavior.'
+      blocking: true
+      observed: 'constructor(readonly auth: AuthService) and constructor(private readonly http: HttpClient)'
+      expected: 'Angular inject() field injection accepted by @angular-eslint/prefer-inject'
+  targets:
+    - path: src/app/app.ts
+      locationHint: '12:15'
+      component: App
+      observed: 'constructor parameter injection of AuthService'
+      expected: 'readonly auth initialized through inject(AuthService)'
+    - path: src/app/core/auth/auth.service.ts
+      locationHint: '30:15'
+      component: AuthService
+      observed: 'constructor parameter injection of HttpClient'
+      expected: 'private readonly http initialized through inject(HttpClient)'
+  editScope:
+    allowedEditPaths: [src/app/app.ts, src/app/core/auth/auth.service.ts]
+    suspectPaths: []
+    forbiddenOrOutOfScope: [src/app/account-access/**, src/app/app.routes.ts, reports/**]
+  buildAgentBrief:
+    - 'From frontendAppRoot, run npx npm run lint and confirm the two @angular-eslint/prefer-inject failures match this feedback before editing.'
+    - 'Read src/app/app.ts and replace constructor injection of AuthService with a readonly inject(AuthService) field, adding the required import.'
+    - 'Read src/app/core/auth/auth.service.ts and replace constructor injection of HttpClient with a private readonly inject(HttpClient) field, adding the required import.'
+    - 'Re-run npx npm run lint; preserve the existing in-memory bearer-token behavior and the /start account-access flow.'
+  nonGoals:
+    - 'Do not change API endpoints, idempotency headers, session storage behavior, routes, or tests solely to address lint.'
+    - 'Do not perform unrelated refactors or suppress/relax the lint rule.'
+failedGateIds: [GATE_LINT]
+failedChecks: [CHK_LINT]

@@ -1,0 +1,116 @@
+artifactRefs:
+- reports/check/frontend/slice-05-scanportfolio.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 14000
+errors: []
+finishedAt: '2026-10-13T15:39:18.000Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      reason: representative slice test verifies getScan(scan-1) resume coverage
+    - path: src/app/app.routes.ts
+      reason: route registration for route_scan_overview and route_assessment
+    - path: src/app/scan-overview/scan-overview.component.ts
+      reason: Scanoverzicht route entry point and listScans client usage
+    - path: src/app/maturity-assessment/maturity-assessment.component.ts
+      reason: Maturity beoordeling route entry point and getScan client usage
+    - path: src/app/core/scans/scan.service.ts
+      reason: scoped listScans/getScan API client verification
+    missingPaths: []
+    persistenceVerifiedByRuntime: true
+    verifiedPaths:
+    - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavLabels:
+    - Scanoverzicht
+    - Beoordeling
+    expectedRoutePaths:
+    - /scans
+    - /scans/:scanId/assessment
+    observedNavLabels:
+    - Scanoverzicht
+    - Beoordeling
+    observedRoutePaths:
+    - /scans
+    - /scans/:scanId/assessment
+    routesConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: passed
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    pages:
+    - observed: visible heading, summary cards, status/search controls, scan-list
+        region, and action controls
+      route: /scans
+      templatePath: src/app/scan-overview/scan-overview.component.ts
+    - observed: visible assessment heading, progress/navigation structure, score fields,
+        evidence field, and action controls
+      route: /scans/:scanId/assessment
+      templatePath: src/app/maturity-assessment/maturity-assessment.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: passed
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    authServicePath: src/app/core/auth/auth.service.ts
+    observedStorage: in-memory signal
+    prohibitedStorageReferences: []
+  gateId: GATE_AUTH_STORAGE
+  status: passed
+- evidence:
+    observed: scoped GET operations contain no optimistic-concurrency command payload
+    scopedOperations:
+    - listScans
+    - getScan
+  gateId: GATE_VERSION_SOURCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    result: 10 test files and 25 tests passed
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- frontendSliceContext:slice-05-scanportfolio
+- buildOutput:repairFrontendBuild-attempt-2
+- conformanceLock:1.0.0
+- frontendStackProfile:1.2.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-05-scanportfolio
+startedAt: '2026-10-13T15:39:04.000Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Angular Sass emitted an existing @import deprecation warning during build and test.
+- Vitest emitted a Vite native-config compatibility warning during test.

@@ -1,0 +1,21 @@
+decisions:
+- choice: Impact en urgentie gebruiken de contractuele driepuntsschaal low, medium
+    en high; deze waarden worden afzonderlijk en duurzaam opgeslagen.
+  unspecifiedId: dec-013
+transitions:
+- kind: mutation
+  mutatedFields:
+  - selected
+  operationId: saveDevelopmentPriorities
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+  testMethod: saveDevelopmentPrioritiesSelectsDevelopmentPoint
+  transitionId: ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+- kind: mutation
+  mutatedFields:
+  - items
+  operationId: saveDevelopmentPriorities
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+  testMethod: saveDevelopmentPrioritiesComposesActionOverviewFromSelectedItems
+  transitionId: ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld

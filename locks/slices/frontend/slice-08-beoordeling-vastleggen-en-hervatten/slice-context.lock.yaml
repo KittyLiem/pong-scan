@@ -1,0 +1,450 @@
+behaviorSubset:
+  initialState: []
+  scenarios:
+  - id: beoordeling_vastleggen_en_hervatten.s4
+    text: De gebruiker kan een toelichting en eventueel bewijs vastleggen.
+    transitionIds:
+    - beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+  transitions:
+  - from: concept
+    id: beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+    kind: mutation
+    operationId: saveAnswer
+    to: in uitvoering
+  - from: vraag onbeantwoord
+    id: beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+    kind: mutation
+    operationId: saveAnswer
+    to: vraaggegevens gedeeltelijk of volledig vastgelegd
+  - from: in uitvoering hervat
+    id: beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+    kind: mutation
+    operationId: saveAnswer
+    to: vraaggegevens en voortgang bijgewerkt
+  unspecified:
+  - id: dec-010
+    text: Besluit vereist over berekening van domein- en totale scanvoortgang; aanbevolen
+      is het aandeel vragen dat aan alle verplichte invoervelden voldoet.
+  - id: dec-011
+    text: Besluit vereist over de vorm van bewijs bij een vraag; aanbevolen zijn bestandsuploads
+      en links met beveiligde opslag en toegang.
+capabilityId: beoordeling_vastleggen_en_hervatten
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: beoordeling_vastleggen_en_hervatten
+    operationIds:
+    - saveAnswer
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - saveAnswer
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}/answers/{questionId}
+    method: PUT
+    operationId: saveAnswer
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    - in: path
+      name: questionId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/QuestionId'
+    path: /v1/scans/{scanId}/answers/{questionId}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              evidenceReferences:
+                items:
+                  type: string
+                type: array
+              explanation:
+                type: string
+              optionId:
+                format: uuid
+                type: string
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - optionId
+            - version
+            type: object
+            x-ref: '#/components/schemas/AnswerInput'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                evidenceReferences:
+                  items:
+                    type: string
+                  type: array
+                explanation:
+                  type: string
+                optionId:
+                  format: uuid
+                  type: string
+                progress:
+                  type: number
+                questionId:
+                  format: uuid
+                  type: string
+                version:
+                  type: integer
+              required:
+              - questionId
+              - optionId
+              - progress
+              - version
+              type: object
+              x-ref: '#/components/schemas/SavedAnswer'
+        description: Answer and progress saved
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+      - beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+      - beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+    capabilityId: beoordeling_vastleggen_en_hervatten
+    contractScopeRef:
+      capabilityKey: beoordeling_vastleggen_en_hervatten
+      operationIds:
+      - saveAnswer
+    dependsOnSlices:
+    - slice-07-kennisgebieden-selecteren
+    sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+    sliceIndex: 7
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds:
+        - getScan
+        ownedOperationIds:
+        - saveAnswer
+        pageKey: Maturity beoordeling
+        routeId: route_assessment
+      pageKeys:
+      - Maturity beoordeling
+      routeIds:
+      - route_assessment
+frontendContext:
+  generationProfile:
+    revision: 1.0.0
+scope:
+  backend:
+    enabled: false
+  frontend:
+    enabled: true
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+sliceType: paired-api
+uiScopeRef:
+  appShellMockupRef: mockups/app-shell.lock.html
+  contributesToPage: []
+  mockupRefs:
+  - mockups/maturity-beoordeling.lock.html
+  navigation:
+    defaultRouteByState:
+      anonymous: route_auth_start
+      member_with_organization: route_scan_overview
+      member_without_organization: route_auth_start
+    globalEntries:
+    - id: nav_assessment
+      label: Beoordeling
+      routeId: route_assessment
+      visibleWhen: member_with_active_scan
+    postAuthRouting:
+      desiredRoutePolicy: restore_allowed_member_route
+      fallbackRouteId: route_scan_overview
+      organizationRequiredRouteId: route_auth_start
+  pageBindings:
+  - allowedOperationIds:
+    - getScan
+    mockupRef: mockups/maturity-beoordeling.lock.html
+    ownedOperationIds:
+    - saveAnswer
+    page:
+      apiRefs:
+      - method: POST
+        operationId: completeScan
+        path: /v1/scans/{scanId}/completion
+      - method: POST
+        operationId: createAdminDomain
+        path: /v1/admin/domains
+      - method: POST
+        operationId: createAnswerOption
+        path: /v1/admin/questions/{questionId}/options
+      - method: GET
+        operationId: getActiveModel
+        path: /v1/models/active
+      - method: GET
+        operationId: getScan
+        path: /v1/scans/{scanId}
+      - method: GET
+        operationId: listAdminDomains
+        path: /v1/admin/domains
+      - method: PUT
+        operationId: saveAnswer
+        path: /v1/scans/{scanId}/answers/{questionId}
+      - method: PATCH
+        operationId: updateAdminDomain
+        path: /v1/admin/domains/{domainId}
+      - method: PATCH
+        operationId: updateAdminQuestion
+        path: /v1/admin/questions/{questionId}
+      - method: PATCH
+        operationId: updateAnswerOption
+        path: /v1/admin/options/{optionId}
+      - method: PATCH
+        operationId: updateScan
+        path: /v1/scans/{scanId}
+      contentKeys:
+      - maturity_assessment
+      - domain_selection
+      - domain_progress
+      - current_question
+      - answer_evidence
+      - organization_goals
+      - assessment_completion
+      - admin_content_management
+      forms:
+      - contentKey: current_question
+        fields:
+        - optionId
+        - explanation
+        - evidenceReferences
+        id: answer_form
+      - contentKey: organization_goals
+        fields:
+        - goals
+        id: organization_goals_form
+      - contentKey: domain_selection
+        fields:
+        - selectedDomainIds
+        id: domain_selection_form
+      - access: administrator
+        contentKey: admin_content_management
+        fields:
+        - domain
+        - question
+        - answerOption
+        id: admin_content_form
+      goals:
+      - Vragen beantwoorden voor strategie, kwaliteit, governance, technologie, processen,
+        vaardigheden en datagedreven besluitvorming
+      - Per vraag een score, toelichting en eventueel bewijs vastleggen
+      - Voortgang per domein zien
+      - Tussentijds opslaan en later verdergaan
+      - De beoordeling afronden voor resultaatberekening
+      lists:
+      - contentKey: domain_progress
+        id: domain_progress_list
+        itemType: selected_domain_progress
+      - contentKey: maturity_assessment
+        id: assessment_question_list
+        itemType: model_question
+      pageKey: Maturity beoordeling
+      pageTitle: Maturity beoordeling
+      primaryActions:
+      - apiRef:
+          method: POST
+          operationId: completeScan
+          path: /v1/scans/{scanId}/completion
+        id: complete_assessment
+        label: Beoordeling afronden
+      - apiRef:
+          method: POST
+          operationId: createAnswerOption
+          path: /v1/admin/questions/{questionId}/options
+        id: create_answer_option
+        label: Antwoordoptie toevoegen
+      - apiRef:
+          method: POST
+          operationId: createAdminDomain
+          path: /v1/admin/domains
+        id: create_domain
+        label: Kennisgebied toevoegen
+      - apiRef:
+          method: GET
+          operationId: getActiveModel
+          path: /v1/models/active
+        id: load_active_model
+        label: Beoordelingsmodel laden
+      - apiRef:
+          method: GET
+          operationId: getScan
+          path: /v1/scans/{scanId}
+        id: load_assessment
+        label: Beoordeling hervatten
+      - apiRef:
+          method: GET
+          operationId: listAdminDomains
+          path: /v1/admin/domains
+        id: load_managed_domains
+        label: Beheerde kennisgebieden laden
+      - apiRef:
+          method: PUT
+          operationId: saveAnswer
+          path: /v1/scans/{scanId}/answers/{questionId}
+        id: save_answer
+        label: Antwoord opslaan
+      - apiRef:
+          method: PATCH
+          operationId: updateScan
+          path: /v1/scans/{scanId}
+        id: save_assessment_context
+        label: Selecties en doelen opslaan
+      - apiRef:
+          method: PATCH
+          operationId: updateAnswerOption
+          path: /v1/admin/options/{optionId}
+        id: update_answer_option
+        label: Antwoordoptie bijwerken
+      - apiRef:
+          method: PATCH
+          operationId: updateAdminDomain
+          path: /v1/admin/domains/{domainId}
+        id: update_domain
+        label: Kennisgebied bijwerken
+      - apiRef:
+          method: PATCH
+          operationId: updateAdminQuestion
+          path: /v1/admin/questions/{questionId}
+        id: update_question
+        label: Vraag bijwerken
+      routeId: route_assessment
+      states:
+      - contentKey: assessment_completion
+        description: Toon welke verplichte invoer nog aandacht vereist.
+        id: completion_blocked
+      - contentKey: answer_evidence
+        description: Bevestig opslag zonder een niet-geautoriseerde beginwaarde te
+          tonen.
+        id: answer_saved
+    pageKey: Maturity beoordeling
+    route:
+      access: member
+      guard: authenticated_with_organization
+      id: route_assessment
+      navigation:
+        parentRouteId: route_scan_overview
+      pageKey: Maturity beoordeling
+      path: /scans/:scanId/assessment
+      title: Maturity beoordeling
+    routeId: route_assessment
+    sectionOutline:
+      exists: true
+      id: Maturity beoordeling
+      outline:
+        counts:
+          buttons: 13
+          cards: 0
+          fields: 7
+          formLabels: 7
+          forms: 1
+          headings: 3
+          images: 0
+          links: 0
+          navLabels: 7
+          sections: 2
+        formLabels:
+        - 0 — Niet beoordeeld / uitgesloten Geen maturiteitsscore De vraag kan niet
+          worden beoordeeld of is aantoonbaar niet van toepassing op de organisatie.
+        - 1 — Initieel / Ad hoc Datakwaliteit wordt incidenteel onderzocht, meestal
+          pas wanneer problemen ontstaan.
+        - 2 — Herhaalbaar Enkele teams voeren terugkerende controles uit, maar een
+          organisatiebrede aanpak ontbreekt.
+        - 3 — Gedefinieerd Voor kritieke datasets zijn kwaliteitsregels, verantwoordelijken
+          en vaste controles vastgelegd.
+        - 4 — Beheerst Kwaliteitsmetingen worden centraal gevolgd en afwijkingen leiden
+          aantoonbaar tot verbeteracties.
+        - 5 — Geoptimaliseerd Datakwaliteit wordt proactief, grotendeels geautomatiseerd
+          en continu verbeterd.
+        - Onderbouwing
+        headings:
+        - Maturity beoordeling
+        - Voortgang
+        - In hoeverre wordt de kwaliteit van kritieke data structureel bewaakt?
+        majorSectionSlugs:
+        - maturity-beoordeling
+        - voortgang
+        - in-hoeverre-wordt-de-kwaliteit-van-kritieke-data-structureel-bewaakt
+        navLabels:
+        - Datastrategie 8/8
+        - Datakwaliteit 3/8
+        - Governance 2/8
+        - Technologie 1/8
+        - Processen 1/8
+        - Vaardigheden 1/7
+        - Besluitvorming 1/8
+      path: mockups/maturity-beoordeling.lock.html
+      sourceItem:
+        description: Gestructureerde invulflow waarin de gebruiker per datavolwassenheidsdomein
+          vragen beantwoordt en onderbouwing vastlegt.
+        goals:
+        - Vragen beantwoorden voor strategie, kwaliteit, governance, technologie,
+          processen, vaardigheden en datagedreven besluitvorming
+        - Per vraag een score, toelichting en eventueel bewijs vastleggen
+        - Voortgang per domein zien
+        - Tussentijds opslaan en later verdergaan
+        - De beoordeling afronden voor resultaatberekening
+        key: Maturity beoordeling
+  pageKeys:
+  - Maturity beoordeling
+  projectContextMockupRef: mockups/project_context.lock.md
+  routeIds:
+  - route_assessment
+  uiSectionsRef: locks/ui-sections.lock.yaml

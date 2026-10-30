@@ -1,0 +1,105 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-05-scanportfolio
+attemptNumber: 1
+status: fail
+startedAt: not-recorded-by-mcp
+finishedAt: not-recorded-by-mcp
+durationMs: 8253
+inputRefs: [frontendSliceContext, frontendStackProfile@1.2.0, conformanceLock@1.0.0, buildOutput]
+artifactRefs:
+  - reports/check/frontend/slice-05-scanportfolio.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-05-scanportfolio.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: interfaceContractSubset supplied for slice-05-scanportfolio
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+failureDomain: slice_local
+failedGateIds: [GATE_TESTS]
+failedChecks: [CHK_UNIT_TESTS]
+gates:
+  - gateId: GATE_TESTS
+    checkId: CHK_UNIT_TESTS
+    status: failed
+    evidence:
+      resolvedCommand: npx npm run test -- --no-watch
+      exitCode: 1
+      failures:
+        - file: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+          suite: MaturityAssessmentComponent
+          test: resumes the exact scan and retains assessment structure
+          locationHint: src/app/maturity-assessment/maturity-assessment.component.spec.ts:20
+          observed: ScanService.get mock has zero calls
+          expected: ScanService.get called with scan-1
+          excerpt: expected vi.fn() to be called with arguments [scan-1]; Number of calls: 0
+warnings:
+  - Sass import deprecation warning is non-blocking
+errors:
+  - gateId: GATE_TESTS
+    failureCategory: slice_local
+    evidence: The test navigates the Router then manually creates the component, leaving its injected ActivatedRoute without the scanId expected by loadScan.
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-05-scanportfolio
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_TESTS]
+  failedChecks: [CHK_UNIT_TESTS]
+  checkerSummary: GATE_TESTS failed after build and lint passed; the maturity-assessment resume test never supplies scan-1 to the component fixture, so the API-backed resume load is not observed.
+  gateFailureContext:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: npx npm run test -- --no-watch
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS]
+    primaryCommand: npx npm run test -- --no-watch
+    notes: type-check and verify are not substitutes for the test command when unit tests fail.
+  testFailures:
+    - file: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      suite: MaturityAssessmentComponent
+      test: resumes the exact scan and retains assessment structure
+      locationHint: src/app/maturity-assessment/maturity-assessment.component.spec.ts:20
+      assertionSummary: exact scan resume invokes ScanService.get with route scanId
+      observed: ScanService.get mock received zero calls
+      expected: ScanService.get receives scan-1
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: resume test fails because the component sees no scanId
+      rootCauseHypothesis: the test's Router navigation does not populate ActivatedRoute for a separately manually created fixture
+      requiredOutcome: the test must instantiate the component with an ActivatedRoute containing scan-1 or use a routed fixture, then observe ScanService.get(scan-1)
+      blocking: true
+      observed: ScanService.get mock received zero calls
+      expected: ScanService.get called with scan-1
+  targets:
+    - file: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      suite: MaturityAssessmentComponent
+      test: resumes the exact scan and retains assessment structure
+      route: /scans/:scanId/assessment
+      component: MaturityAssessmentComponent
+      operation: getScan
+      observed: manually created fixture has no activated scanId and makes no get call
+      expected: fixture validates getScan for scan-1
+  editScope:
+    allowedEditPaths:
+      - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+    suspectPaths:
+      - path: src/app/maturity-assessment/maturity-assessment.component.ts
+        confidence: low; inspect only if a corrected routed test shows the component does not call ScanService.get for a supplied scanId
+    forbiddenOrOutOfScope:
+      - src/app/core/scans/scan.service.ts
+      - reports/**
+      - unrelated frontend routes and auth code
+  buildAgentBrief:
+    - Run npx npm run test -- --no-watch from frontendAppRoot and confirm the reported MaturityAssessmentComponent failure before editing.
+    - Read src/app/maturity-assessment/maturity-assessment.component.spec.ts and preserve the production getScan resume assertion.
+    - Provide an ActivatedRoute with scanId scan-1 to the fixture or instantiate through a real routed outlet so the test exercises loadScan.
+    - Use write_file to update only the implicated test, then rerun the mandatory local repro command.
+  nonGoals:
+    - Do not weaken or remove the getScan(scan-1) assertion.
+    - Do not change scan API behavior, auth, unrelated routes, or report files for this test-fixture repair.

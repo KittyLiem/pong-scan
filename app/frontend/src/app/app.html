@@ -1,0 +1,50 @@
+<a href="#hoofdinhoud" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-body-bg focus:px-4 focus:py-2 focus:text-body-color">Naar hoofdinhoud</a>
+<div class="flex min-h-screen flex-col bg-body-bg text-body-color">
+  <header class="bg-primary text-primary-content shadow-sm">
+    <div class="mx-auto flex min-h-16 w-full max-w-screen-2xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 sm:px-6 lg:px-8">
+      <a [routerLink]="auth.isAuthenticated() ? '/scans' : '/start'" class="flex shrink-0 items-center gap-3 rounded-sm font-semibold">
+        <span class="flex h-9 w-9 items-center justify-center rounded-md bg-primary-content text-primary" aria-hidden="true">✓</span>
+        <span>Pong data maturity scan</span>
+      </a>
+
+      @if (auth.isAuthenticated()) {
+        <nav class="flex flex-wrap items-center gap-1" aria-label="Hoofdnavigatie">
+          <a routerLink="/scans" routerLinkActive="bg-primary-hover underline underline-offset-4" ariaCurrentWhenActive="page" class="rounded-md px-3 py-2 text-sm font-semibold hover:bg-primary-hover">Scanoverzicht</a>
+          @if (auth.isAdmin()) {
+            <a routerLink="/admin" routerLinkActive="bg-primary-hover underline underline-offset-4" ariaCurrentWhenActive="page" class="rounded-md px-3 py-2 text-sm font-semibold hover:bg-primary-hover">Beheer</a>
+          }
+        </nav>
+        <div class="ml-auto flex flex-wrap items-center gap-3">
+          @if (organizations.current(); as organization) {
+            <div class="hidden border-r border-primary-border-subtle pr-3 text-right md:block">
+              <p class="text-xs opacity-80">Organisatie</p>
+              <p class="max-w-48 truncate text-sm font-semibold">{{ organization.name }}</p>
+            </div>
+          }
+          @if (auth.member(); as member) {
+            <span class="max-w-56 truncate text-sm" [title]="member.accountIdentifier">
+              <span class="sr-only">Aangemeld als </span>{{ member.accountIdentifier }}
+            </span>
+          }
+          <button type="button" class="rounded-md border border-primary-content/40 px-3 py-2 text-sm font-semibold hover:bg-primary-hover" [disabled]="signingOut()" (click)="signOut()">
+            {{ signingOut() ? 'Afmelden…' : 'Afmelden' }}
+          </button>
+        </div>
+      } @else {
+        <nav class="ml-auto" aria-label="Hoofdnavigatie">
+          <a routerLink="/start" class="rounded-md px-3 py-2 text-sm font-semibold hover:bg-primary-hover">Aanmelden</a>
+        </nav>
+      }
+    </div>
+  </header>
+
+  <main id="hoofdinhoud" class="min-h-0 flex-1" tabindex="-1">
+    <router-outlet />
+  </main>
+
+  <footer class="border-t border-border bg-secondary-bg">
+    <div class="mx-auto w-full max-w-screen-2xl px-4 py-5 text-sm text-secondary-color sm:px-6 lg:px-8">
+      <p>© 2026 Pong Consulting. Data maturity scan versie 2.</p>
+    </div>
+  </footer>
+</div>

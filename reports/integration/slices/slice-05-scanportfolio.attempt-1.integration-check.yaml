@@ -1,0 +1,186 @@
+artifactRefs:
+- reports/integration/slices/slice-05-scanportfolio.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 1000
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/scan/api/ScanResource.java
+        purpose: Verify getScan route, operation id, bearer enforcement, and response
+          DTO use.
+      - path: backend/src/main/java/com/example/scan/api/ScanPortfolioResource.java
+        purpose: Verify listScans route, operation id, bearer enforcement, and pagination
+          bounds.
+      - path: backend/src/main/java/com/example/scan/api/ScanDtos.java
+        purpose: Verify response DTO field parity for Scan and ScanCollection.
+      - path: backend/src/test/java/com/example/scan/ScanResourceTest.java
+        purpose: Verify protected endpoint, problem-details, pagination, route, and
+          transition coverage.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/main/java/com/example/scan/api/ScanResource.java
+      - app/backend/src/main/java/com/example/scan/api/ScanPortfolioResource.java
+      - app/backend/src/test/java/com/example/scan/ScanResourceTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+      - backend/src/main/java/com/example/scan/api/ScanDtos.java
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify scoped route registration and authentication guards.
+      - path: frontend/src/app/scan-overview/scan-overview.component.ts
+        purpose: Verify listScans UI binding, cursor continuation action, and scan-detail
+          navigation.
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+        purpose: Verify getScan invocation on the assessment route.
+      - path: frontend/src/app/core/scans/scan.service.ts
+        purpose: Verify operation paths, DTOs, bearer header, problem-details parsing,
+          and cursor pagination.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      - frontend/src/app/app.routes.ts
+      - frontend/src/app/scan-overview/scan-overview.component.ts
+      - frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+      - frontend/src/app/core/scans/scan.service.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    note: Per-stream contexts correctly declare only their owned stream and were not
+      treated as contradictory.
+    source: combinedSliceScope
+  endpointParity:
+    endpoints:
+    - GET /v1/organizations/{organizationId}/scans
+    - GET /v1/scans/{scanId}
+    operationIds:
+    - listScans
+    - getScan
+    source: endpointParityPreGate
+    valid: true
+  upstreamChecks:
+    backendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    backendStatus: ok
+    frontendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_FRONTEND_AUTH_STORAGE
+    frontendStatus: ok
+finishedAt: '2026-10-13T15:44:12.000Z'
+gates:
+- evidence:
+    observed:
+    - ScanService implements listScans as GET /v1/organizations/{organizationId}/scans
+      and getScan as GET /v1/scans/{scanId}.
+    - Both protected calls attach the Authorization bearer credential from AuthService.
+    - Frontend DTO fields and status values align with the contract response schemas.
+    - ProblemDetails parsing preserves required type, title, and status fields.
+    - listScans uses cursor and pageSize, defaults to 20 at its call site, and clamps
+      pageSize to 1..100.
+    - App routes expose /scans and /scans/:scanId/assessment behind authenticatedGuard.
+    - Scanoverzicht invokes listScans and assessment initialization invokes getScan.
+    payloadRefs:
+    - frontendSliceContext.contractSubset.operations
+    - frontendSliceContext.uiScopeRef.pageBindings
+    - interfaceContractSubset.operations
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observed:
+    - ScanPortfolioResource exposes operationId listScans at the exact versioned GET
+      portfolio path.
+    - ScanResource exposes operationId getScan at the exact versioned GET detail path.
+    - Both handlers require bearer authentication and read the authenticated member
+      principal.
+    - ScanDtos matches the required Scan and ScanCollection response properties.
+    - Cursor and pageSize parameters use default 20 and bounds 1..100.
+    - Unauthorized and invalid-cursor tests assert application/problem+json with required
+      fields.
+    payloadRefs:
+    - backendSliceContext.contractSubset.operations
+    - interfaceContractSubset.operations
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput
+    - behaviorEvidencePreGate
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observed:
+    - Deterministic endpoint parity is valid for listScans and getScan.
+    - FE and BE agree on URI versioning, methods, paths, bearer auth, response DTOs,
+      problem-details errors, and cursor pagination.
+    - Both upstream check outputs are ok and all required build, unit-test, and lint
+      checks passed.
+    - At least one content-read integration anchor was verified for each enabled stream.
+    payloadRefs:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - upstreamEvidence.frontendCheckOutput
+    - upstreamEvidence.backendCheckOutput
+    - precomputedDiskVerification
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    observed:
+      backendTest: backend/src/test/java/com/example/scan/ScanResourceTest.java
+      backendVerifiedTransitionCount: 6
+      ownedTransitionCount: 6
+      startsFrom: api-fixture
+      uiBindings:
+        getScan: Scanoverzicht navigation opens the assessment route and MaturityAssessmentComponent
+          invokes ScanService.get.
+        listScans: Scanoverzicht load action invokes ScanService.list.
+      verifiedTransitionIds:
+      - organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+      - organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+      - kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+      - beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+      - beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+      - beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd
+    payloadRefs:
+    - backendSliceContext.behaviorSubset.transitions
+    - behaviorEvidencePreGate
+    - upstreamEvidence.backendBuildOutput.behavior-evidence
+    - frontendSliceContext.uiScopeRef.pageBindings
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext:slice-05-scanportfolio
+- backendSliceContext:slice-05-scanportfolio
+- interfaceContractSubset:listScans,getScan
+- conformanceLock:1.0.0
+- apiChoiceLock:1.0.0
+- contractDecisionsLock:1.0.0
+- upstreamEvidence.frontendBuildOutput:attempt-2
+- upstreamEvidence.backendBuildOutput:attempt-2
+- upstreamEvidence.frontendCheckOutput:attempt-1
+- upstreamEvidence.backendCheckOutput:attempt-1
+- endpointParityPreGate:valid
+- precomputedDiskVerification:frontend,backend
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-05-scanportfolio
+startedAt: '2026-10-13T15:44:11.000Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Upstream frontend checks reported existing Sass deprecation and Vite compatibility
+  warnings; neither affected integration gates.
+- Upstream backend tests reported non-failing OTLP exporter connection warnings.

@@ -1,0 +1,121 @@
+artifactRefs:
+- reports/check/frontend/slice-13-ontwikkelprioriteiten-selecteren.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 20000
+errors: []
+finishedAt: '2026-10-13T17:14:22Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/core/scans/scan-results.service.ts
+      reason: scoped API client for saveDevelopmentPriorities
+    - path: src/app/scan-results/scan-results.component.ts
+      reason: route component and optimistic-lock payload source
+    - path: src/app/scan-results/scan-results.component.html
+      reason: page structure and priority/action-overview behavior
+    - path: src/app/scan-results/scan-results.component.spec.ts
+      reason: representative route-surface coverage
+    - path: src/app/app.routes.ts
+      reason: scoped route registration
+    - path: src/app/app.html
+      reason: shell navigation
+    missingPaths: []
+    verifiedPaths:
+    - src/app/core/scans/scan-results.service.ts
+    - src/app/core/scans/scan-results.service.spec.ts
+    - src/app/scan-results/scan-results.component.ts
+    - src/app/scan-results/scan-results.component.html
+    - src/app/scan-results/scan-results.component.spec.ts
+  id: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavigationLabel: Resultaten
+    expectedRoute: /scans/:scanId/results
+    observedNavigationLabel: Resultaten
+    observedRoute: scans/:scanId/results
+    routesPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  id: GATE_APP_SHELL_NAV
+  status: passed
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedVisibleStructure:
+      buttons: 5
+      cards: 6
+      fields: 4
+      headings: 11
+      sections: 3
+    observed: visible result score, insight, goals, priority-selection, action-overview,
+      and refinement sections with headings, controls, and cards
+    route: /scans/:scanId/results
+    templatePath: src/app/scan-results/scan-results.component.html
+  id: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: passed
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    authModel: bearer/JWT
+    inspectedPaths:
+    - src/app/core/auth/auth.service.ts
+    - src/app/core/scans/scan-results.service.ts
+    observed: token retained in an in-memory signal and supplied as an Authorization
+      header; no localStorage or sessionStorage token persistence
+  id: GATE_AUTH_STORAGE
+  status: passed
+- evidence:
+    componentPath: src/app/scan-results/scan-results.component.ts
+    observed: request version is scan.version from ScanService selected API-backed
+      scan state
+    operationId: saveDevelopmentPriorities
+  id: GATE_VERSION_SOURCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    summary: Angular production build completed.
+    workingDirectory: .
+  id: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    summary: 12 test files and 45 tests passed, including scan-results component and
+      service suites.
+    workingDirectory: .
+  id: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    summary: All files pass linting.
+    workingDirectory: .
+  id: GATE_LINT
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+startedAt: '2026-10-13T17:14:02Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Build and test emitted the existing Sass @import deprecation warning from src/styles.scss.
+- Vitest emitted a future native config-loader compatibility warning for vitest.config.ts.

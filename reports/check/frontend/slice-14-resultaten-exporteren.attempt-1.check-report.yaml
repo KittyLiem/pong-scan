@@ -1,0 +1,125 @@
+artifactRefs:
+- reports/check/frontend/slice-14-resultaten-exporteren.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 31000
+errors: []
+finishedAt: '2026-10-13T17:37:19Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/core/scans/scan-results.service.ts
+      reason: verifies exportScanPdf uses the scoped GET export operation and bearer
+        header
+    - path: src/app/app.routes.ts
+      reason: verifies the scoped results route
+    - path: src/app/app.html
+      reason: verifies non-bare shell and scoped navigation
+    - path: src/app/scan-results/scan-results.component.ts
+      reason: verifies page export behavior and version source
+    - path: src/app/scan-results/scan-results.component.html
+      reason: verifies scoped structural parity
+    - path: src/app/core/auth/auth.service.ts
+      reason: verifies bearer token storage behavior
+    - path: src/app/core/scans/scan.service.ts
+      reason: traces version to an API response
+    missingPaths: []
+    verifiedPaths:
+    - src/app/core/scans/scan-results.service.spec.ts
+    - src/app/core/scans/scan-results.service.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    navigationLabel: Resultaten
+    routePath: /scans/:scanId/results
+    routesConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedMinimums:
+      buttons: 5
+      cards: 6
+      fields: 4
+      headings: 11
+      sections: 3
+    observedVisibleStructure:
+      buttons: 6
+      cards: 8
+      fields: dynamic-priority-controls
+      headings: 12
+      sections: 7
+    route: /scans/:scanId/results
+    templatePath: src/app/scan-results/scan-results.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: pass
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    authServicePath: src/app/core/auth/auth.service.ts
+    browserTokenStorageFound: false
+    storageMode: in-memory signal
+  gateId: GATE_AUTH_STORAGE
+  status: pass
+- evidence:
+    resultValues: API-bound
+    staticMockRecommendations: absent
+    templatePath: src/app/scan-results/scan-results.component.html
+  gateId: GATE_UI_INITIAL_STATE_PARITY
+  status: pass
+- evidence:
+    command: saveDevelopmentPriorities
+    componentPath: src/app/scan-results/scan-results.component.ts
+    servicePath: src/app/core/scans/scan.service.ts
+    versionSource: selected Scan returned by GET /v1/scans/{scanId}
+  gateId: GATE_VERSION_SOURCE
+  status: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    summary: Angular production build completed.
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    summary: 12 test files and 48 tests passed.
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    summary: All files passed linting.
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: pass
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-14-resultaten-exporteren
+startedAt: '2026-10-13T17:36:48Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Sass @import deprecation warning was emitted by build and test.
+- Vite native config-loader compatibility warning was emitted by test.

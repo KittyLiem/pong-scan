@@ -1,0 +1,95 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runBackendCheck
+stream: backend
+sliceId: slice-10-maturiteitsscores-berekenen
+attemptNumber: 1
+status: fail
+startedAt: not-recorded
+finishedAt: not-recorded
+durationMs: 60993
+inputRefs:
+  - buildOutput.artifactRefs
+artifactRefs:
+  - reports/check/backend/slice-10-maturiteitsscores-berekenen.attempt-1.check-report.yaml
+  - reports/feedback/backend/slice-10-maturiteitsscores-berekenen.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+gates:
+  - gateId: GATE_BUILD_HANDOFF
+    status: failed
+    checkId: CHK_BUILD
+    evidence:
+      missingPaths:
+        - app/backend/src/test/java/com/example/scan/ResultsBehaviorTest.java
+        - app/backend/locks/behavior-decisions.lock.yaml
+    failureCategory: builder_handoff
+warnings: []
+errors:
+  - gateId: GATE_BUILD_HANDOFF
+    evidence: On-disk implementation handoff verification failed before slice entry-point and behavior-evidence content checks could be completed.
+    failureCategory: builder_handoff
+failedGateIds:
+  - GATE_BUILD_HANDOFF
+failedChecks:
+  - CHK_BUILD
+failureDomain: slice_local
+reprocessHint: backend-build
+reprocessInputs:
+  sliceId: slice-10-maturiteitsscores-berekenen
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds:
+    - GATE_BUILD_HANDOFF
+  failedChecks:
+    - CHK_BUILD
+  checkerSummary: GATE_BUILD_HANDOFF failed before formal slice-content review because both claimed implementation references resolve under app/backend/app/backend from backendAppRoot '.', while build, unit-test, and lint commands passed. The handoff must name files reachable from the declared backend root so the results behavior work can be verified.
+  gateFailureContext:
+    - gateId: GATE_BUILD_HANDOFF
+      checkId: CHK_BUILD
+      commandRef: buildOutput.artifactRefs
+      resolvedCommand: not-applicable-on-disk-probe
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds:
+      - CHK_BUILD
+    primaryCommand: mvn -B -ntp -q -DskipTests package
+    notes: A successful compile or package command is not a substitute for providing implementation artifact references that Backend Check can resolve from backendAppRoot.
+  primaryFailures:
+    - gateId: GATE_BUILD_HANDOFF
+      checkId: CHK_BUILD
+      symptom: Both claimed implementation artifact refs were unreadable relative to backendAppRoot.
+      rootCauseHypothesis: Build handoff used workspace-prefixed app/backend paths while the configured backend root is already the backend application directory.
+      requiredOutcome: Emit artifactRefs that resolve from backendAppRoot and retain at least one on-disk implementation file plus the reports/build/backend build-report ref.
+      blocking: true
+      observed: app/backend/src/test/java/com/example/scan/ResultsBehaviorTest.java resolved under app/backend/app/backend.
+      expected: A minimal read of every non-report artifact ref succeeds from backendAppRoot.
+  targets:
+    - suite: ResultsBehaviorTest
+      test: handoff artifact reference
+      operation: getResults
+      observed: app/backend/src/test/java/com/example/scan/ResultsBehaviorTest.java is not reachable from backendAppRoot '.'
+      expected: src/test/java/com/example/scan/ResultsBehaviorTest.java or another backend-root-relative implementation reference is readable.
+  editScope:
+    allowedEditPaths:
+      - src/test/java/com/example/scan/ResultsBehaviorTest.java
+      - locks/behavior-decisions.lock.yaml
+    suspectPaths:
+      - path: Backend Build handoff artifactRefs
+        confidence: high
+    forbiddenOrOutOfScope:
+      - reports/check/backend/**
+      - reports/feedback/backend/**
+      - unrelated frontend files
+  buildAgentBrief:
+    - Run mvn -B -ntp -q -DskipTests package from backendAppRoot and confirm the repository remains buildable before editing the handoff.
+    - Call list_directory on '.' to establish the backend-root-relative paths.
+    - Read the implicated results test and behavior decisions lock using backend-root-relative paths.
+    - Preserve the existing getResults implementation and tests; correct the Backend Build artifactRefs to paths readable from backendAppRoot, using write_file or create_directory only if an implicated file is actually absent.
+    - Re-emit the behavior-evidence and build-report refs under reports/build/backend/ alongside at least one valid implementation ref.
+  nonGoals:
+    - Do not weaken or remove result-transition tests.
+    - Do not refactor unrelated backend or frontend code.

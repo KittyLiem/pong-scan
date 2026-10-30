@@ -1,0 +1,152 @@
+artifactRefs:
+- reports/integration/slices/slice-07-kennisgebieden-selecteren.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/scan/api/ScanResource.java
+        purpose: verify PATCH updateScan route, operation ID, and bearer enforcement
+      - path: backend/src/main/java/com/example/scan/api/ScanDtos.java
+        purpose: verify request and response DTO alignment
+      - path: backend/src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+        purpose: verify all owned transitions start from API fixtures and exercise
+          updateScan
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/main/java/com/example/scan/api/ScanDtos.java
+      - app/backend/src/main/java/com/example/scan/api/ScanResource.java
+      - app/backend/src/main/java/com/example/scan/application/ScanService.java
+      - app/backend/src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: verify scoped route registration and authenticated route guard
+      - path: frontend/src/app/core/scans/scan.service.ts
+        purpose: verify updateScan request DTO, versioned URI, bearer header, and
+          problem-details parsing
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+        purpose: verify updateScan UI action, selected domains, goals, revision mode,
+          and API-sourced version
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.html
+        purpose: verify transition-hosting primary save action and scoped controls
+      - path: frontend/src/app/scan-overview/scan-overview.component.ts
+        purpose: verify Scanoverzicht route page binding and navigation into the update
+          flow
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/core/scans/scan.service.ts
+      - app/frontend/src/app/core/scans/scan.service.spec.ts
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.html
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  dualStreamAuthority: combinedSliceScope
+  endpointParity:
+    method: PATCH
+    operationId: updateScan
+    path: /v1/scans/{scanId}
+    source: endpointParityPreGate
+    valid: true
+  policyAlignment:
+    authTransport: bearer Authorization header is attached by frontend and enforced
+      by backend
+    errorShape: frontend parses and backend tests application/problem+json with type,
+      title, and status
+    optimisticLocking: frontend sends API-sourced version and backend DTO requires
+      nonnegative version
+    pagination: not applicable to scoped PATCH operation
+    versioning: frontend and backend both use URI-versioned /v1/scans/{scanId}
+  transitionCoverage:
+    backendEvidenceSource: backendSliceContext.behaviorEvidencePreGate and upstreamEvidence.backendCheckOutput.GATE_BEHAVIOR_EVIDENCE
+    backendVerifiedCount: 8
+    expectedCount: 8
+    fixtureStart: api-fixture
+    testFile: backend/src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+    uiAction: frontend maturity assessment saveContext invokes ScanService.update
+      for updateScan
+  upstreamChecks:
+    backendBuildStatus: ok
+    backendStatus: ok
+    frontendBuildStatus: ok
+    frontendStatus: ok
+finishedAt: '2026-10-13T16:08:54Z'
+gates:
+- evidence:
+  - frontendSliceContext.contractSubset.operations[updateScan]
+  - frontendSliceContext.uiScopeRef.pageBindings[route_scan_overview,route_assessment]
+  - endpointParityPreGate.valid
+  - upstreamEvidence.frontendCheckOutput.status
+  - frontend/src/app/core/scans/scan.service.ts
+  - frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+  - frontend/src/app/app.routes.ts
+  - apiChoiceLock.authBindingPolicy
+  - contractDecisionsLock.errorModel
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+  - backendSliceContext.contractSubset.operations[updateScan]
+  - backendSliceContext.behaviorEvidencePreGate
+  - endpointParityPreGate.valid
+  - upstreamEvidence.backendCheckOutput.status
+  - backend/src/main/java/com/example/scan/api/ScanResource.java
+  - backend/src/main/java/com/example/scan/api/ScanDtos.java
+  - backend/src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  - apiChoiceLock.versioningStrategy
+  - contractDecisionsLock.authModel
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+  - combinedSliceScope enables frontend and backend
+  - interfaceContractSubset operation updateScan is PATCH /v1/scans/{scanId}
+  - endpointParityPreGate valid with no missingFrontend or missingBackend endpoints
+  - frontend and backend checks are ok
+  - frontend and backend agree on bearer auth, problem-details, v1 URI, DTO fields,
+    and version locking
+  - precomputedDiskVerification confirms both stream handoffs with no missing paths
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+  - backendSliceContext.behaviorSubset.transitions contains 8 owned updateScan mutations
+  - backendSliceContext.behaviorEvidencePreGate verifies all 8 transition IDs
+  - upstreamEvidence.backendCheckOutput GATE_BEHAVIOR_EVIDENCE passed with api-fixture
+    setup
+  - backend/src/test/java/com/example/scan/ScanUpdateBehaviorTest.java contains matching
+    API tests
+  - frontend/src/app/maturity-assessment/maturity-assessment.component.ts and template
+    implement the updateScan save action
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- interfaceContractSubset
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- combinedSliceScope
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-07-kennisgebieden-selecteren
+startedAt: '2026-10-13T16:08:54Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- evidence: Upstream checks reported only non-blocking Sass, Vite, and local OpenTelemetry
+    warnings; all authoritative build, test, lint, security, and handoff gates passed.
+  gateId: GATE_SLICE_INTEGRATION

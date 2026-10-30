@@ -1,0 +1,135 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState: []
+  scenarios:
+  - id: resultaten_exporteren.s1
+    text: Een bevoegde gebruiker kan een PDF van een afgeronde scan exporteren.
+    transitionIds:
+    - resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+  transitions:
+  - from: intern resultaat
+    id: resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+    kind: recompute
+    operationId: exportScanPdf
+    to: PDF geëxporteerd
+  - from: doelcontext opgeslagen
+    id: resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf
+    kind: recompute
+    operationId: exportScanPdf
+    to: doelcontext opgenomen in PDF
+  unspecified: []
+capabilityId: resultaten_exporteren
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: resultaten_exporteren
+    operationIds:
+    - exportScanPdf
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - exportScanPdf
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}/export
+    method: GET
+    operationId: exportScanPdf
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    path: /v1/scans/{scanId}/export
+    responses:
+      '200':
+        content:
+          application/pdf:
+            schema:
+              format: binary
+              type: string
+        description: PDF containing the persisted result view
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+      - resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf
+    capabilityId: resultaten_exporteren
+    contractScopeRef:
+      capabilityKey: resultaten_exporteren
+      operationIds:
+      - exportScanPdf
+    dependsOnSlices:
+    - slice-10-maturiteitsscores-berekenen
+    - slice-13-ontwikkelprioriteiten-selecteren
+    sliceId: slice-14-resultaten-exporteren
+    sliceIndex: 13
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - exportScanPdf
+        pageKey: Scanresultaten en ontwikkelprioriteiten
+        routeId: route_results
+      pageKeys:
+      - Scanresultaten en ontwikkelprioriteiten
+      routeIds:
+      - route_results
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-14-resultaten-exporteren
+sliceType: paired-api

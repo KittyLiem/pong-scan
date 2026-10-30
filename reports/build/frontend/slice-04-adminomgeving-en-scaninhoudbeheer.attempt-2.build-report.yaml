@@ -1,0 +1,44 @@
+artifactRefs:
+- frontend/src/app/maturity-assessment/maturity-assessment.component.html
+- frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 8425
+errors: []
+finishedAt: '2026-10-13T15:05:12.425Z'
+gates:
+- command: npx npm run test -- --no-watch
+  evidence: 'Full configured frontend suite completed locally: 9 test files and 26
+    tests passed.'
+  exitCode: 0
+  id: LOCAL_UNIT_TEST_DIAGNOSTIC
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision:
+    apiChoiceLock: 1.0.0
+    contractDecisionsLock: 1.0.0
+    interfaceContractSubset: inline-slice-authority
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+startedAt: '2026-10-13T15:05:04.000Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Removed static zero progress quantities from the assessment page. Because
+  the applicable model response contains no scan-progress fields, the UI now visibly
+  states that progress is unavailable. Added a focused DOM regression test prohibiting
+  the former invented quantities.
+warnings:
+- The deterministic UI initial-state source-review gate is owned by Frontend Check
+  and was not asserted as a formal pass; the reported source pattern was repaired
+  and covered by a focused DOM test.

@@ -1,0 +1,174 @@
+artifactRefs:
+- reports/integration/slices/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/answer/api/AnswerResource.java
+        purpose: Verify saveAnswer operation ID, PUT route, and bearer enforcement.
+      - path: backend/src/main/java/com/example/answer/api/AnswerDtos.java
+        purpose: Verify request and response DTO fields against the contract subset.
+      - path: backend/src/main/java/com/example/answer/application/AnswerService.java
+        purpose: Verify transactional persistence, version conflict behavior, and
+          response construction.
+      - path: backend/src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+        purpose: Verify Authorization-header bearer token validation.
+      - path: backend/src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+        purpose: Verify API-fixture transition coverage and problem-details/security
+          behavior.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/main/java/com/example/answer/application/AnswerService.java
+      - app/backend/src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify route_assessment binding and authenticated route guard.
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+        purpose: Verify the saveAnswer UI action, request assembly, optimistic version
+          sourcing, and response handling.
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.html
+        purpose: Verify that the scoped page hosts saveAnswer as an enabled primary
+          form action.
+      - path: frontend/src/app/core/scans/scan.service.ts
+        purpose: Verify PUT path, DTO types, bearer Authorization header, and problem-details
+          parsing.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    note: Stream-local counterpart flags were treated as ownership metadata, not as
+      a contradiction.
+    source: combinedSliceScope
+  endpointParity:
+    method: PUT
+    operationId: saveAnswer
+    path: /v1/scans/{scanId}/answers/{questionId}
+    source: endpointParityPreGate
+    valid: true
+  upstreamChecks:
+    backendStatus: ok
+    evaluatedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    - CHK_FRONTEND_AUTH_STORAGE
+    - CHK_CONTRACT_VALID
+    - CHK_SLICE_INTEGRATION
+    frontendStatus: ok
+finishedAt: '2026-10-13T16:24:45Z'
+gates:
+- evidence:
+    observations:
+    - app.routes.ts binds scans/:scanId/assessment to MaturityAssessmentComponent
+      with authenticatedGuard.
+    - The page form invokes saveAnswer and forwards optionId, version, explanation,
+      and evidenceReferences.
+    - ScanService issues PUT /v1/scans/{scanId}/answers/{questionId} with an Authorization
+      bearer header.
+    - SavedAnswer fields and problem-details fields match the contract; successful
+      response versions are reused.
+    - URI versioning uses /v1; pagination and POST idempotency policies do not apply
+      to this PUT operation.
+    payloadSections:
+    - frontendSliceContext.contractSubset.operations[saveAnswer]
+    - frontendSliceContext.uiScopeRef.pageBindings[route_assessment]
+    - interfaceContractSubset.operations[saveAnswer]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observations:
+    - AnswerResource exposes PUT /v1/scans/{scanId}/answers/{questionId} as operationId
+      saveAnswer.
+    - AnswerDtos matches required optionId and version plus optional explanation and
+      evidenceReferences, and returns all required SavedAnswer fields.
+    - BearerAuthenticated and BearerAuthenticationFilter enforce Authorization-header
+      bearer authentication.
+    - Transactional AnswerService enforces optimistic version conflicts and constructs
+      the contract response.
+    - Backend tests prove application/problem+json with required type, title, and
+      status fields for 401 and 409 paths.
+    payloadSections:
+    - backendSliceContext.contractSubset.operations[saveAnswer]
+    - interfaceContractSubset.operations[saveAnswer]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observations:
+    - Deterministic endpoint parity passed for saveAnswer.
+    - Frontend and backend agree on PUT, the /v1 path, bearer authentication, DTO
+      fields, optimistic version exchange, and problem-details errors.
+    - Both upstream check outputs are ok and both enabled streams have deterministic
+      on-disk handoff evidence.
+    payloadSections:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - precomputedDiskVerification
+    - upstreamEvidence.frontendCheckOutput
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    coveredTransitionIds:
+    - beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+    - beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+    - beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+    observations:
+    - All three owned saveAnswer transition IDs are present in behaviorEvidencePreGate
+      and mapped to SaveAnswerBehaviorTest methods starting from api-fixture.
+    - The scoped assessment page hosts saveAnswer as its primary answer form submission
+      and calls ScanService.saveAnswer.
+    payloadSections:
+    - backendSliceContext.behaviorSubset.transitions
+    - behaviorEvidencePreGate
+    - upstreamEvidence.backendCheckOutput.GATE_BEHAVIOR_EVIDENCE
+    - frontendSliceContext.uiScopeRef.pageBindings[route_assessment]
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- combinedSliceScope
+- interfaceContractSubset
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+startedAt: '2026-10-13T16:24:45Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Upstream build attempt metadata is attempt 2 while this integration artifact is
+  attempt 1; this is consistent with repaired builds followed by the first integration
+  attempt.
+- Existing upstream frontend Sass and Vite warnings and backend OpenTelemetry export
+  warnings were non-blocking because all authoritative checks exited successfully.

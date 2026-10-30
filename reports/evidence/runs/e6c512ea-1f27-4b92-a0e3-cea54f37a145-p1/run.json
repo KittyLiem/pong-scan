@@ -1,0 +1,150 @@
+{
+  "schemaVersion" : "1",
+  "run" : {
+    "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p1",
+    "workflowId" : "vs-phase-1-readiness",
+    "status" : "SUCCEEDED",
+    "startedAt" : 1.791900207618096E9,
+    "finishedAt" : 1.7919002200784168E9,
+    "input" : {
+      "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p1",
+      "publishLineageId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145"
+    },
+    "recordedAt" : 1.79191421744E9
+  },
+  "steps" : {
+    "validateRequiredBundle" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002084058325E9,
+      "finishedAt" : 1.7919002084058325E9,
+      "attempts" : [ {
+        "attemptId" : "validateRequiredBundle-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002084058325E9,
+        "finishedAt" : 1.7919002084058325E9,
+        "agent" : false
+      } ]
+    },
+    "validateResolveReport" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002147160888E9,
+      "finishedAt" : 1.7919002147160888E9,
+      "attempts" : [ {
+        "attemptId" : "validateResolveReport-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002147160888E9,
+        "finishedAt" : 1.7919002147160888E9,
+        "agent" : false
+      } ]
+    },
+    "persistReadinessReports" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002146018867E9,
+      "finishedAt" : 1.7919002146018867E9,
+      "attempts" : [ {
+        "attemptId" : "persistReadinessReports-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002146018867E9,
+        "finishedAt" : 1.7919002146018867E9,
+        "agent" : false
+      } ]
+    },
+    "validateReadinessArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900214550395E9,
+      "finishedAt" : 1.791900214550395E9,
+      "attempts" : [ {
+        "attemptId" : "validateReadinessArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900214550395E9,
+        "finishedAt" : 1.791900214550395E9,
+        "agent" : false
+      } ]
+    },
+    "runReadinessValidator" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002085086381E9,
+      "finishedAt" : 1.7919002085086381E9,
+      "attempts" : [ {
+        "attemptId" : "runReadinessValidator-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002085086381E9,
+        "finishedAt" : 1.7919002085086381E9,
+        "agent" : true
+      } ]
+    },
+    "completeRun" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002200784168E9,
+      "finishedAt" : 1.7919002200784168E9,
+      "attempts" : [ {
+        "attemptId" : "completeRun-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002200784168E9,
+        "finishedAt" : 1.7919002200784168E9,
+        "agent" : false
+      } ]
+    },
+    "publishReadiness" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002147451382E9,
+      "finishedAt" : 1.7919002147451382E9,
+      "attempts" : [ {
+        "attemptId" : "publishReadiness-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002147451382E9,
+        "finishedAt" : 1.7919002147451382E9,
+        "agent" : false
+      } ]
+    },
+    "loadResolveReport" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002146569405E9,
+      "finishedAt" : 1.7919002146569405E9,
+      "attempts" : [ {
+        "attemptId" : "loadResolveReport-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002146569405E9,
+        "finishedAt" : 1.7919002146569405E9,
+        "agent" : false
+      } ]
+    },
+    "loadRequiredBundle" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002078896964E9,
+      "finishedAt" : 1.7919002078896964E9,
+      "attempts" : [ {
+        "attemptId" : "loadRequiredBundle-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002078896964E9,
+        "finishedAt" : 1.7919002078896964E9,
+        "agent" : false
+      } ]
+    }
+  },
+  "invalidations" : [ ],
+  "childRuns" : [ ],
+  "terminalOutcome" : {
+    "kind" : "complete",
+    "stepId" : "completeRun",
+    "reachedAt" : 1.7919002200784168E9
+  }
+}

@@ -1,0 +1,438 @@
+behaviorSubset:
+  initialState:
+  - fields:
+      status: unspecified
+    operationId: registerMember
+  - fields:
+      status: aangemeld
+    operationId: createSession
+  scenarios:
+  - id: accounttoegang.s2
+    text: Een bestaande gebruiker kan met geldige gegevens inloggen.
+    transitionIds:
+    - accounttoegang.niet_aangemeld__aangemeld
+  - id: accounttoegang.s4
+    text: Een verlopen sessie kan via opnieuw aanmelden worden hersteld.
+    transitionIds:
+    - accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+  transitions:
+  - from: niet aangemeld
+    id: accounttoegang.niet_aangemeld__aangemeld
+    kind: mutation
+    operationId: createSession
+    to: aangemeld
+  - from: toegang geblokkeerd
+    id: accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+    kind: mutation
+    operationId: createSession
+    to: accounttoegang hersteld
+  unspecified:
+  - id: asm-002
+    text: Zelfbediend herstel van vergeten of onbruikbare inloggegevens is niet beschreven.
+  - id: asm-006
+    text: Een eerdere scope noemt accounts en login buiten scope, maar accounttoegang
+      blijft vereist door de aanmeldpagina.
+capabilityId: accounttoegang
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: accounttoegang
+    operationIds:
+    - registerMember
+    - createSession
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - registerMember
+  - createSession
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/auth/registrations
+    method: POST
+    operationId: registerMember
+    parameters:
+    - in: header
+      name: X-Idempotency-Key
+      required: true
+      schema:
+        minLength: 1
+        type: string
+      x-ref: '#/components/parameters/IdempotencyKey'
+    path: /v1/auth/registrations
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              accountIdentifier:
+                type: string
+              credential:
+                format: password
+                type: string
+            required:
+            - accountIdentifier
+            - credential
+            type: object
+            x-ref: '#/components/schemas/RegistrationInput'
+      required: true
+    responses:
+      '201':
+        content:
+          application/json:
+            schema:
+              properties:
+                accountIdentifier:
+                  type: string
+                id:
+                  format: uuid
+                  type: string
+              required:
+              - id
+              - accountIdentifier
+              type: object
+              x-ref: '#/components/schemas/Member'
+        description: Member registered
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security: []
+  - apiBasePath: ''
+    fullPath: /v1/auth/sessions
+    method: POST
+    operationId: createSession
+    parameters:
+    - in: header
+      name: X-Idempotency-Key
+      required: true
+      schema:
+        minLength: 1
+        type: string
+      x-ref: '#/components/parameters/IdempotencyKey'
+    path: /v1/auth/sessions
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              accountIdentifier:
+                type: string
+              credential:
+                format: password
+                type: string
+              desiredRoute:
+                type: string
+            required:
+            - accountIdentifier
+            - credential
+            type: object
+            x-ref: '#/components/schemas/SessionInput'
+      required: true
+    responses:
+      '201':
+        content:
+          application/json:
+            schema:
+              properties:
+                accessToken:
+                  type: string
+                desiredRoute:
+                  type: string
+                tokenType:
+                  const: Bearer
+                  type: string
+              required:
+              - accessToken
+              - tokenType
+              type: object
+              x-ref: '#/components/schemas/Session'
+        description: Authenticated session
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - accounttoegang.niet_aangemeld__aangemeld
+      - accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+    capabilityId: accounttoegang
+    contractScopeRef:
+      capabilityKey: accounttoegang
+      operationIds:
+      - registerMember
+      - createSession
+    dependsOnSlices: []
+    sliceId: slice-01-accounttoegang
+    sliceIndex: 0
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - registerMember
+        - createSession
+        pageKey: Aanmelden en organisatie starten
+        routeId: route_auth_start
+      pageKeys:
+      - Aanmelden en organisatie starten
+      routeIds:
+      - route_auth_start
+frontendContext:
+  generationProfile:
+    deliveryTopology: single-repo
+    frontend:
+      enabled: true
+      uiContractPolicy:
+        pageCoverage: bijection
+        requireContentPagePerProductPage: true
+        requireRoutePerProductPage: true
+      uiFidelityPolicy:
+        requireMockupPerPage: true
+        structuralParity:
+          enabled: true
+          minMediaCoverage: 0.5
+          minSectionCoverage: 0.5
+    revision: 1.0.0
+scope:
+  backend:
+    enabled: false
+  frontend:
+    enabled: true
+sliceId: slice-01-accounttoegang
+sliceType: paired-api
+uiScopeRef:
+  appShellMockupRef: mockups/app-shell.lock.html
+  contributesToPage: []
+  mockupRefs:
+  - mockups/aanmelden-en-organisatie-starten.lock.html
+  navigation:
+    defaultRouteByState:
+      anonymous: route_auth_start
+      member_with_organization: route_scan_overview
+      member_without_organization: route_auth_start
+    globalEntries:
+    - id: nav_auth
+      label: Aanmelden
+      routeId: route_auth_start
+      visibleWhen: anonymous
+    - id: nav_logout
+      label: Afmelden
+      routeId: route_auth_start
+      visibleWhen: member
+    postAuthRouting:
+      desiredRoutePolicy: restore_allowed_member_route
+      fallbackRouteId: route_scan_overview
+      organizationRequiredRouteId: route_auth_start
+  pageBindings:
+  - allowedOperationIds: []
+    mockupRef: mockups/aanmelden-en-organisatie-starten.lock.html
+    ownedOperationIds:
+    - registerMember
+    - createSession
+    page:
+      apiRefs:
+      - method: POST
+        operationId: createOrganization
+        path: /v1/organizations
+      - method: POST
+        operationId: createScan
+        path: /v1/organizations/{organizationId}/scans
+      - method: POST
+        operationId: createSession
+        path: /v1/auth/sessions
+      - method: GET
+        operationId: getActiveModel
+        path: /v1/models/active
+      - method: POST
+        operationId: registerMember
+        path: /v1/auth/registrations
+      contentKeys:
+      - account_access
+      - organization_context
+      - scan_start_intro
+      - start_scan
+      forms:
+      - contentKey: account_access
+        fields:
+        - accountIdentifier
+        - credential
+        id: account_access_form
+      - contentKey: organization_context
+        fields:
+        - name
+        - chamberOfCommerceNumber
+        - additionalInformation
+        - industry
+        id: organization_context_form
+      - contentKey: start_scan
+        fields:
+        - name
+        - assessmentPeriod
+        - initialSelectedDomainIds
+        id: first_scan_form
+      goals:
+      - Inloggen of een account aanmaken
+      - Organisatienaam en basiscontext vastleggen
+      - Een eerste maturity scan starten
+      - Gebruiker naar het scanoverzicht leiden
+      pageKey: Aanmelden en organisatie starten
+      pageTitle: Aanmelden en organisatie starten
+      primaryActions:
+      - apiRef:
+          method: POST
+          operationId: createOrganization
+          path: /v1/organizations
+        id: create_organization
+        label: Organisatie vastleggen
+      - apiRef:
+          method: GET
+          operationId: getActiveModel
+          path: /v1/models/active
+        id: load_active_model
+        label: Beschikbaarheid van het beoordelingsmodel controleren
+      - apiRef:
+          method: POST
+          operationId: registerMember
+          path: /v1/auth/registrations
+        id: register_account
+        label: Account aanmaken
+      - apiRef:
+          method: POST
+          operationId: createSession
+          path: /v1/auth/sessions
+        id: sign_in
+        label: Aanmelden
+      - apiRef:
+          method: POST
+          operationId: createScan
+          path: /v1/organizations/{organizationId}/scans
+        id: start_first_scan
+        label: Eerste scan starten
+      routeId: route_auth_start
+      states:
+      - contentKey: scan_start_intro
+        description: Toon dat een scan pas kan starten wanneer modelinhoud beschikbaar
+          is.
+        id: model_unavailable
+    pageKey: Aanmelden en organisatie starten
+    route:
+      access: public
+      id: route_auth_start
+      pageKey: Aanmelden en organisatie starten
+      path: /start
+      title: Aanmelden en organisatie starten
+    routeId: route_auth_start
+    sectionOutline:
+      exists: true
+      id: Aanmelden en organisatie starten
+      outline:
+        counts:
+          buttons: 4
+          cards: 0
+          fields: 18
+          formLabels: 18
+          forms: 1
+          headings: 2
+          images: 0
+          links: 0
+          navLabels: 0
+          sections: 1
+        formLabels:
+        - Naam
+        - Zakelijk e-mailadres
+        - Wachtwoord
+        - Organisatienaam
+        - Sector
+        - Data Ethics
+        - Data Governance
+        - Data Architecture
+        - Data Modeling & Design
+        - Data Storage & Operations
+        - Data Security
+        - Data Integration & Operability
+        - Document & Content Management
+        - Reference & Master Data
+        - Data Warehousing & BI
+        - Metadata Management
+        - Data Quality
+        - Ik ga akkoord met de voorwaarden en het privacybeleid.
+        headings:
+        - Start met de data maturity scan
+        - Aanmelden en organisatie starten
+        majorSectionSlugs:
+        - start-met-de-data-maturity-scan
+        - aanmelden-en-organisatie-starten
+        navLabels: []
+      path: mockups/aanmelden-en-organisatie-starten.lock.html
+      sourceItem:
+        description: Toegangspunt voor gebruikers om in te loggen en hun eerste organisatiecontext
+          te starten.
+        goals:
+        - Inloggen of een account aanmaken
+        - Organisatienaam en basiscontext vastleggen
+        - Een eerste maturity scan starten
+        - Gebruiker naar het scanoverzicht leiden
+        key: Aanmelden en organisatie starten
+  pageKeys:
+  - Aanmelden en organisatie starten
+  projectContextMockupRef: mockups/project_context.lock.md
+  routeIds:
+  - route_auth_start
+  uiSectionsRef: locks/ui-sections.lock.yaml

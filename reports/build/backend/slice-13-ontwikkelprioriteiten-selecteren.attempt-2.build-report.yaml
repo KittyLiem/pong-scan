@@ -1,0 +1,55 @@
+artifactRefs:
+- src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+- reports/build/backend/slice-13-ontwikkelprioriteiten-selecteren.behavior-evidence.yaml
+- reports/build/backend/slice-13-ontwikkelprioriteiten-selecteren.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 121000
+errors: []
+finishedAt: '2026-10-13T17:17:28Z'
+gates:
+- authority: diagnostic-only
+  checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: Reproduced 70 tests with 2 errors in DevelopmentPriorityBehaviorTest;
+    both aborted at complete() because Integer was cast to Long.
+  exitCode: 1
+  phase: pre-fix reproduction
+  scope: full backend test suite
+- authority: diagnostic-only
+  checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: The same mapped unit-test command completed successfully after Number.longValue()
+    conversion.
+  exitCode: 0
+  phase: post-fix verification
+  scope: full backend test suite
+inputRefs:
+- name: backendSliceContext
+  source: workflow-input
+- name: interfaceContractSubset
+  source: workflow-input
+- name: reprocessInputs
+  source: workflow-input
+- name: GATE_TESTS failure evidence
+  source: workflow-input
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+startedAt: '2026-10-13T17:15:27Z'
+status: ok
+stepId: repairBackendBuild
+stream: backend
+summary: Changed the completion helper's JsonPath version extraction from an implicit
+  Long cast to Number.longValue(), directly addressing both reported behavior-test
+  fixture errors while preserving all behavior and authentication assertions.
+warnings:
+- Build and lint commands were not rerun because the repair contract scoped this attempt
+  to CHK_UNIT_TESTS and reported those other checks as passing.
+- OTLP export attempts logged connection-refused warnings during tests; they did not
+  prevent the post-fix command from exiting 0.
+- The existing dec-013 behavior decision was inspected and already matched the contract
+  enum; it was left unchanged under the narrow edit scope.

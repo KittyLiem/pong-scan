@@ -1,0 +1,244 @@
+behaviorSubset:
+  initialState: []
+  scenarios: []
+  transitions: []
+  unspecified:
+  - id: dec-012
+    text: Besluit vereist over classificatie van sterktes, gaps en ontwikkelpunten;
+      aanbevolen zijn domeinspecifieke grenzen en teksten.
+  - id: asm-010
+    text: Aanbevelingen gelden als concrete ontwikkelpunten; een zelfstandige roadmapgenerator
+      is niet toegevoegd.
+capabilityId: resultaatinzichten_en_doelcontext
+contractSubset:
+  contractScopeRef:
+    capabilityKey: resultaatinzichten_en_doelcontext
+    operationIds: []
+  operationIds: []
+  operations: []
+  slice:
+    capabilityId: resultaatinzichten_en_doelcontext
+    contractScopeRef:
+      capabilityKey: resultaatinzichten_en_doelcontext
+      operationIds: []
+    dependsOnSlices:
+    - slice-10-maturiteitsscores-berekenen
+    sliceId: slice-12-resultaatinzichten-en-doelcontext
+    sliceIndex: 11
+    sliceType: ui-only
+    streamScopeRef:
+      backend:
+        enabled: false
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        bindingKind: route-only
+        ownedOperationIds: []
+        pageKey: Scanresultaten en ontwikkelprioriteiten
+        routeId: route_results
+      pageKeys:
+      - Scanresultaten en ontwikkelprioriteiten
+      routeIds:
+      - route_results
+frontendContext:
+  generationProfile:
+    deliveryTopology: single-repo
+    frontend:
+      enabled: true
+      uiContractPolicy:
+        pageCoverage: bijection
+        requireContentPagePerProductPage: true
+        requireRoutePerProductPage: true
+      uiFidelityPolicy:
+        requireMockupPerPage: true
+        structuralParity:
+          enabled: true
+          minMediaCoverage: 0.5
+          minSectionCoverage: 0.5
+    qualityBar: mvp
+    revision: 1.0.0
+scope:
+  backend:
+    enabled: false
+  frontend:
+    enabled: true
+sliceId: slice-12-resultaatinzichten-en-doelcontext
+sliceType: ui-only
+uiScopeRef:
+  appShellMockupRef: mockups/app-shell.lock.html
+  contributesToPage: []
+  mockupRefs:
+  - mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+  navigation:
+    defaultRouteByState:
+      anonymous: route_auth_start
+      member_with_organization: route_scan_overview
+      member_without_organization: route_auth_start
+    globalEntries:
+    - id: nav_results
+      label: Resultaten
+      routeId: route_results
+      visibleWhen: member_with_completed_scan
+    postAuthRouting:
+      desiredRoutePolicy: restore_allowed_member_route
+      fallbackRouteId: route_scan_overview
+      organizationRequiredRouteId: route_auth_start
+  pageBindings:
+  - allowedOperationIds: []
+    bindingKind: route-only
+    mockupRef: mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+    ownedOperationIds: []
+    page:
+      apiRefs:
+      - method: GET
+        operationId: exportScanPdf
+        path: /v1/scans/{scanId}/export
+      - method: GET
+        operationId: getResults
+        path: /v1/scans/{scanId}/results
+      - method: PUT
+        operationId: saveDevelopmentPriorities
+        path: /v1/scans/{scanId}/development-priorities
+      contentKeys:
+      - scan_results
+      - score_summary
+      - domain_scores
+      - result_insights
+      - strengths
+      - development_gaps
+      - development_priorities
+      - action_overview
+      - result_export
+      - refine_assessment
+      forms:
+      - contentKey: development_priorities
+        fields:
+        - developmentPointId
+        - impact
+        - urgency
+        - selected
+        id: development_priorities_form
+      goals:
+      - Totale maturiteitsscore en domeinscores bekijken
+      - Sterktes, gaps en concrete ontwikkelpunten begrijpen
+      - Prioriteiten selecteren op impact en urgentie
+      - Resultaten en actieoverzicht delen of exporteren
+      - Terugkeren naar de beoordeling om antwoorden te verfijnen
+      lists:
+      - contentKey: domain_scores
+        id: domain_score_list
+        itemType: domain_score
+      - contentKey: result_insights
+        id: insight_list
+        itemType: development_point
+      - contentKey: action_overview
+        id: action_overview_list
+        itemType: selected_development_priority
+      pageKey: Scanresultaten en ontwikkelprioriteiten
+      pageTitle: Scanresultaten en ontwikkelprioriteiten
+      primaryActions:
+      - apiRef:
+          method: GET
+          operationId: exportScanPdf
+          path: /v1/scans/{scanId}/export
+        id: export_results
+        label: Resultaten exporteren
+      - apiRef:
+          method: GET
+          operationId: getResults
+          path: /v1/scans/{scanId}/results
+        id: load_results
+        label: Resultaten laden
+      - apiRef:
+          method: PUT
+          operationId: saveDevelopmentPriorities
+          path: /v1/scans/{scanId}/development-priorities
+        id: save_development_priorities
+        label: Ontwikkelprioriteiten opslaan
+      routeId: route_results
+      states:
+      - contentKey: scan_results
+        description: Toon API-resultaten zonder vaste voorbeeldscore.
+        id: results_available
+      - contentKey: strengths
+        description: Groepeer teruggegeven inzichten als sterktes, gaps en ontwikkelpunten.
+        id: strengths_and_gaps
+      - contentKey: development_gaps
+        description: De benoemde mockupaanbevelingen zijn structurele voorbeelden;
+          toon uitsluitend ontwikkelpunten uit de API.
+        id: mock_recommendations_structural_only
+      - contentKey: refine_assessment
+        description: Navigeer naar de beoordeling; wijziging gebruikt daar de scanoperaties.
+        id: refinement_navigation
+    pageKey: Scanresultaten en ontwikkelprioriteiten
+    route:
+      access: member
+      guard: authenticated_with_organization
+      id: route_results
+      navigation:
+        parentRouteId: route_scan_overview
+      pageKey: Scanresultaten en ontwikkelprioriteiten
+      path: /scans/:scanId/results
+      title: Scanresultaten en ontwikkelprioriteiten
+    routeId: route_results
+    sectionOutline:
+      exists: true
+      id: Scanresultaten en ontwikkelprioriteiten
+      outline:
+        counts:
+          buttons: 5
+          cards: 6
+          fields: 4
+          formLabels: 0
+          forms: 0
+          headings: 11
+          images: 0
+          links: 0
+          navLabels: 0
+          sections: 3
+        formLabels: []
+        headings:
+        - Scanresultaten en ontwikkelprioriteiten
+        - 3,2 / 5
+        - Scores per domein
+        - Wat valt op?
+        - Sterktes om op voort te bouwen
+        - Belangrijkste ontwikkelgaps
+        - Aanbevolen ontwikkelprioriteiten
+        - Benoem data-eigenaren en leg besluitrechten vast
+        - Start monitoring voor kritieke data-elementen
+        - Ontwikkel een rolgericht datavaardighedenprogramma
+        - Koppel data-initiatieven aan meetbare organisatiedoelen
+        majorSectionSlugs:
+        - scanresultaten-en-ontwikkelprioriteiten
+        - 3-2-5
+        - scores-per-domein
+        - wat-valt-op
+        - sterktes-om-op-voort-te-bouwen
+        - belangrijkste-ontwikkelgaps
+        - aanbevolen-ontwikkelprioriteiten
+        - benoem-data-eigenaren-en-leg-besluitrechten-vast
+        - start-monitoring-voor-kritieke-data-elementen
+        - ontwikkel-een-rolgericht-datavaardighedenprogramma
+        - koppel-data-initiatieven-aan-meetbare-organisatiedoelen
+        navLabels: []
+      path: mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+      sourceItem:
+        description: Resultaatweergave die scores per domein vertaalt naar inzichtelijke
+          ontwikkelpunten en geprioriteerde vervolgstappen.
+        goals:
+        - Totale maturiteitsscore en domeinscores bekijken
+        - Sterktes, gaps en concrete ontwikkelpunten begrijpen
+        - Prioriteiten selecteren op impact en urgentie
+        - Resultaten en actieoverzicht delen of exporteren
+        - Terugkeren naar de beoordeling om antwoorden te verfijnen
+        key: Scanresultaten en ontwikkelprioriteiten
+  pageKeys:
+  - Scanresultaten en ontwikkelprioriteiten
+  projectContextMockupRef: mockups/project_context.lock.md
+  routeIds:
+  - route_results
+  uiSectionsRef: locks/ui-sections.lock.yaml

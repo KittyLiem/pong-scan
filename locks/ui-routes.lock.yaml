@@ -1,0 +1,60 @@
+authoringTimestamp: '2026-03-12T10:00:00Z'
+navigation:
+  defaultRouteByState:
+    anonymous: route_auth_start
+    member_with_organization: route_scan_overview
+    member_without_organization: route_auth_start
+  globalEntries:
+  - id: nav_assessment
+    label: Beoordeling
+    routeId: route_assessment
+    visibleWhen: member_with_active_scan
+  - id: nav_auth
+    label: Aanmelden
+    routeId: route_auth_start
+    visibleWhen: anonymous
+  - id: nav_logout
+    label: Afmelden
+    routeId: route_auth_start
+    visibleWhen: member
+  - id: nav_results
+    label: Resultaten
+    routeId: route_results
+    visibleWhen: member_with_completed_scan
+  - id: nav_scans
+    label: Scanoverzicht
+    routeId: route_scan_overview
+    visibleWhen: member_with_organization
+  postAuthRouting:
+    desiredRoutePolicy: restore_allowed_member_route
+    fallbackRouteId: route_scan_overview
+    organizationRequiredRouteId: route_auth_start
+revision: 1.0.0
+routes:
+- access: member
+  guard: authenticated_with_organization
+  id: route_assessment
+  navigation:
+    parentRouteId: route_scan_overview
+  pageKey: Maturity beoordeling
+  path: /scans/:scanId/assessment
+  title: Maturity beoordeling
+- access: public
+  id: route_auth_start
+  pageKey: Aanmelden en organisatie starten
+  path: /start
+  title: Aanmelden en organisatie starten
+- access: member
+  guard: authenticated_with_organization
+  id: route_results
+  navigation:
+    parentRouteId: route_scan_overview
+  pageKey: Scanresultaten en ontwikkelprioriteiten
+  path: /scans/:scanId/results
+  title: Scanresultaten en ontwikkelprioriteiten
+- access: member
+  guard: authenticated_with_organization
+  id: route_scan_overview
+  pageKey: Scanoverzicht
+  path: /scans
+  title: Scanoverzicht

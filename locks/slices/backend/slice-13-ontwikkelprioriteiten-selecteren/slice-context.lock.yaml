@@ -1,0 +1,215 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState: []
+  scenarios:
+  - id: ontwikkelprioriteiten_selecteren.s2
+    text: De gebruiker kan een ontwikkelpunt selecteren of deselecteren.
+    transitionIds:
+    - ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+  - id: ontwikkelprioriteiten_selecteren.s3
+    text: Geselecteerde ontwikkelpunten verschijnen in het actieoverzicht.
+    transitionIds:
+    - ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+  transitions:
+  - from: ontwikkelprioriteiten niet geselecteerd
+    id: ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+    kind: mutation
+    operationId: saveDevelopmentPriorities
+    to: ontwikkelprioriteiten geselecteerd
+  - from: actieoverzicht onvolledig
+    id: ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+    kind: mutation
+    operationId: saveDevelopmentPriorities
+    to: actieoverzicht samengesteld
+  unspecified:
+  - id: dec-013
+    text: Besluit vereist over de schaal voor impact en urgentie; aanbevolen is Laag,
+      middel en hoog.
+capabilityId: ontwikkelprioriteiten_selecteren
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: ontwikkelprioriteiten_selecteren
+    operationIds:
+    - saveDevelopmentPriorities
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - saveDevelopmentPriorities
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}/development-priorities
+    method: PUT
+    operationId: saveDevelopmentPriorities
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    path: /v1/scans/{scanId}/development-priorities
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              items:
+                items:
+                  properties:
+                    developmentPointId:
+                      format: uuid
+                      type: string
+                    impact:
+                      enum:
+                      - low
+                      - medium
+                      - high
+                      type: string
+                    selected:
+                      type: boolean
+                    urgency:
+                      enum:
+                      - low
+                      - medium
+                      - high
+                      type: string
+                  required:
+                  - developmentPointId
+                  - impact
+                  - urgency
+                  - selected
+                  type: object
+                  x-ref: '#/components/schemas/DevelopmentPriorityInput'
+                type: array
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - items
+            - version
+            type: object
+            x-ref: '#/components/schemas/DevelopmentPrioritiesInput'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                items:
+                  items:
+                    properties:
+                      developmentPointId:
+                        format: uuid
+                        type: string
+                      impact:
+                        enum:
+                        - low
+                        - medium
+                        - high
+                        type: string
+                      selected:
+                        type: boolean
+                      urgency:
+                        enum:
+                        - low
+                        - medium
+                        - high
+                        type: string
+                    required:
+                    - developmentPointId
+                    - impact
+                    - urgency
+                    - selected
+                    type: object
+                    x-ref: '#/components/schemas/DevelopmentPriorityInput'
+                  type: array
+              required:
+              - items
+              type: object
+              x-ref: '#/components/schemas/ActionOverview'
+        description: Development priorities and action overview saved
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+      - ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+    capabilityId: ontwikkelprioriteiten_selecteren
+    contractScopeRef:
+      capabilityKey: ontwikkelprioriteiten_selecteren
+      operationIds:
+      - saveDevelopmentPriorities
+    dependsOnSlices:
+    - slice-10-maturiteitsscores-berekenen
+    sliceId: slice-13-ontwikkelprioriteiten-selecteren
+    sliceIndex: 12
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds:
+        - getScan
+        ownedOperationIds:
+        - saveDevelopmentPriorities
+        pageKey: Scanresultaten en ontwikkelprioriteiten
+        routeId: route_results
+      pageKeys:
+      - Scanresultaten en ontwikkelprioriteiten
+      routeIds:
+      - route_results
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+sliceType: paired-api

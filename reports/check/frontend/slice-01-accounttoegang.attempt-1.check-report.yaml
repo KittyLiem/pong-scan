@@ -1,0 +1,119 @@
+artifactRefs:
+- reports/check/frontend/slice-01-accounttoegang.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 15035
+errors: []
+finishedAt: null
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/core/auth/auth.service.ts
+      reason: verifies createSession and registerMember API client behavior plus bearer-token
+        storage policy
+    - path: src/app/account-access/account-access.component.ts
+      reason: verifies slice route component calls scoped authentication operations
+    - path: src/app/account-access/account-access.component.html
+      reason: verifies mockup-derived page structure
+    - path: src/app/app.routes.ts
+      reason: verifies route_auth_start registration
+    - path: src/app/app.html
+      reason: verifies app-shell navigation
+    missingPaths: []
+    verifiedPaths:
+    - src/app/app.ts
+    - src/app/core/auth/auth.service.ts
+  gateId: GATE_BUILD_HANDOFF
+  outcome: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavLabels:
+    - Aanmelden
+    - Afmelden
+    expectedRoutePaths:
+    - /start
+    observedNavLabels:
+    - Aanmelden
+    - Afmelden
+    observedRoutePaths:
+    - /start
+    routeConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  outcome: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedMinimumStructure:
+      buttons: 4
+      fields: 18
+      forms: 1
+      headings: 2
+    observedVisibleStructure:
+      buttons: 5
+      fields: 18
+      forms: 1
+      headings: 2
+    route: /start
+    templatePath: src/app/account-access/account-access.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  outcome: pass
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    authModel: bearer/JWT
+    inspectedPaths:
+    - src/app/core/auth/auth.service.ts
+    prohibitedBrowserStorageUse: false
+    tokenStorage: in-memory signal
+  gateId: GATE_AUTH_STORAGE
+  outcome: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    excerpt: Application bundle generation complete.
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  outcome: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    excerpt: 3 test files and 7 tests passed.
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    workingDirectory: .
+  gateId: GATE_TESTS
+  outcome: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    excerpt: All files pass linting.
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  outcome: pass
+inputRefs:
+- frontendSliceContext
+- frontendAppRoot
+- frontendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  frontendContextRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-01-accounttoegang
+startedAt: null
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Angular Sass emitted a deprecation warning for the global Tailwind @import during
+  build and test.
+- Vitest emitted a future Vite native config-loader compatibility warning; all tests
+  passed using the committed vitest.config.ts.

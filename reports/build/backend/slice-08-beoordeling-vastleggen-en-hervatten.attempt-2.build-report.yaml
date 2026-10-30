@@ -1,0 +1,60 @@
+artifactRefs:
+- src/main/java/com/example/answer/application/AnswerService.java
+- src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-08-beoordeling-vastleggen-en-hervatten.behavior-evidence.yaml
+- reports/build/backend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 141020
+errors: []
+finishedAt: '2026-10-13T16:19:54.260Z'
+gates:
+- authoritative: false
+  checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: 55 tests executed; SaveAnswerBehaviorTest.saveAnswerRejectsStaleVersionWithProblemDetails
+    received HTTP 200 instead of 409.
+  exitCode: 1
+  phase: pre-repair-local-reproduction
+  status: diagnostic-failed
+- authoritative: false
+  checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: Required full unit-test command completed successfully after the narrow
+    repair.
+  exitCode: 0
+  phase: post-repair-local-verification
+  status: diagnostic-passed
+inputRefs:
+- interfaceContractSubset:saveAnswer
+- reprocessInputs:GATE_TESTS
+- backendStackProfile:1.1.0
+- apiChoiceLock:1.0.0
+- contractDecisionsLock:1.0.0
+- conformanceLock:1.0.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+repairEvidence:
+- change: AnswerService now exposes and compares a client version one greater than
+    the zero-based Hibernate persistence version.
+  failure: Stale version 0 was accepted for an existing answer.
+- change: SaveAnswerBehaviorTest now asserts version 1 after creation and confirms
+    optionId, explanation, and persistence version remain unchanged after the 409
+    response.
+  failure: The reported test did not verify that rejected input left persisted data
+    unchanged.
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+startedAt: '2026-10-13T16:17:33.240Z'
+status: ok
+stepId: repairBackendBuild
+stream: backend
+summary: Aligned client-visible answer versions with Hibernate optimistic versions,
+  rejecting stale existing-answer updates before mutation and preserving problem-details
+  behavior.
+warnings:
+- The local test runtime logged non-blocking OpenTelemetry export connection-refused
+  warnings for localhost:4317.
+- Local verification is diagnostic only; Backend Check retains formal gate authority.

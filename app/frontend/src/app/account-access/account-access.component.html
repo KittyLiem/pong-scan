@@ -1,0 +1,115 @@
+<div class="mx-auto w-full max-w-6xl px-4 py-8 md:px-6 md:py-12">
+  <div class="grid gap-10 lg:grid-cols-5 lg:items-start">
+    <header class="lg:col-span-2">
+      <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-content" aria-hidden="true">✓</div>
+      <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">Start met de datavolwassenheidsscan</h1>
+      <p class="mt-4 leading-7 text-secondary-color">Meld je aan, leg de organisatiecontext vast en beoordeel de datavolwassenheid van je organisatie.</p>
+      <ol class="mt-8 space-y-3 text-sm">
+        <li [class.font-semibold]="stage() === 'account'"><span aria-hidden="true">1.</span> Aanmelden of account aanmaken</li>
+        <li [class.font-semibold]="stage() === 'organization'"><span aria-hidden="true">2.</span> Organisatiecontext vastleggen</li>
+        <li><span aria-hidden="true">3.</span> Scan starten vanuit het scanoverzicht</li>
+      </ol>
+    </header>
+
+    <section class="card p-5 md:p-8 lg:col-span-3" aria-labelledby="start-heading">
+      <div aria-live="polite">
+        @if (notice(); as text) {
+          <p class="alert-info mb-5" role="status">{{ text }}</p>
+        }
+      </div>
+
+      @switch (stage()) {
+        @case ('account') {
+          <h2 id="start-heading" class="text-2xl font-semibold">{{ mode() === 'register' ? 'Account aanmaken' : 'Aanmelden' }}</h2>
+          <div class="mt-6 grid grid-cols-2 gap-2" role="group" aria-label="Kies aanmelden of registreren">
+            <button type="button" class="btn" [class.btn-primary]="mode() === 'login'" [class.btn-secondary]="mode() !== 'login'" [attr.aria-pressed]="mode() === 'login'" (click)="setMode('login')">Aanmelden</button>
+            <button type="button" class="btn" [class.btn-primary]="mode() === 'register'" [class.btn-secondary]="mode() !== 'register'" [attr.aria-pressed]="mode() === 'register'" (click)="setMode('register')">Account aanmaken</button>
+          </div>
+
+          <form class="mt-7 space-y-5" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div>
+              <label for="email" class="form-label">Zakelijk e-mailadres</label>
+              <input id="email" type="email" autocomplete="username" formControlName="accountIdentifier" class="form-control"
+                [attr.aria-invalid]="showError(form.controls.accountIdentifier, submitted())" aria-describedby="email-error" />
+              <app-field-error fieldId="email-error" [control]="form.controls.accountIdentifier" [submitted]="submitted()" />
+            </div>
+            <div>
+              <label for="password" class="form-label">Wachtwoord</label>
+              <div class="flex gap-2">
+                <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="credential" class="form-control min-w-0 flex-1"
+                  [attr.autocomplete]="mode() === 'register' ? 'new-password' : 'current-password'"
+                  [attr.aria-invalid]="showError(form.controls.credential, submitted())" aria-describedby="password-hint password-error" />
+                <button type="button" class="btn btn-secondary" [attr.aria-pressed]="showPassword()" aria-controls="password" (click)="showPassword.set(!showPassword())">
+                  {{ showPassword() ? 'Verberg' : 'Toon' }}<span class="sr-only"> wachtwoord</span>
+                </button>
+              </div>
+              <p id="password-hint" class="form-hint">Minimaal 8 tekens.</p>
+              <app-field-error fieldId="password-error" [control]="form.controls.credential" [submitted]="submitted()" />
+            </div>
+            <button type="submit" class="btn btn-primary w-full" [disabled]="busy()">
+              @if (busy()) { Bezig… } @else { {{ mode() === 'register' ? 'Account aanmaken' : 'Aanmelden' }} }
+            </button>
+          </form>
+          @if (problem(); as p) {
+            <div class="alert-error mt-5" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+          }
+        }
+
+        @case ('loading') {
+          <h2 id="start-heading" class="text-2xl font-semibold">Organisatie ophalen</h2>
+          <p class="mt-4" role="status">Je organisatiecontext wordt geladen…</p>
+        }
+
+        @case ('organizations-error') {
+          <h2 id="start-heading" class="text-2xl font-semibold">Organisatie ophalen</h2>
+          @if (organizationsProblem(); as p) {
+            <div class="alert-error mt-5" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+          }
+          <button type="button" class="btn btn-secondary mt-4" (click)="loadOrganizations()">Opnieuw proberen</button>
+        }
+
+        @case ('organization') {
+          <h2 id="start-heading" class="text-2xl font-semibold">Organisatiegegevens vastleggen</h2>
+          <p class="mt-2 text-sm text-secondary-color">Er is nog geen organisatie aan je account gekoppeld. Leg de basiscontext vast om scans te kunnen starten.</p>
+          <form class="mt-6 space-y-5" [formGroup]="organizationForm" (ngSubmit)="submitOrganization()" novalidate>
+            <div>
+              <label for="org-name" class="form-label">Organisatienaam <span aria-hidden="true">*</span></label>
+              <input id="org-name" formControlName="name" class="form-control" autocomplete="organization" required
+                [attr.aria-invalid]="showError(organizationForm.controls.name, orgSubmitted())" aria-describedby="org-name-error" />
+              <app-field-error fieldId="org-name-error" [control]="organizationForm.controls.name" [submitted]="orgSubmitted()" />
+            </div>
+            <div>
+              <label for="org-kvk" class="form-label">KvK-nummer (optioneel)</label>
+              <input id="org-kvk" formControlName="chamberOfCommerceNumber" class="form-control" inputmode="numeric"
+                [attr.aria-invalid]="showError(organizationForm.controls.chamberOfCommerceNumber, orgSubmitted())" aria-describedby="org-kvk-hint org-kvk-error" />
+              <p id="org-kvk-hint" class="form-hint">8 cijfers, bijv. 12345678.</p>
+              <app-field-error fieldId="org-kvk-error" [control]="organizationForm.controls.chamberOfCommerceNumber" [submitted]="orgSubmitted()" patternMessage="Een KvK-nummer bestaat uit precies 8 cijfers." />
+            </div>
+            <div>
+              <label for="org-industry" class="form-label">Sector (optioneel)</label>
+              <input id="org-industry" formControlName="industry" class="form-control"
+                [attr.aria-invalid]="showError(organizationForm.controls.industry, orgSubmitted())" aria-describedby="org-industry-error" />
+              <app-field-error fieldId="org-industry-error" [control]="organizationForm.controls.industry" [submitted]="orgSubmitted()" />
+            </div>
+            <div>
+              <label for="org-info" class="form-label">Aanvullende informatie (optioneel)</label>
+              <textarea id="org-info" rows="4" formControlName="additionalInformation" class="form-control"
+                [attr.aria-invalid]="showError(organizationForm.controls.additionalInformation, orgSubmitted())" aria-describedby="org-info-error"></textarea>
+              <app-field-error fieldId="org-info-error" [control]="organizationForm.controls.additionalInformation" [submitted]="orgSubmitted()" />
+            </div>
+            <button type="submit" class="btn btn-primary w-full" [disabled]="orgBusy()">{{ orgBusy() ? 'Organisatie vastleggen…' : 'Organisatie vastleggen' }}</button>
+          </form>
+          @if (orgProblem(); as p) {
+            <div class="alert-error mt-5" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+          }
+        }
+
+        @case ('ready') {
+          <h2 id="start-heading" class="text-2xl font-semibold">Je bent aangemeld</h2>
+          <p class="mt-2">Organisatie: <strong>{{ organizations.current()?.name }}</strong></p>
+          <a routerLink="/scans" class="btn btn-primary mt-5">Naar het scanoverzicht</a>
+        }
+      }
+    </section>
+  </div>
+</div>

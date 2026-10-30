@@ -1,0 +1,34 @@
+decisions:
+- choice: Voortgang is het begrensde percentage volledig beantwoorde verplichte vragen
+    (0 tot en met 100), duurzaam opgeslagen en bij lezen gevalideerd.
+  unspecifiedId: dec-010
+- choice: Bewijs ondersteunt beveiligde bestandsreferenties en HTTPS-links; binaire
+    inhoud valt buiten de scanportfoliorespons.
+  unspecifiedId: dec-011
+transitions:
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: saveAnswer
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+  testMethod: saveAnswerMovesConceptScanIntoExecution
+  transitionId: beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+- kind: mutation
+  mutatedFields:
+  - optionId
+  - explanation
+  - evidenceReferences
+  operationId: saveAnswer
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+  testMethod: saveAnswerPersistsPreviouslyUnansweredQuestionData
+  transitionId: beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+- kind: mutation
+  mutatedFields:
+  - progress
+  operationId: saveAnswer
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+  testMethod: saveAnswerAfterResumeUpdatesQuestionDataAndProgress
+  transitionId: beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt

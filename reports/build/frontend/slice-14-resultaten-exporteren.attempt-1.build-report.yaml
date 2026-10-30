@@ -1,0 +1,54 @@
+artifactRefs:
+- src/app/core/scans/scan-results.service.ts
+- src/app/core/scans/scan-results.service.spec.ts
+- src/app/scan-results/scan-results.component.ts
+- src/app/scan-results/scan-results.component.html
+- src/app/scan-results/scan-results.component.spec.ts
+- reports/build/frontend/slice-14-resultaten-exporteren.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 35000
+errors: []
+finishedAt: '2026-10-13T17:24:25.000Z'
+gates:
+- check: local-type-check
+  command: npx npm run build
+  evidence: Initial Angular production build completed successfully.
+  exitCode: 0
+  status: passed
+- check: local-type-check-after-final-edit
+  command: npx npm run build
+  evidence: Final Angular production build completed successfully; generated bundle
+    size was 409.38 kB.
+  exitCode: 0
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+- mockups/app-shell.lock.html
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interfaceContractSubset supplied for slice-14-resultaten-exporteren
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-14-resultaten-exporteren
+startedAt: '2026-10-13T17:23:50.000Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added bearer-authenticated GET /v1/scans/{scanId}/export handling, PDF download
+  behavior, export progress and confirmation UI, Problem Details parsing for blob
+  error responses, and automated service/component coverage.
+warnings:
+- The stack profile provided commands.typeCheck, mapped to the full Angular build
+  command; this was used as the local compile preflight.
+- Unit tests and lint were not run locally on this first-pass build because formal
+  full-stream gates belong to Frontend Check.
+- Angular build reported the existing Sass @import deprecation in src/styles.scss;
+  it is unrelated to this slice.

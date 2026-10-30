@@ -1,0 +1,299 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState: []
+  scenarios: []
+  transitions:
+  - from: kennisgebieden niet geselecteerd
+    id: kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+    kind: mutation
+    operationId: updateScan
+    to: kennisgebieden geselecteerd
+  - from: kennisgebieden geselecteerd
+    id: kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+    kind: mutation
+    operationId: updateScan
+    to: selectie opgeslagen
+  - from: selectie opgeslagen
+    id: kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+    kind: mutation
+    operationId: updateScan
+    to: vragenlijst beschikbaar
+  - from: doel niet geselecteerd
+    id: organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+    kind: mutation
+    operationId: updateScan
+    to: doel geselecteerd
+  - from: doel geselecteerd
+    id: organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+    kind: mutation
+    operationId: updateScan
+    to: doel geprioriteerd
+  - from: doelprioriteit niet opgeslagen
+    id: organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+    kind: mutation
+    operationId: updateScan
+    to: doelprioriteit opgeslagen
+  - from: afgerond
+    id: afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+    kind: mutation
+    operationId: updateScan
+    to: opnieuw in beoordeling bij heropeningsbeleid
+  - from: afgerond
+    id: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+    kind: mutation
+    operationId: updateScan
+    to: nieuwe revisie in beoordeling bij revisiebeleid
+  unspecified:
+  - id: asm-014
+    text: Kennisgebiedselectie is een stap binnen Maturity beoordeling omdat geen
+      afzonderlijke pagina bestaat.
+  - id: dec-016
+    text: Besluit vereist of organisatiedoelen optioneel of verplicht zijn; aanbevolen
+      is optionele context.
+  - id: asm-012
+    text: Doelselectie en prioritering zijn stappen binnen Maturity beoordeling omdat
+      geen afzonderlijke pagina bestaat.
+  - id: dec-005
+    text: Besluit vereist over wijzigingen aan afgeronde scans; aanbevolen is een
+      nieuwe revisie binnen dezelfde scan met behoud van eerdere resultaten.
+capabilityId: kennisgebieden_selecteren
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: kennisgebieden_selecteren
+    operationIds:
+    - updateScan
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - updateScan
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}
+    method: PATCH
+    operationId: updateScan
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    path: /v1/scans/{scanId}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              goals:
+                items:
+                  properties:
+                    customText:
+                      type: string
+                    name:
+                      type: string
+                    priority:
+                      enum:
+                      - high
+                      - medium
+                      - low
+                      type: string
+                  required:
+                  - name
+                  - priority
+                  type: object
+                  x-ref: '#/components/schemas/OrganizationGoal'
+                type: array
+              revisionMode:
+                enum:
+                - reopen
+                - new-revision
+                - copy
+                type: string
+              selectedDomainIds:
+                items:
+                  format: uuid
+                  type: string
+                minItems: 1
+                type: array
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - version
+            type: object
+            x-ref: '#/components/schemas/ScanUpdateInput'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                assessmentPeriod:
+                  type: string
+                goals:
+                  items:
+                    properties:
+                      customText:
+                        type: string
+                      name:
+                        type: string
+                      priority:
+                        enum:
+                        - high
+                        - medium
+                        - low
+                        type: string
+                    required:
+                    - name
+                    - priority
+                    type: object
+                    x-ref: '#/components/schemas/OrganizationGoal'
+                  type: array
+                id:
+                  format: uuid
+                  type: string
+                modelSnapshotId:
+                  format: uuid
+                  type: string
+                name:
+                  type: string
+                organizationId:
+                  format: uuid
+                  type: string
+                progress:
+                  maximum: 100
+                  minimum: 0
+                  type: number
+                selectedDomainIds:
+                  items:
+                    format: uuid
+                    type: string
+                  type: array
+                status:
+                  enum:
+                  - concept
+                  - in-progress
+                  - content-complete
+                  - completed
+                  - reopened
+                  type: string
+                updatedAt:
+                  format: date-time
+                  type: string
+                version:
+                  minimum: 0
+                  type: integer
+              required:
+              - id
+              - organizationId
+              - name
+              - assessmentPeriod
+              - status
+              - progress
+              - modelSnapshotId
+              - selectedDomainIds
+              - version
+              - updatedAt
+              type: object
+              x-ref: '#/components/schemas/Scan'
+        description: Scan context, selection, goals, or revision state updated
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+      - kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+      - kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+      - organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+      - organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+      - organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+      - afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+      - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+    capabilityId: kennisgebieden_selecteren
+    contractScopeRef:
+      capabilityKey: kennisgebieden_selecteren
+      operationIds:
+      - updateScan
+    dependsOnSlices:
+    - slice-03-datavolwassenheidsmodel
+    - slice-06-scan-aanmaken
+    sliceId: slice-07-kennisgebieden-selecteren
+    sliceIndex: 6
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds:
+        - getScan
+        ownedOperationIds:
+        - updateScan
+        pageKey: Scanoverzicht
+        routeId: route_scan_overview
+      - allowedOperationIds:
+        - updateScan
+        - getScan
+        ownedOperationIds: []
+        pageKey: Maturity beoordeling
+        routeId: route_assessment
+      pageKeys:
+      - Scanoverzicht
+      - Maturity beoordeling
+      routeIds:
+      - route_scan_overview
+      - route_assessment
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-07-kennisgebieden-selecteren
+sliceType: paired-api

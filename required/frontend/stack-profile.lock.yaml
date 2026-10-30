@@ -1,0 +1,50 @@
+revision: "1.2.0"
+authoringTimestamp: "2026-07-01T00:00:00Z"
+
+scaffoldArchive:
+  id: angular
+
+toolchain: angular
+version: "22"
+
+# Gate commands — every key MUST map to a package.json "scripts" entry (see scaffoldContract).
+commands:
+  typeCheck: npx npm run build
+  build: npx npm run build
+  test: npx npm run test -- --no-watch
+  lint: npx npm run lint
+
+# Agent preflight policy keyed off commands above (not app structure).
+localVerification:
+  firstPass:
+    required: [lint, test]
+  repair:
+    required: [test]
+
+# Paths and naming that the Phase 2 scaffold baseline is expected to provide.
+conventions:
+  appRoot: src/app
+  routesConfig: src/app/app.routes.ts
+  appConfig: src/app/app.config.ts
+  componentSuffix: Component
+
+scaffoldContract:
+  requiredNpmScripts:
+    - build
+    - test
+    - lint
+
+deterministicExecution:
+  testRandomSeed: fixed
+  buildCache: allowed
+
+testRunner:
+  name: vitest
+  version: "5.0.2"
+  pool: forks
+  include:
+    - "src/**/*.spec.ts"
+
+qualityTooling:
+  - eslint
+  - vitest

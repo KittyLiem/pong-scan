@@ -1,0 +1,392 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState: []
+  scenarios:
+  - id: organisatiecontext_en_scanrechten.s3
+    text: Een gebruiker zonder organisatietoegang ziet geen bijbehorende scans.
+    transitionIds:
+    - organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+  - id: kennisgebieden_selecteren.s4
+    text: Doorgaan zonder selectie toont dat minimaal één kennisgebied vereist is.
+    transitionIds:
+    - kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+  - id: beoordeling_vastleggen_en_hervatten.s6
+    text: Opgeslagen gegevens blijven na hervatten beschikbaar.
+    transitionIds:
+    - beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+  transitions:
+  - from: organisatiecontext ontoegankelijk
+    id: organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+    kind: recompute
+    operationId: listScans
+    to: toegang geblokkeerd
+  - from: gebruiker aangemeld
+    id: organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+    kind: recompute
+    operationId: listScans
+    to: organisatiecontext toegankelijk
+  - from: selectie ontbreekt
+    id: kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+    kind: recompute
+    operationId: getScan
+    to: doorgaan geblokkeerd
+  - from: concept opgeslagen
+    id: beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+    kind: recompute
+    operationId: getScan
+    to: concept hervat
+  - from: in uitvoering onderbroken
+    id: beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+    kind: recompute
+    operationId: getScan
+    to: in uitvoering hervat
+  - from: verplichte invoer ontbreekt
+    id: beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd
+    kind: recompute
+    operationId: getScan
+    to: voltooiing geblokkeerd
+  unspecified:
+  - id: asm-007
+    text: Het verplichtingsbeleid voor bedrijfstak is onbeslist doordat de bron dit
+      zowel verplicht als niet-verplicht beschrijft.
+  - id: asm-009
+    text: Trend- en benchmarkhistorie vallen buiten scope; afzonderlijke scans blijven
+      beschikbaar.
+  - id: asm-014
+    text: Kennisgebiedselectie is een stap binnen Maturity beoordeling omdat geen
+      afzonderlijke pagina bestaat.
+  - id: dec-010
+    text: Besluit vereist over berekening van domein- en totale scanvoortgang; aanbevolen
+      is het aandeel vragen dat aan alle verplichte invoervelden voldoet.
+  - id: dec-011
+    text: Besluit vereist over de vorm van bewijs bij een vraag; aanbevolen zijn bestandsuploads
+      en links met beveiligde opslag en toegang.
+  - id: dec-002
+    text: Besluit vereist over afrondingsvoorwaarden; aanbevolen is dat iedere verplichte
+      vraag een score en toelichting heeft.
+capabilityId: scanportfolio
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: scanportfolio
+    operationIds:
+    - listScans
+    - getScan
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - listScans
+  - getScan
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/organizations/{organizationId}/scans
+    method: GET
+    operationId: listScans
+    parameters:
+    - in: path
+      name: organizationId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/OrganizationId'
+    - in: query
+      name: cursor
+      required: false
+      schema:
+        type:
+        - string
+        - 'null'
+      x-ref: '#/components/parameters/Cursor'
+    - in: query
+      name: pageSize
+      required: false
+      schema:
+        default: 20
+        maximum: 100
+        minimum: 1
+        type: integer
+      x-ref: '#/components/parameters/PageSize'
+    path: /v1/organizations/{organizationId}/scans
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                items:
+                  items:
+                    properties:
+                      assessmentPeriod:
+                        type: string
+                      goals:
+                        items:
+                          $ref: '#/components/schemas/OrganizationGoal'
+                        type: array
+                      id:
+                        format: uuid
+                        type: string
+                      modelSnapshotId:
+                        format: uuid
+                        type: string
+                      name:
+                        type: string
+                      organizationId:
+                        format: uuid
+                        type: string
+                      progress:
+                        maximum: 100
+                        minimum: 0
+                        type: number
+                      selectedDomainIds:
+                        items:
+                          format: uuid
+                          type: string
+                        type: array
+                      status:
+                        enum:
+                        - concept
+                        - in-progress
+                        - content-complete
+                        - completed
+                        - reopened
+                        type: string
+                      updatedAt:
+                        format: date-time
+                        type: string
+                      version:
+                        minimum: 0
+                        type: integer
+                    required:
+                    - id
+                    - organizationId
+                    - name
+                    - assessmentPeriod
+                    - status
+                    - progress
+                    - modelSnapshotId
+                    - selectedDomainIds
+                    - version
+                    - updatedAt
+                    type: object
+                    x-ref: '#/components/schemas/Scan'
+                  type: array
+                nextCursor:
+                  type:
+                  - string
+                  - 'null'
+              required:
+              - items
+              type: object
+              x-ref: '#/components/schemas/ScanCollection'
+        description: Accessible scans
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}
+    method: GET
+    operationId: getScan
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    path: /v1/scans/{scanId}
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                assessmentPeriod:
+                  type: string
+                goals:
+                  items:
+                    properties:
+                      customText:
+                        type: string
+                      name:
+                        type: string
+                      priority:
+                        enum:
+                        - high
+                        - medium
+                        - low
+                        type: string
+                    required:
+                    - name
+                    - priority
+                    type: object
+                    x-ref: '#/components/schemas/OrganizationGoal'
+                  type: array
+                id:
+                  format: uuid
+                  type: string
+                modelSnapshotId:
+                  format: uuid
+                  type: string
+                name:
+                  type: string
+                organizationId:
+                  format: uuid
+                  type: string
+                progress:
+                  maximum: 100
+                  minimum: 0
+                  type: number
+                selectedDomainIds:
+                  items:
+                    format: uuid
+                    type: string
+                  type: array
+                status:
+                  enum:
+                  - concept
+                  - in-progress
+                  - content-complete
+                  - completed
+                  - reopened
+                  type: string
+                updatedAt:
+                  format: date-time
+                  type: string
+                version:
+                  minimum: 0
+                  type: integer
+              required:
+              - id
+              - organizationId
+              - name
+              - assessmentPeriod
+              - status
+              - progress
+              - modelSnapshotId
+              - selectedDomainIds
+              - version
+              - updatedAt
+              type: object
+              x-ref: '#/components/schemas/Scan'
+        description: Scan detail and current progress
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+      - organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+      - kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+      - beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+      - beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+      - beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd
+    capabilityId: scanportfolio
+    contractScopeRef:
+      capabilityKey: scanportfolio
+      operationIds:
+      - listScans
+      - getScan
+    dependsOnSlices:
+    - slice-01-accounttoegang
+    - slice-02-organisatiecontext-en-scanrechten
+    sliceId: slice-05-scanportfolio
+    sliceIndex: 4
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - listScans
+        - getScan
+        pageKey: Scanoverzicht
+        routeId: route_scan_overview
+      - allowedOperationIds:
+        - getScan
+        ownedOperationIds: []
+        pageKey: Maturity beoordeling
+        routeId: route_assessment
+      pageKeys:
+      - Scanoverzicht
+      - Maturity beoordeling
+      routeIds:
+      - route_scan_overview
+      - route_assessment
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-05-scanportfolio
+sliceType: paired-api

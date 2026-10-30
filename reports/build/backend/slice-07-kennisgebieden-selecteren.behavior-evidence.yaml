@@ -1,0 +1,80 @@
+decisions:
+- choice: Kennisgebiedselectie is onderdeel van de Maturity-beoordeling; een lege
+    selectie houdt de scan in conceptstatus.
+  unspecifiedId: asm-014
+- choice: Organisatiedoelen zijn optionele context; wanneer ze worden aangeleverd
+    zijn naam en prioriteit verplicht.
+  unspecifiedId: dec-016
+- choice: Doelselectie en prioritering zijn stappen binnen de Maturity-beoordeling
+    en gebruiken updateScan; er wordt geen afzonderlijke route toegevoegd.
+  unspecifiedId: asm-012
+- choice: Een wijziging na afronding maakt via createScan een nieuwe conceptscan tegen
+    het actuele modelsnapshot; de afgeronde scan en resultaten blijven ongewijzigd
+    bewaard.
+  unspecifiedId: dec-005
+transitions:
+- kind: mutation
+  mutatedFields:
+  - selectedDomainIds
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: selectingKnowledgeAreasPersistsSelection
+  transitionId: kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+- kind: mutation
+  mutatedFields:
+  - version
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: savingKnowledgeAreaSelectionAdvancesVersion
+  transitionId: kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: savedSelectionMakesQuestionnaireAvailable
+  transitionId: kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+- kind: mutation
+  mutatedFields:
+  - goals
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: selectingOrganizationGoalPersistsGoal
+  transitionId: organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+- kind: mutation
+  mutatedFields:
+  - priority
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: prioritizingOrganizationGoalChangesPriority
+  transitionId: organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+- kind: mutation
+  mutatedFields:
+  - version
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: savingGoalPriorityAdvancesVersion
+  transitionId: organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: reopenPolicyMovesCompletedScanBackIntoAssessment
+  transitionId: afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+- kind: mutation
+  mutatedFields:
+  - status
+  - id
+  operationId: updateScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+  testMethod: newRevisionPolicyPreservesCompletedScanAndReturnsAssessmentRevision
+  transitionId: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid

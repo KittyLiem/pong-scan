@@ -1,0 +1,138 @@
+artifactRefs:
+- reports/check/frontend/slice-07-kennisgebieden-selecteren.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 21000
+errors: []
+finishedAt: '2026-10-13T16:08:54Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/core/scans/scan.service.ts
+      reason: updateScan API client and bearer-auth request implementation
+    - path: src/app/maturity-assessment/maturity-assessment.component.ts
+      reason: selected-domain update payload and version provenance
+    - path: src/app/maturity-assessment/maturity-assessment.component.html
+      reason: scoped assessment structural parity
+    - path: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      reason: representative route-surface coverage
+    - path: src/app/core/scans/scan.service.spec.ts
+      reason: representative service coverage
+    - path: src/app/app.routes.ts
+      reason: scoped route registration
+    - path: src/app/app.html
+      reason: shell navigation registration
+    - path: src/app/scan-overview/scan-overview.component.ts
+      reason: inline scoped overview template structural parity
+    missingPaths: []
+    verifiedPaths:
+    - src/app/core/scans/scan.service.ts
+    - src/app/core/scans/scan.service.spec.ts
+    - src/app/maturity-assessment/maturity-assessment.component.ts
+    - src/app/maturity-assessment/maturity-assessment.component.html
+    - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavigationLabels:
+    - Scanoverzicht
+    - Beoordeling
+    expectedRoutePaths:
+    - /scans
+    - /scans/:scanId/assessment
+    observed: routes and visible authenticated shell links are registered
+    routesConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    pages:
+    - observed: visible overview heading, scan section, filter fields, create form,
+        cards/list items, and actions
+      route: /scans
+      template: src/app/scan-overview/scan-overview.component.ts
+    - observed: visible assessment heading, domain-selection form, goals fields, progress
+        area, question structure, and actions
+      route: /scans/:scanId/assessment
+      template: src/app/maturity-assessment/maturity-assessment.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: pass
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    authModel: bearer JWT
+    inspectedPaths:
+    - src/app/core/auth/auth.service.ts
+    - src/app/core/scans/scan.service.ts
+    observed: token is held in an in-memory signal; no localStorage or sessionStorage
+      persistence found
+  gateId: GATE_AUTH_STORAGE
+  status: pass
+- evidence:
+    componentPath: src/app/maturity-assessment/maturity-assessment.component.ts
+    observed: PATCH payload uses version from the loaded Scan API response
+    operationId: updateScan
+    servicePath: src/app/core/scans/scan.service.ts
+  gateId: GATE_VERSION_SOURCE
+  status: pass
+- evidence:
+    initialStateAuthority: frontendSliceContext.behaviorSubset.initialState
+    observed: no unauthorized slice initial-state literal was used for selected domains
+      or goals
+  gateId: GATE_UI_INITIAL_STATE_PARITY
+  status: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    excerpt: Application bundle generation complete
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    excerpt: 10 test files and 32 tests passed
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    excerpt: All files pass linting
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: pass
+inputRefs:
+  buildArtifactRefs:
+  - src/app/core/scans/scan.service.ts
+  - src/app/core/scans/scan.service.spec.ts
+  - src/app/maturity-assessment/maturity-assessment.component.ts
+  - src/app/maturity-assessment/maturity-assessment.component.html
+  - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  buildReportRef: reports/build/frontend/slice-07-kennisgebieden-selecteren.attempt-1.build-report.yaml
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-07-kennisgebieden-selecteren
+startedAt: '2026-10-13T16:08:33Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- evidence: Sass @import deprecation warning in src/styles.scss
+  failureCategory: non_blocking_tooling_warning
+  gateId: GATE_BUILD
+- evidence: Vite reports a future config-loader compatibility warning for vitest.config.ts
+  failureCategory: non_blocking_tooling_warning
+  gateId: GATE_TESTS

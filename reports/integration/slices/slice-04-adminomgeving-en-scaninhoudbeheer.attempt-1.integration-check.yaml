@@ -1,0 +1,184 @@
+artifactRefs:
+- reports/integration/slices/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/admin/api/AdminContentResource.java
+        purpose: Verify all scoped REST operations, versioned paths, bearer enforcement,
+          pagination, and idempotency headers.
+      - path: backend/src/main/java/com/example/admin/api/AdminDtos.java
+        purpose: Verify request and response DTO fields against the contract subset.
+      - path: backend/src/main/java/com/example/admin/application/AdminContentService.java
+        purpose: Verify cursor pagination, transactional writes, optimistic version
+          checks, and idempotency behavior.
+      - path: backend/src/main/java/com/example/account/api/ProblemMappers.java
+        purpose: Verify application/problem+json responses with required problem-details
+          fields.
+      - path: backend/src/test/java/com/example/admin/AdminContentBehaviorTest.java
+        purpose: Verify protected endpoints and all five owned transitions from API
+          fixtures.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/test/java/com/example/admin/AdminContentBehaviorTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify the route_assessment route, authentication guard, and page
+          binding.
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+        purpose: Verify hosted admin actions invoke every scoped operation through
+          the client.
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.html
+        purpose: Verify the scoped page exposes primary actions for owned transitions.
+      - path: frontend/src/app/core/admin-content/admin-content.service.ts
+        purpose: Verify methods, URI versioning, DTOs, bearer auth, idempotency, pagination,
+          and problem-details parsing.
+      - path: frontend/src/app/core/auth/auth.service.ts
+        purpose: Verify bearer Authorization header production and ProblemDetails
+          type.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.html
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    observation: Per-stream counterpart flags were treated as ownership metadata and
+      not as a contradiction.
+    source: combinedSliceScope
+  endpointParity:
+    missingBackend: []
+    missingFrontend: []
+    operations:
+    - listAdminDomains
+    - createAdminDomain
+    - updateAdminDomain
+    - updateAdminQuestion
+    - createAnswerOption
+    - updateAnswerOption
+    source: endpointParityPreGate
+    valid: true
+  policyAlignment:
+    authTransport: FE supplies Authorization Bearer headers and BE enforces bearerAuth
+      with BearerAuthenticated for all six operations.
+    errorShape: FE parses type, title, status, detail, and instance; BE ProblemMappers
+      emits application/problem+json with required type, title, and status.
+    idempotency: FE sends X-Idempotency-Key on createAdminDomain and createAnswerOption;
+      BE requires it and implements replay/conflict handling.
+    optimisticLocking: FE forwards API-provided version fields and BE rejects stale
+      versions.
+    pagination: FE uses cursor and pageSize with default 20 and clamps to 1..100;
+      BE accepts cursor and pageSize with default 20 and bounds 1..100 and returns
+      items plus nextCursor.
+    versioning: FE and BE use the /v1 URI prefix for all scoped operations.
+  upstreamChecks:
+    backendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    backendStatus: ok
+    frontendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_FRONTEND_AUTH_STORAGE
+    frontendStatus: ok
+finishedAt: '2026-10-13T15:12:37Z'
+gates:
+- evidence:
+    observed: The route, assessment page, and AdminContentService implement all six
+      scoped operations with matching methods and /v1 paths. Protected calls attach
+      Bearer authorization; POST operations attach X-Idempotency-Key; list pagination
+      and problem-details parsing match policy.
+    payloadRefs:
+    - frontendSliceContext.contractSubset.operations
+    - frontendSliceContext.uiScopeRef.pageBindings[0]
+    - interfaceContractSubset.operations
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput
+    - endpointParityPreGate.evidence.frontendEndpoints
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observed: AdminContentResource and AdminDtos expose all six scoped operations
+      with matching routes, methods, request/response fields, bearer enforcement,
+      idempotency headers, cursor pagination, and version fields. ProblemMappers supplies
+      the declared error media type and required fields.
+    payloadRefs:
+    - backendSliceContext.contractSubset.operations
+    - interfaceContractSubset.operations
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput
+    - endpointParityPreGate.evidence.backendEndpoints
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observed: FE and BE agree on operation set, methods, versioned paths, DTO fields,
+      auth transport, problem-details errors, pagination, idempotency, and optimistic
+      locking. Both upstream check outputs are ok and deterministic endpoint parity
+      is valid.
+    payloadRefs:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - frontendSliceContext.contractSubset
+    - backendSliceContext.contractSubset
+    - upstreamEvidence.frontendCheckOutput
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    observed: All five owned transitions have passing backend tests starting from
+      api-fixture in AdminContentBehaviorTest. Their hosted operations updateAdminDomain,
+      updateAdminQuestion, and updateAnswerOption are wired to assessment-page buttons/forms
+      and AdminContentService client calls.
+    payloadRefs:
+    - backendSliceContext.behaviorSubset.transitions
+    - behaviorEvidencePreGate
+    - upstreamEvidence.backendBuildOutput.artifacts[0]
+    - upstreamEvidence.backendCheckOutput
+    - frontendSliceContext.uiScopeRef.pageBindings[0].page.primaryActions
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- combinedSliceScope
+- interfaceContractSubset
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  backendGenerationProfileRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractRevision:
+    apiChoiceLock: 1.0.0
+    contractDecisionsLock: 1.0.0
+    interfaceContractSubset: inline-slice-authority
+  frontendGenerationProfileRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+startedAt: '2026-10-13T15:12:37Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- The backend test runtime emitted non-blocking OTLP collector connection warnings;
+  the authoritative Maven check exited successfully.
+- Frontend Sass and Vite emitted non-blocking deprecation/future-compatibility warnings
+  in the authoritative check.

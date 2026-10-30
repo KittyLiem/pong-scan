@@ -1,0 +1,575 @@
+behaviorSubset:
+  initialState:
+  - fields:
+      progress: unspecified
+      status: concept
+    operationId: createScan
+  scenarios:
+  - id: scan_aanmaken.s2
+    text: Geldige scangegevens leveren één conceptscan op.
+    transitionIds:
+    - scan_aanmaken.scan_bestaat_niet__concept
+  transitions:
+  - from: scan bestaat niet
+    id: scan_aanmaken.scan_bestaat_niet__concept
+    kind: mutation
+    operationId: createScan
+    to: concept
+  - from: afgerond
+    id: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+    kind: mutation
+    operationId: createScan
+    to: nieuwe conceptscan bij kopieerbeleid
+  unspecified:
+  - id: asm-008
+    text: Homepage, introductie en survey-start zijn onderdelen van bestaande start-
+      en beoordelingspagina's.
+  - id: dec-005
+    text: Besluit vereist over wijzigingen aan afgeronde scans; aanbevolen is een
+      nieuwe revisie binnen dezelfde scan met behoud van eerdere resultaten.
+capabilityId: scan_aanmaken
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: scan_aanmaken
+    operationIds:
+    - createScan
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - createScan
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/organizations/{organizationId}/scans
+    method: POST
+    operationId: createScan
+    parameters:
+    - in: path
+      name: organizationId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/OrganizationId'
+    - in: header
+      name: X-Idempotency-Key
+      required: true
+      schema:
+        minLength: 1
+        type: string
+      x-ref: '#/components/parameters/IdempotencyKey'
+    path: /v1/organizations/{organizationId}/scans
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              assessmentPeriod:
+                type: string
+              initialSelectedDomainIds:
+                items:
+                  format: uuid
+                  type: string
+                type: array
+              name:
+                type: string
+            required:
+            - name
+            - assessmentPeriod
+            type: object
+            x-ref: '#/components/schemas/ScanCreateInput'
+      required: true
+    responses:
+      '201':
+        content:
+          application/json:
+            schema:
+              properties:
+                assessmentPeriod:
+                  type: string
+                goals:
+                  items:
+                    properties:
+                      customText:
+                        type: string
+                      name:
+                        type: string
+                      priority:
+                        enum:
+                        - high
+                        - medium
+                        - low
+                        type: string
+                    required:
+                    - name
+                    - priority
+                    type: object
+                    x-ref: '#/components/schemas/OrganizationGoal'
+                  type: array
+                id:
+                  format: uuid
+                  type: string
+                modelSnapshotId:
+                  format: uuid
+                  type: string
+                name:
+                  type: string
+                organizationId:
+                  format: uuid
+                  type: string
+                progress:
+                  maximum: 100
+                  minimum: 0
+                  type: number
+                selectedDomainIds:
+                  items:
+                    format: uuid
+                    type: string
+                  type: array
+                status:
+                  enum:
+                  - concept
+                  - in-progress
+                  - content-complete
+                  - completed
+                  - reopened
+                  type: string
+                updatedAt:
+                  format: date-time
+                  type: string
+                version:
+                  minimum: 0
+                  type: integer
+              required:
+              - id
+              - organizationId
+              - name
+              - assessmentPeriod
+              - status
+              - progress
+              - modelSnapshotId
+              - selectedDomainIds
+              - version
+              - updatedAt
+              type: object
+              x-ref: '#/components/schemas/Scan'
+        description: Concept scan created against active model snapshot
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - scan_aanmaken.scan_bestaat_niet__concept
+      - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+    capabilityId: scan_aanmaken
+    contractScopeRef:
+      capabilityKey: scan_aanmaken
+      operationIds:
+      - createScan
+    dependsOnSlices:
+    - slice-02-organisatiecontext-en-scanrechten
+    - slice-03-datavolwassenheidsmodel
+    sliceId: slice-06-scan-aanmaken
+    sliceIndex: 5
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - createScan
+        pageKey: Aanmelden en organisatie starten
+        routeId: route_auth_start
+      - allowedOperationIds:
+        - createScan
+        ownedOperationIds: []
+        pageKey: Scanoverzicht
+        routeId: route_scan_overview
+      pageKeys:
+      - Aanmelden en organisatie starten
+      - Scanoverzicht
+      routeIds:
+      - route_auth_start
+      - route_scan_overview
+frontendContext:
+  generationProfile:
+    deliveryTopology: single-repo
+    frontend:
+      enabled: true
+      uiContractPolicy:
+        pageCoverage: bijection
+        requireContentPagePerProductPage: true
+        requireRoutePerProductPage: true
+      uiFidelityPolicy:
+        requireMockupPerPage: true
+        structuralParity:
+          enabled: true
+          minMediaCoverage: 0.5
+          minSectionCoverage: 0.5
+    revision: 1.0.0
+scope:
+  backend:
+    enabled: false
+  frontend:
+    enabled: true
+sliceId: slice-06-scan-aanmaken
+sliceType: paired-api
+uiScopeRef:
+  appShellMockupRef: mockups/app-shell.lock.html
+  contributesToPage: []
+  mockupRefs:
+  - mockups/aanmelden-en-organisatie-starten.lock.html
+  - mockups/scanoverzicht.lock.html
+  navigation:
+    defaultRouteByState:
+      anonymous: route_auth_start
+      member_with_organization: route_scan_overview
+      member_without_organization: route_auth_start
+    globalEntries:
+    - id: nav_auth
+      label: Aanmelden
+      routeId: route_auth_start
+      visibleWhen: anonymous
+    - id: nav_logout
+      label: Afmelden
+      routeId: route_auth_start
+      visibleWhen: member
+    - id: nav_scans
+      label: Scanoverzicht
+      routeId: route_scan_overview
+      visibleWhen: member_with_organization
+    postAuthRouting:
+      desiredRoutePolicy: restore_allowed_member_route
+      fallbackRouteId: route_scan_overview
+      organizationRequiredRouteId: route_auth_start
+  pageBindings:
+  - allowedOperationIds: []
+    mockupRef: mockups/aanmelden-en-organisatie-starten.lock.html
+    ownedOperationIds:
+    - createScan
+    page:
+      apiRefs:
+      - method: POST
+        operationId: createOrganization
+        path: /v1/organizations
+      - method: POST
+        operationId: createScan
+        path: /v1/organizations/{organizationId}/scans
+      - method: POST
+        operationId: createSession
+        path: /v1/auth/sessions
+      - method: GET
+        operationId: getActiveModel
+        path: /v1/models/active
+      - method: POST
+        operationId: registerMember
+        path: /v1/auth/registrations
+      contentKeys:
+      - account_access
+      - organization_context
+      - scan_start_intro
+      - start_scan
+      forms:
+      - contentKey: account_access
+        fields:
+        - accountIdentifier
+        - credential
+        id: account_access_form
+      - contentKey: organization_context
+        fields:
+        - name
+        - chamberOfCommerceNumber
+        - additionalInformation
+        - industry
+        id: organization_context_form
+      - contentKey: start_scan
+        fields:
+        - name
+        - assessmentPeriod
+        - initialSelectedDomainIds
+        id: first_scan_form
+      goals:
+      - Inloggen of een account aanmaken
+      - Organisatienaam en basiscontext vastleggen
+      - Een eerste maturity scan starten
+      - Gebruiker naar het scanoverzicht leiden
+      pageKey: Aanmelden en organisatie starten
+      pageTitle: Aanmelden en organisatie starten
+      primaryActions:
+      - apiRef:
+          method: POST
+          operationId: createOrganization
+          path: /v1/organizations
+        id: create_organization
+        label: Organisatie vastleggen
+      - apiRef:
+          method: GET
+          operationId: getActiveModel
+          path: /v1/models/active
+        id: load_active_model
+        label: Beschikbaarheid van het beoordelingsmodel controleren
+      - apiRef:
+          method: POST
+          operationId: registerMember
+          path: /v1/auth/registrations
+        id: register_account
+        label: Account aanmaken
+      - apiRef:
+          method: POST
+          operationId: createSession
+          path: /v1/auth/sessions
+        id: sign_in
+        label: Aanmelden
+      - apiRef:
+          method: POST
+          operationId: createScan
+          path: /v1/organizations/{organizationId}/scans
+        id: start_first_scan
+        label: Eerste scan starten
+      routeId: route_auth_start
+      states:
+      - contentKey: scan_start_intro
+        description: Toon dat een scan pas kan starten wanneer modelinhoud beschikbaar
+          is.
+        id: model_unavailable
+    pageKey: Aanmelden en organisatie starten
+    route:
+      access: public
+      id: route_auth_start
+      pageKey: Aanmelden en organisatie starten
+      path: /start
+      title: Aanmelden en organisatie starten
+    routeId: route_auth_start
+    sectionOutline:
+      exists: true
+      id: Aanmelden en organisatie starten
+      outline:
+        counts:
+          buttons: 4
+          cards: 0
+          fields: 18
+          formLabels: 18
+          forms: 1
+          headings: 2
+          images: 0
+          links: 0
+          navLabels: 0
+          sections: 1
+        formLabels:
+        - Naam
+        - Zakelijk e-mailadres
+        - Wachtwoord
+        - Organisatienaam
+        - Sector
+        - Data Ethics
+        - Data Governance
+        - Data Architecture
+        - Data Modeling & Design
+        - Data Storage & Operations
+        - Data Security
+        - Data Integration & Operability
+        - Document & Content Management
+        - Reference & Master Data
+        - Data Warehousing & BI
+        - Metadata Management
+        - Data Quality
+        - Ik ga akkoord met de voorwaarden en het privacybeleid.
+        headings:
+        - Start met de data maturity scan
+        - Aanmelden en organisatie starten
+        majorSectionSlugs:
+        - start-met-de-data-maturity-scan
+        - aanmelden-en-organisatie-starten
+        navLabels: []
+      path: mockups/aanmelden-en-organisatie-starten.lock.html
+      sourceItem:
+        description: Toegangspunt voor gebruikers om in te loggen en hun eerste organisatiecontext
+          te starten.
+        goals:
+        - Inloggen of een account aanmaken
+        - Organisatienaam en basiscontext vastleggen
+        - Een eerste maturity scan starten
+        - Gebruiker naar het scanoverzicht leiden
+        key: Aanmelden en organisatie starten
+  - allowedOperationIds:
+    - createScan
+    mockupRef: mockups/scanoverzicht.lock.html
+    ownedOperationIds: []
+    page:
+      apiRefs:
+      - method: POST
+        operationId: createScan
+        path: /v1/organizations/{organizationId}/scans
+      - method: GET
+        operationId: getScan
+        path: /v1/scans/{scanId}
+      - method: GET
+        operationId: listScans
+        path: /v1/organizations/{organizationId}/scans
+      - method: PATCH
+        operationId: updateScan
+        path: /v1/scans/{scanId}
+      contentKeys:
+      - scan_overview
+      - scan_list
+      - scan_cards
+      - scan_status_filter
+      - create_scan
+      - resume_scan
+      - manage_completed_scan
+      forms:
+      - contentKey: create_scan
+        fields:
+        - name
+        - assessmentPeriod
+        - initialSelectedDomainIds
+        id: create_scan_form
+      - contentKey: scan_status_filter
+        fields:
+        - status
+        id: scan_filter_form
+      goals:
+      - Alle scans met status, voortgang en laatste wijziging bekijken
+      - Een nieuwe scan aanmaken met naam en beoordelingsperiode
+      - Een conceptscan hervatten
+      - Een afgeronde scan openen en beheren
+      lists:
+      - contentKey: scan_list
+        id: scan_list
+        itemFields:
+        - name
+        - status
+        - progress
+        - updatedAt
+        itemType: scan_card
+      pageKey: Scanoverzicht
+      pageTitle: Scanoverzicht
+      primaryActions:
+      - apiRef:
+          method: POST
+          operationId: createScan
+          path: /v1/organizations/{organizationId}/scans
+        id: create_scan
+        label: Nieuwe scan aanmaken
+      - apiRef:
+          method: GET
+          operationId: listScans
+          path: /v1/organizations/{organizationId}/scans
+        id: list_scans
+        label: Scans laden en filteren
+      - apiRef:
+          method: GET
+          operationId: getScan
+          path: /v1/scans/{scanId}
+        id: open_scan
+        label: Scan openen
+      - apiRef:
+          method: PATCH
+          operationId: updateScan
+          path: /v1/scans/{scanId}
+        id: manage_completed_scan
+        label: Afgeronde scan beheren
+      routeId: route_scan_overview
+      states:
+      - contentKey: scan_overview
+        description: Toon de aanmaakactie wanneer nog geen toegankelijke scans zijn
+          gevonden.
+        id: empty_scan_portfolio
+      - contentKey: scan_cards
+        description: De benoemde mockupkaarten zijn structurele voorbeelden; toon
+          uitsluitend scans uit de API.
+        id: mock_scan_cards_structural_only
+    pageKey: Scanoverzicht
+    route:
+      access: member
+      guard: authenticated_with_organization
+      id: route_scan_overview
+      pageKey: Scanoverzicht
+      path: /scans
+      title: Scanoverzicht
+    routeId: route_scan_overview
+    sectionOutline:
+      exists: true
+      id: Scanoverzicht
+      outline:
+        counts:
+          buttons: 5
+          cards: 3
+          fields: 2
+          formLabels: 1
+          forms: 0
+          headings: 5
+          images: 0
+          links: 0
+          navLabels: 0
+          sections: 3
+        formLabels:
+        - Alle statussen Concept Afgerond
+        headings:
+        - Scanoverzicht
+        - Maturity scans
+        - Organisatiebrede nulmeting 2025
+        - Data maturity scan 2024
+        - Governance verdiepingsscan
+        majorSectionSlugs:
+        - scanoverzicht
+        - maturity-scans
+        - organisatiebrede-nulmeting-2025
+        - data-maturity-scan-2024
+        - governance-verdiepingsscan
+        navLabels: []
+      path: mockups/scanoverzicht.lock.html
+      sourceItem:
+        description: Centrale pagina voor het aanmaken, hervatten, bekijken en beheren
+          van maturity scans binnen de organisatie.
+        goals:
+        - Alle scans met status, voortgang en laatste wijziging bekijken
+        - Een nieuwe scan aanmaken met naam en beoordelingsperiode
+        - Een conceptscan hervatten
+        - Een afgeronde scan openen en beheren
+        key: Scanoverzicht
+  pageKeys:
+  - Aanmelden en organisatie starten
+  - Scanoverzicht
+  projectContextMockupRef: mockups/project_context.lock.md
+  routeIds:
+  - route_auth_start
+  - route_scan_overview
+  uiSectionsRef: locks/ui-sections.lock.yaml

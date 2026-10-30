@@ -1,0 +1,199 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState: []
+  scenarios:
+  - id: beoordeling_vastleggen_en_hervatten.s4
+    text: De gebruiker kan een toelichting en eventueel bewijs vastleggen.
+    transitionIds:
+    - beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+  transitions:
+  - from: concept
+    id: beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+    kind: mutation
+    operationId: saveAnswer
+    to: in uitvoering
+  - from: vraag onbeantwoord
+    id: beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+    kind: mutation
+    operationId: saveAnswer
+    to: vraaggegevens gedeeltelijk of volledig vastgelegd
+  - from: in uitvoering hervat
+    id: beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+    kind: mutation
+    operationId: saveAnswer
+    to: vraaggegevens en voortgang bijgewerkt
+  unspecified:
+  - id: dec-010
+    text: Besluit vereist over berekening van domein- en totale scanvoortgang; aanbevolen
+      is het aandeel vragen dat aan alle verplichte invoervelden voldoet.
+  - id: dec-011
+    text: Besluit vereist over de vorm van bewijs bij een vraag; aanbevolen zijn bestandsuploads
+      en links met beveiligde opslag en toegang.
+capabilityId: beoordeling_vastleggen_en_hervatten
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: beoordeling_vastleggen_en_hervatten
+    operationIds:
+    - saveAnswer
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - saveAnswer
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}/answers/{questionId}
+    method: PUT
+    operationId: saveAnswer
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    - in: path
+      name: questionId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/QuestionId'
+    path: /v1/scans/{scanId}/answers/{questionId}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              evidenceReferences:
+                items:
+                  type: string
+                type: array
+              explanation:
+                type: string
+              optionId:
+                format: uuid
+                type: string
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - optionId
+            - version
+            type: object
+            x-ref: '#/components/schemas/AnswerInput'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                evidenceReferences:
+                  items:
+                    type: string
+                  type: array
+                explanation:
+                  type: string
+                optionId:
+                  format: uuid
+                  type: string
+                progress:
+                  type: number
+                questionId:
+                  format: uuid
+                  type: string
+                version:
+                  type: integer
+              required:
+              - questionId
+              - optionId
+              - progress
+              - version
+              type: object
+              x-ref: '#/components/schemas/SavedAnswer'
+        description: Answer and progress saved
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+      - beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+      - beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+    capabilityId: beoordeling_vastleggen_en_hervatten
+    contractScopeRef:
+      capabilityKey: beoordeling_vastleggen_en_hervatten
+      operationIds:
+      - saveAnswer
+    dependsOnSlices:
+    - slice-07-kennisgebieden-selecteren
+    sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+    sliceIndex: 7
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds:
+        - getScan
+        ownedOperationIds:
+        - saveAnswer
+        pageKey: Maturity beoordeling
+        routeId: route_assessment
+      pageKeys:
+      - Maturity beoordeling
+      routeIds:
+      - route_assessment
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+sliceType: paired-api

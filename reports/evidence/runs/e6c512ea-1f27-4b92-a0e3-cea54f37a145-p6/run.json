@@ -1,0 +1,318 @@
+{
+  "schemaVersion" : "1",
+  "run" : {
+    "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p6",
+    "workflowId" : "vs-phase-6-integration",
+    "status" : "RUNNING",
+    "startedAt" : 1.7919133115216446E9,
+    "input" : {
+      "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p6",
+      "publishLineageId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145"
+    },
+    "recordedAt" : 1.791914217625E9
+  },
+  "steps" : {
+    "loadIntegrationInputs" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919133121021643E9,
+      "finishedAt" : 1.7919133121021643E9,
+      "attempts" : [ {
+        "attemptId" : "loadIntegrationInputs-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919133121021643E9,
+        "finishedAt" : 1.7919133121021643E9,
+        "agent" : false
+      } ]
+    },
+    "verifyDeferredWorkResolved" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919142164567022E9,
+      "finishedAt" : 1.7919142164567022E9,
+      "attempts" : [ {
+        "attemptId" : "verifyDeferredWorkResolved-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919142164567022E9,
+        "finishedAt" : 1.7919142164567022E9,
+        "agent" : false
+      } ]
+    },
+    "repairWholeAppFromVerifyFailure" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791913784893592E9,
+      "finishedAt" : 1.7919140390948722E9,
+      "attempts" : [ {
+        "attemptId" : "repairWholeAppFromVerifyFailure-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791913784893592E9,
+        "finishedAt" : 1.7919137849111392E9,
+        "agent" : true
+      }, {
+        "attemptId" : "repairWholeAppFromVerifyFailure-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919140390930128E9,
+        "finishedAt" : 1.7919140390948722E9,
+        "agent" : true
+      } ]
+    },
+    "runWholeAppBuild" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919136327548108E9,
+      "finishedAt" : 1.7919136327548108E9,
+      "attempts" : [ {
+        "attemptId" : "runWholeAppBuild-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919136327548108E9,
+        "finishedAt" : 1.7919136327548108E9,
+        "agent" : true
+      } ]
+    },
+    "preflightPublishEnvironment" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919133134274309E9,
+      "finishedAt" : 1.7919133134274309E9,
+      "attempts" : [ {
+        "attemptId" : "preflightPublishEnvironment-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919133134274309E9,
+        "finishedAt" : 1.7919133134274309E9,
+        "agent" : false
+      } ]
+    },
+    "persistWholeAppBuildArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919137764514148E9,
+      "finishedAt" : 1.7919142098051894E9,
+      "attempts" : [ {
+        "attemptId" : "persistWholeAppBuildArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919137764514148E9,
+        "finishedAt" : 1.7919137764514148E9,
+        "agent" : false
+      }, {
+        "attemptId" : "persistWholeAppBuildArtifacts-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919140325920537E9,
+        "finishedAt" : 1.7919140325920537E9,
+        "agent" : false
+      }, {
+        "attemptId" : "persistWholeAppBuildArtifacts-3",
+        "attemptNumber" : 3,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919142098051894E9,
+        "finishedAt" : 1.7919142098051894E9,
+        "agent" : false
+      } ]
+    },
+    "persistDemoSeedArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919136326040995E9,
+      "finishedAt" : 1.7919136326040995E9,
+      "attempts" : [ {
+        "attemptId" : "persistDemoSeedArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919136326040995E9,
+        "finishedAt" : 1.7919136326040995E9,
+        "agent" : false
+      } ]
+    },
+    "verifyTransitionCoverage" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919142161008186E9,
+      "finishedAt" : 1.7919142161008186E9,
+      "attempts" : [ {
+        "attemptId" : "verifyTransitionCoverage-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919142161008186E9,
+        "finishedAt" : 1.7919142161008186E9,
+        "agent" : false
+      } ]
+    },
+    "persistPublishEnvironmentPreflight" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919133134953587E9,
+      "finishedAt" : 1.7919133134953587E9,
+      "attempts" : [ {
+        "attemptId" : "persistPublishEnvironmentPreflight-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919133134953587E9,
+        "finishedAt" : 1.7919133134953587E9,
+        "agent" : false
+      } ]
+    },
+    "persistWholeAppIntegrationGateReport" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919142159374273E9,
+      "finishedAt" : 1.7919142159374273E9,
+      "attempts" : [ {
+        "attemptId" : "persistWholeAppIntegrationGateReport-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919142159374273E9,
+        "finishedAt" : 1.7919142159374273E9,
+        "agent" : false
+      } ]
+    },
+    "ensureIntegrationExceptionsRegistry" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919133132192895E9,
+      "finishedAt" : 1.7919133132192895E9,
+      "attempts" : [ {
+        "attemptId" : "ensureIntegrationExceptionsRegistry-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919133132192895E9,
+        "finishedAt" : 1.7919133132192895E9,
+        "agent" : false
+      } ]
+    },
+    "stageDemoSeed" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791913313754218E9,
+      "finishedAt" : 1.791913313754218E9,
+      "attempts" : [ {
+        "attemptId" : "stageDemoSeed-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791913313754218E9,
+        "finishedAt" : 1.791913313754218E9,
+        "agent" : true
+      } ]
+    },
+    "verifyUnspecifiedDecisionsRecorded" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919142163340826E9,
+      "finishedAt" : 1.7919142163340826E9,
+      "attempts" : [ {
+        "attemptId" : "verifyUnspecifiedDecisionsRecorded-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919142163340826E9,
+        "finishedAt" : 1.7919142163340826E9,
+        "agent" : false
+      } ]
+    },
+    "persistVerifyRepairArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919140327512589E9,
+      "finishedAt" : 1.7919142096914554E9,
+      "attempts" : [ {
+        "attemptId" : "persistVerifyRepairArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919140327512589E9,
+        "finishedAt" : 1.7919140327512589E9,
+        "agent" : false
+      }, {
+        "attemptId" : "persistVerifyRepairArtifacts-2",
+        "attemptNumber" : 2,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919142096914554E9,
+        "finishedAt" : 1.7919142096914554E9,
+        "agent" : false
+      } ]
+    },
+    "stageWholeAppRepair" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919136327014596E9,
+      "finishedAt" : 1.7919136327014596E9,
+      "attempts" : [ {
+        "attemptId" : "stageWholeAppRepair-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919136327014596E9,
+        "finishedAt" : 1.7919136327014596E9,
+        "agent" : false
+      } ]
+    },
+    "extractWholeAppContract" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791913313549156E9,
+      "finishedAt" : 1.791913313549156E9,
+      "attempts" : [ {
+        "attemptId" : "extractWholeAppContract-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791913313549156E9,
+        "finishedAt" : 1.791913313549156E9,
+        "agent" : false
+      } ]
+    },
+    "verifyWholeAppIntegration" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791913776597434E9,
+      "finishedAt" : 1.7919142099038043E9,
+      "attempts" : [ {
+        "attemptId" : "verifyWholeAppIntegration-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "FAILED",
+        "startedAt" : 1.791913776597434E9,
+        "finishedAt" : 1.791913776597434E9,
+        "agent" : false,
+        "errorCode" : "STEP_SUCCESS_CLASSIFICATION_FAILED"
+      }, {
+        "attemptId" : "verifyWholeAppIntegration-2",
+        "attemptNumber" : 2,
+        "kind" : "REPAIR_VALIDATION",
+        "status" : "FAILED",
+        "startedAt" : 1.7919137849111392E9,
+        "finishedAt" : 1.7919140328913012E9,
+        "agent" : false,
+        "errorCode" : "STEP_SUCCESS_CLASSIFICATION_FAILED"
+      }, {
+        "attemptId" : "verifyWholeAppIntegration-3",
+        "attemptNumber" : 3,
+        "kind" : "REPAIR_VALIDATION",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919140390948722E9,
+        "finishedAt" : 1.7919142099038043E9,
+        "agent" : false
+      } ]
+    }
+  },
+  "invalidations" : [ {
+    "causedByStepId" : "verifyWholeAppIntegration",
+    "targetStepId" : "runWholeAppBuild",
+    "repairStepId" : "repairWholeAppFromVerifyFailure",
+    "invalidatedStepIds" : [ "persistWholeAppBuildArtifacts" ],
+    "createdAt" : 1.7919137849111392E9
+  }, {
+    "causedByStepId" : "verifyWholeAppIntegration",
+    "targetStepId" : "runWholeAppBuild",
+    "repairStepId" : "repairWholeAppFromVerifyFailure",
+    "invalidatedStepIds" : [ "persistVerifyRepairArtifacts", "persistWholeAppBuildArtifacts" ],
+    "createdAt" : 1.7919140390948722E9
+  } ],
+  "childRuns" : [ ]
+}

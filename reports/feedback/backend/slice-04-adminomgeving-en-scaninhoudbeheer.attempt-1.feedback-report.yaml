@@ -1,0 +1,90 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runBackendCheck
+stream: backend
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+attemptNumber: 1
+status: fail
+startedAt: null
+finishedAt: null
+durationMs: null
+inputRefs: [backendSliceContext, buildOutput, backendStackProfile@1.1.0, conformanceLock@1.0.0]
+artifactRefs:
+  - reports/check/backend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.check-report.yaml
+  - reports/feedback/backend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.feedback-report.yaml
+provenance:
+  stackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+failureDomain: slice_local
+failedGateIds: [GATE_ENDPOINT_SECURITY]
+failedChecks: [CHK_ENDPOINT_SECURITY]
+gates:
+  - gateId: GATE_ENDPOINT_SECURITY
+    status: failed
+    checkId: CHK_ENDPOINT_SECURITY
+    evidence:
+      observed: AdminContentBehaviorTest sends bearer tokens for mutation happy paths but contains no statusCode(401) assertion.
+      expected: Each protected admin operation has at least one 401/unauthorized test and handler enforcement is demonstrable.
+      protectedOperations: [listAdminDomains, createAdminDomain, updateAdminDomain, updateAdminQuestion, createAnswerOption, updateAnswerOption]
+warnings: []
+errors:
+  - gateId: GATE_ENDPOINT_SECURITY
+    evidence: Missing unauthorized coverage for all protected operations.
+    failureCategory: contract_regression
+reprocessHint: backend-build
+reprocessInputs:
+  sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  failedGateIds: [GATE_ENDPOINT_SECURITY]
+  failedChecks: [CHK_ENDPOINT_SECURITY]
+  scope: narrow-fix
+  checkerSummary: GATE_ENDPOINT_SECURITY failed after build, unit-test, and lint commands passed: the protected admin API has authenticated happy-path coverage but no 401/unauthorized assertion for any owned protected operation.
+  gateFailureContext:
+    - gateId: GATE_ENDPOINT_SECURITY
+      checkId: CHK_ENDPOINT_SECURITY
+      commandRef: deterministic-endpoint-security
+      resolvedCommand: deterministic-endpoint-security
+      exitCode: 1
+  primaryFailures:
+    - gateId: GATE_ENDPOINT_SECURITY
+      checkId: CHK_ENDPOINT_SECURITY
+      symptom: No unauthorized request is asserted for the protected admin endpoints.
+      rootCauseHypothesis: Slice test coverage only exercises requests carrying a valid bearer token, and the handler security binding was not included in the build handoff for direct review.
+      requiredOutcome: Add executable 401 coverage for every protected owned admin operation and retain or repair handler authorization enforcement so unauthenticated calls are rejected.
+      blocking: true
+      observed: AdminContentBehaviorTest uses auth().oauth2(token) for mutation requests and has no statusCode(401).
+      expected: GET /v1/admin/domains, POST /v1/admin/domains, PATCH /v1/admin/domains/{domainId}, PATCH /v1/admin/questions/{questionId}, POST /v1/admin/questions/{questionId}/options, and PATCH /v1/admin/options/{optionId} reject unauthenticated callers with 401.
+  targets:
+    - file: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+      suite: AdminContentBehaviorTest
+      test: add unauthorized coverage
+      operation: listAdminDomains; createAdminDomain; updateAdminDomain; updateAdminQuestion; createAnswerOption; updateAnswerOption
+      observed: Authenticated happy paths only; no 401 assertion.
+      expected: One or more deterministic unauthorized requests cover every protected method/path and assert 401.
+      locationHint: AdminContentBehaviorTest API request methods
+  editScope:
+    allowedEditPaths:
+      - src/test/java/com/example/admin/AdminContentBehaviorTest.java
+    suspectPaths:
+      - path: Source resource/handler exposing /v1/admin/domains, /v1/admin/questions, and /v1/admin/options
+        confidence: medium; inspect after locating from the backend app because no handler path was supplied in buildOutput.artifactRefs.
+    forbiddenOrOutOfScope:
+      - reports/**
+      - unrelated frontend files
+      - broad persistence or auth refactors without a reproduced authorization failure
+  mandatoryLocalRepro:
+    checkIds: [CHK_ENDPOINT_SECURITY]
+    primaryCommand: mvn -B -ntp -q test
+    notes: Passing compile/type-check verification is not a substitute for required endpoint-security coverage.
+  testFailures: []
+  buildAgentBrief:
+    - Run `mvn -B -ntp -q test` from backendAppRoot and confirm the current AdminContentBehaviorTest authenticated happy-path baseline before editing.
+    - Read src/test/java/com/example/admin/AdminContentBehaviorTest.java and locate the resource/handler files that expose the six owned admin paths.
+    - Add 401 assertions without a bearer token for every protected owned method/path; a shared parameterized test is acceptable only if it explicitly covers each path and HTTP method.
+    - Verify the located handlers retain explicit or shared authorization enforcement; repair those existing handler/security bindings only if unauthenticated requests are not rejected.
+    - Rerun the test command and preserve the behavior-evidence transition tests.
+  nonGoals:
+    - Do not weaken protected endpoints or change the contract to make unauthenticated access pass.
+    - Do not remove authenticated mutation coverage, behavior-evidence entries, or make unrelated refactors.

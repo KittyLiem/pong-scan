@@ -1,0 +1,104 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runBackendCheck
+stream: backend
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+attemptNumber: 1
+status: fail
+startedAt: '2026-10-13T17:12:16Z'
+finishedAt: '2026-10-13T17:12:49Z'
+durationMs: 63312
+inputRefs:
+  - backendSliceContext:inline
+  - conformanceLock:inline
+  - backendStackProfile:inline
+artifactRefs:
+  - reports/check/backend/slice-13-ontwikkelprioriteiten-selecteren.attempt-1.check-report.yaml
+  - reports/feedback/backend/slice-13-ontwikkelprioriteiten-selecteren.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+failedGateIds: [GATE_TESTS]
+failedChecks: [CHK_UNIT_TESTS]
+failureDomain: slice_local
+reprocessHint: backend-build
+reprocessInputs:
+  sliceId: slice-13-ontwikkelprioriteiten-selecteren
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_TESTS]
+  failedChecks: [CHK_UNIT_TESTS]
+  checkerSummary: GATE_TESTS failed after build and lint passed because both slice behavior tests abort in their shared fixture before exercising saveDevelopmentPriorities: the scan version is returned as Integer but cast to Long.
+  gateFailureContext:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS]
+    primaryCommand: mvn -B -ntp -q test
+    notes: Compile/package verification is not a substitute for the failed unit-test gate.
+  testFailures:
+    - file: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+      suite: com.example.priority.DevelopmentPriorityBehaviorTest
+      test: saveDevelopmentPrioritiesComposesActionOverviewFromSelectedItems
+      locationHint: '39; shared helper complete:109'
+      assertionSummary: Fixture must complete the scan before asserting only selected items compose the returned action overview.
+      observed: ClassCastException casting Integer to Long
+      expected: Version is read numerically and completion succeeds so the action-overview assertion runs.
+    - file: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+      suite: com.example.priority.DevelopmentPriorityBehaviorTest
+      test: saveDevelopmentPrioritiesSelectsDevelopmentPoint
+      locationHint: '27; shared helper complete:109'
+      assertionSummary: Fixture must complete the scan before asserting selected is true in the response.
+      observed: ClassCastException casting Integer to Long
+      expected: Version is read numerically and completion succeeds so the selected-state assertion runs.
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: Two behavior tests error in completedApiFixture via complete before reaching their API assertions.
+      rootCauseHypothesis: RestAssured JsonPath returns the zero-valued scan version as Integer, while complete assigns the result directly to long through a Long cast.
+      requiredOutcome: Read version as Number and convert with longValue, or otherwise use a numeric extraction that accepts Integer and Long; both behavior tests must reach and pass their assertions.
+      blocking: true
+      observed: java.lang.Integer cannot be cast to java.lang.Long at DevelopmentPriorityBehaviorTest.complete line 109.
+      expected: All 70 tests pass with no errors.
+  targets:
+    - suite: com.example.priority.DevelopmentPriorityBehaviorTest
+      test: saveDevelopmentPrioritiesSelectsDevelopmentPoint
+      operation: PUT /v1/scans/{scanId}/development-priorities (saveDevelopmentPriorities)
+      observed: Fixture aborts with ClassCastException before request assertion.
+      expected: Fixture completes scan and response contains selected true.
+      file: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java:109
+    - suite: com.example.priority.DevelopmentPriorityBehaviorTest
+      test: saveDevelopmentPrioritiesComposesActionOverviewFromSelectedItems
+      operation: PUT /v1/scans/{scanId}/development-priorities (saveDevelopmentPriorities)
+      observed: Fixture aborts with ClassCastException before request assertion.
+      expected: Fixture completes scan and response contains only selected development point.
+      file: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java:109
+  editScope:
+    allowedEditPaths:
+      - src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+    suspectPaths:
+      - path: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+        confidence: high
+        reason: Direct stack-frame evidence identifies complete helper line 109.
+    forbiddenOrOutOfScope:
+      - src/main/java/com/example/priority/api/DevelopmentPriorityResource.java
+      - src/main/java/com/example/priority/application/DevelopmentPriorityService.java
+      - src/main/resources/db/migration/V10__development_priorities.sql
+      - reports/**
+  buildAgentBrief:
+    - Run `mvn -B -ntp -q test` from backendAppRoot and confirm the two reported DevelopmentPriorityBehaviorTest errors match before editing.
+    - Read src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java and correct the complete helper numeric version extraction at line 109 to safely accept the JsonPath numeric type.
+    - Keep both behavior assertions intact; rerun the mandatory unit-test command and confirm all tests pass.
+  nonGoals:
+    - Do not weaken or remove the selected-state, action-overview, or 401 assertions.
+    - Do not change production resource, service, persistence, migration, or authentication code for this fixture-only failure.
+warnings: []
+errors:
+  - gateId: GATE_TESTS
+    evidence: Tests run 70, errors 2; both errors are ClassCastException in shared fixture helper complete line 109.
+    failureCategory: test_fixture_type_error

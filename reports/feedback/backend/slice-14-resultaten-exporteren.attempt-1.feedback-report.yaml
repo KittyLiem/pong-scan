@@ -1,0 +1,134 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runBackendCheck
+stream: backend
+sliceId: slice-14-resultaten-exporteren
+attemptNumber: 1
+status: fail
+startedAt: "2026-10-13T17:25:37.569Z"
+finishedAt: "2026-10-13T17:26:14.014Z"
+durationMs: 109971
+inputRefs: [backendSliceContext, backendAppRoot, conformanceLock, backendStackProfile, buildOutput]
+artifactRefs:
+  - reports/check/backend/slice-14-resultaten-exporteren.attempt-1.check-report.yaml
+  - reports/feedback/backend/slice-14-resultaten-exporteren.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+failedGateIds: [GATE_BEHAVIOR_EVIDENCE, GATE_TESTS]
+failedChecks: [CHK_UNIT_TESTS]
+reprocessHint: backend-build
+reprocessInputs:
+  sliceId: slice-14-resultaten-exporteren
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_BEHAVIOR_EVIDENCE, GATE_TESTS]
+  failedChecks: [CHK_UNIT_TESTS]
+  checkerSummary: "GATE_BEHAVIOR_EVIDENCE failed first because both transition tests abort in fixture setup, followed by GATE_TESTS: the slice fixture sends PUT /v1/scans/{scanId}, which returns 405 instead of 200, so no completed scan reaches the PDF export assertions."
+  gateFailureContext:
+    - gateId: GATE_BEHAVIOR_EVIDENCE
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS]
+    primaryCommand: mvn -B -ntp -q test
+    notes: Compile or type-check-only verification is not a substitute for the failed unit-test command.
+  primaryFailures:
+    - gateId: GATE_BEHAVIOR_EVIDENCE
+      checkId: CHK_UNIT_TESTS
+      symptom: Both behavior-evidence methods terminate during completedApiFixture setup.
+      rootCauseHypothesis: The fixture uses an unsupported PUT method for /v1/scans/{scanId}, or the slice implementation omitted the API route that the fixture is intended to use.
+      requiredOutcome: Both listed transition methods run to their PDF assertions using a supported persisted goal-context setup path.
+      blocking: true
+      observed: PUT /v1/scans/{scanId} returned 405 at ResultsExportBehaviorTest.java:78.
+      expected: Fixture setup returns 200 and creates completed scan data.
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: ResultsExportBehaviorTest has 2 failures out of 73 total tests.
+      rootCauseHypothesis: Test fixture/API route mismatch prevents the export endpoint from being exercised.
+      requiredOutcome: mvn -B -ntp -q test exits 0 with both export behavior tests passing.
+      blocking: true
+      observed: Expected 200 but received 405.
+      expected: 200
+  targets:
+    - file: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      suite: ResultsExportBehaviorTest
+      test: exportScanPdfProducesPdfFromCompletedResult
+      operation: PUT /v1/scans/{scanId} fixture setup; GET /v1/scans/{scanId}/export target
+      locationHint: ResultsExportBehaviorTest.java:25 and :78
+      observed: PUT fixture request returns 405.
+      expected: Use a supported route that establishes goal context and returns 200, then assert PDF 200/content type.
+    - file: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      suite: ResultsExportBehaviorTest
+      test: exportScanPdfIncludesPersistedGoalContext
+      operation: PUT /v1/scans/{scanId} fixture setup; GET /v1/scans/{scanId}/export target
+      locationHint: ResultsExportBehaviorTest.java:38 and :78
+      observed: PUT fixture request returns 405.
+      expected: Use a supported route that persists goal context, then assert it is present in the PDF.
+  testFailures:
+    - file: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      suite: ResultsExportBehaviorTest
+      test: exportScanPdfProducesPdfFromCompletedResult
+      locationHint: ResultsExportBehaviorTest.java:25 -> completedApiFixture:78
+      assertionSummary: Fixture update was asserted to return 200 before PDF response validation.
+      observed: 405 Method Not Allowed
+      expected: 200
+    - file: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      suite: ResultsExportBehaviorTest
+      test: exportScanPdfIncludesPersistedGoalContext
+      locationHint: ResultsExportBehaviorTest.java:38 -> completedApiFixture:78
+      assertionSummary: Fixture update was asserted to return 200 before goal-context PDF validation.
+      observed: 405 Method Not Allowed
+      expected: 200
+  editScope:
+    allowedEditPaths:
+      - src/test/java/com/example/results/ResultsExportBehaviorTest.java
+      - src/main/java/com/example/results/api/ResultsExportResource.java
+      - src/main/java/com/example/results/application/ResultsExportService.java
+    suspectPaths:
+      - path: src/test/java/com/example/results/ResultsExportBehaviorTest.java
+        confidence: high
+      - path: src/main/java/com/example/results/api/ResultsExportResource.java
+        confidence: low
+    forbiddenOrOutOfScope:
+      - reports/**
+      - unrelated frontend files
+      - broad auth or persistence refactors
+  buildAgentBrief:
+    - Run `mvn -B -ntp -q test` from backendAppRoot and confirm the two ResultsExportBehaviorTest fixture failures match this feedback before editing code.
+    - Read ResultsExportBehaviorTest.java, especially completedApiFixture at line 78, and identify the supported existing API route for persisting scan goal context.
+    - Repair the fixture to use that supported route, or add the missing slice-owned route only if the supplied contract/slice scope proves it is required; preserve the GET export contract.
+    - Re-run the unit-test command and confirm both behavior transition methods execute their PDF assertions.
+  nonGoals:
+    - Do not weaken expected 200/PDF/goal-context assertions.
+    - Do not alter unrelated auth, frontend, or report files.
+gates:
+  - gateId: GATE_BEHAVIOR_EVIDENCE
+    status: failed
+    checkId: CHK_UNIT_TESTS
+    evidence:
+      observed: Referenced test methods failed at fixture setup rather than completing.
+      expected: Every evidence method must run in the successful unit-test suite.
+    failureCategory: test_failure
+  - gateId: GATE_TESTS
+    status: failed
+    checkId: CHK_UNIT_TESTS
+    evidence:
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+      excerpt: "Expected status code <200> but was <405> at completedApiFixture:78."
+    failureCategory: test_failure
+warnings: []
+errors:
+  - gateId: GATE_TESTS
+    evidence: "Two ResultsExportBehaviorTest methods failed because PUT /v1/scans/{scanId} returned 405."
+    failureCategory: test_failure

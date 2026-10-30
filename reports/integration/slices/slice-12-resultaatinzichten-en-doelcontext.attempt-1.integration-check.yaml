@@ -1,0 +1,125 @@
+artifactRefs:
+- reports/integration/slices/slice-12-resultaatinzichten-en-doelcontext.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths: []
+      existenceSource: not_applicable
+      missingPaths: []
+      verifiedPaths: []
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify route_results path, component binding, and authentication
+          guard.
+      - path: frontend/src/app/scan-results/scan-results.component.ts
+        purpose: Verify route page behavior, API-backed state, and local priority
+          selection.
+      - path: frontend/src/app/scan-results/scan-results.component.html
+        purpose: Verify scoped page actions, data binding, disabled out-of-scope actions,
+          and error/retry UI.
+      - path: frontend/src/app/scan-results/scan-results.component.spec.ts
+        purpose: Verify representative page behavior and problem-details coverage.
+      - path: frontend/src/app/core/scans/scan-results.service.ts
+        purpose: Verify the existing GET results client path, authorization header,
+          DTO usage, and problem-details parsing.
+      existenceSource: upstream_check_handoff
+      missingPaths: []
+      verifiedPaths:
+      - frontend/src/app/scan-results/scan-results.component.ts
+      - frontend/src/app/scan-results/scan-results.component.html
+      - frontend/src/app/scan-results/scan-results.component.spec.ts
+  endpointParity:
+    reason: The authoritative slice contract subset contains no owned operationIds.
+    status: not_applicable
+  policyCompliance:
+    reason: apiChoiceLock and contractDecisionsLock were not supplied to this integration
+      step; FE cross-check used slice context and interface subset only.
+    status: not_evaluated
+  upstreamHandoff:
+    gateId: GATE_BUILD_HANDOFF
+    missingPaths: []
+    status: passed
+finishedAt: null
+gates:
+- evidence:
+    anchors:
+    - frontend/src/app/app.routes.ts
+    - frontend/src/app/scan-results/scan-results.component.ts
+    - frontend/src/app/scan-results/scan-results.component.html
+    - frontend/src/app/core/scans/scan-results.service.ts
+    assessment: The enabled frontend owns route_results as a route-only page binding
+      and the authoritative contract subset owns no operations. The guarded route
+      is registered at /scans/:scanId/results, the page is implemented, and unsupported
+      export and priority-save actions remain disabled rather than creating out-of-scope
+      calls. The existing results read uses the page API reference GET /v1/scans/{scanId}/results
+      and renders API-derived data with problem-details handling.
+    payloadSections:
+    - frontendSliceContext.scope
+    - frontendSliceContext.uiScopeRef.pageBindings
+    - frontendSliceContext.contractSubset
+    - interfaceContractSubset
+    - upstreamEvidence.frontendCheckOutput
+    upstreamChecks:
+      passedChecks:
+      - CHK_BUILD
+      - CHK_UNIT_TESTS
+      - CHK_LINT
+      status: ok
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    assessment: Backend is disabled for this ui-only frontend slice; no backend implementation
+      or backend operation is owned by this integration attempt.
+    payloadSections:
+    - frontendSliceContext.scope.backend.enabled
+    - interfaceContractSubset.slice.streamScopeRef.backend.enabled
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: skipped
+- evidence:
+    assessment: Frontend-only integration is coherent. The build and check outputs
+      are ok, the route/page anchors match route_results, no owned contract operation
+      is missing, and no backend cross-stream parity requirement applies.
+    conformanceSignals:
+      CHK_CONTRACT_VALID: statically satisfied by the well-formed empty owned-operation
+        subset
+      CHK_SLICE_INTEGRATION: passed by this report
+    payloadSections:
+    - frontendSliceContext.sliceType
+    - frontendSliceContext.uiScopeRef
+    - interfaceContractSubset.operationIds
+    - upstreamEvidence.frontendBuildOutput
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    assessment: The slice owns no transitions, so transition coverage passes vacuously.
+    payloadSections:
+    - frontendSliceContext.behaviorSubset.transitions
+    - frontendSliceContext.behaviorSubset.scenarios
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- interfaceContractSubset
+- conformanceLock
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: interface subset embedded for slice-12-resultaatinzichten-en-doelcontext
+  frontendBuildAttempt: 1
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-12-resultaatinzichten-en-doelcontext
+startedAt: null
+status: ok
+stepId: runSliceIntegrationCheckFrontendOnly
+stream: integration
+warnings:
+- The slice retains unresolved decision dec-012 for classification boundaries; the
+  implementation does not infer thresholds and groups only API-returned classifications.
+- Export and development-priority persistence are visible but disabled because the
+  authoritative route-only contract subset owns no operations.

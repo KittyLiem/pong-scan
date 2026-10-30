@@ -1,0 +1,726 @@
+behaviorSubset:
+  initialState: []
+  scenarios: []
+  transitions:
+  - from: kennisgebieden niet geselecteerd
+    id: kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+    kind: mutation
+    operationId: updateScan
+    to: kennisgebieden geselecteerd
+  - from: kennisgebieden geselecteerd
+    id: kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+    kind: mutation
+    operationId: updateScan
+    to: selectie opgeslagen
+  - from: selectie opgeslagen
+    id: kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+    kind: mutation
+    operationId: updateScan
+    to: vragenlijst beschikbaar
+  - from: doel niet geselecteerd
+    id: organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+    kind: mutation
+    operationId: updateScan
+    to: doel geselecteerd
+  - from: doel geselecteerd
+    id: organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+    kind: mutation
+    operationId: updateScan
+    to: doel geprioriteerd
+  - from: doelprioriteit niet opgeslagen
+    id: organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+    kind: mutation
+    operationId: updateScan
+    to: doelprioriteit opgeslagen
+  - from: afgerond
+    id: afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+    kind: mutation
+    operationId: updateScan
+    to: opnieuw in beoordeling bij heropeningsbeleid
+  - from: afgerond
+    id: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+    kind: mutation
+    operationId: updateScan
+    to: nieuwe revisie in beoordeling bij revisiebeleid
+  unspecified:
+  - id: asm-014
+    text: Kennisgebiedselectie is een stap binnen Maturity beoordeling omdat geen
+      afzonderlijke pagina bestaat.
+  - id: dec-016
+    text: Besluit vereist of organisatiedoelen optioneel of verplicht zijn; aanbevolen
+      is optionele context.
+  - id: asm-012
+    text: Doelselectie en prioritering zijn stappen binnen Maturity beoordeling omdat
+      geen afzonderlijke pagina bestaat.
+  - id: dec-005
+    text: Besluit vereist over wijzigingen aan afgeronde scans; aanbevolen is een
+      nieuwe revisie binnen dezelfde scan met behoud van eerdere resultaten.
+capabilityId: kennisgebieden_selecteren
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: kennisgebieden_selecteren
+    operationIds:
+    - updateScan
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - updateScan
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}
+    method: PATCH
+    operationId: updateScan
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    path: /v1/scans/{scanId}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              goals:
+                items:
+                  properties:
+                    customText:
+                      type: string
+                    name:
+                      type: string
+                    priority:
+                      enum:
+                      - high
+                      - medium
+                      - low
+                      type: string
+                  required:
+                  - name
+                  - priority
+                  type: object
+                  x-ref: '#/components/schemas/OrganizationGoal'
+                type: array
+              revisionMode:
+                enum:
+                - reopen
+                - new-revision
+                - copy
+                type: string
+              selectedDomainIds:
+                items:
+                  format: uuid
+                  type: string
+                minItems: 1
+                type: array
+              version:
+                minimum: 0
+                type: integer
+            required:
+            - version
+            type: object
+            x-ref: '#/components/schemas/ScanUpdateInput'
+      required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                assessmentPeriod:
+                  type: string
+                goals:
+                  items:
+                    properties:
+                      customText:
+                        type: string
+                      name:
+                        type: string
+                      priority:
+                        enum:
+                        - high
+                        - medium
+                        - low
+                        type: string
+                    required:
+                    - name
+                    - priority
+                    type: object
+                    x-ref: '#/components/schemas/OrganizationGoal'
+                  type: array
+                id:
+                  format: uuid
+                  type: string
+                modelSnapshotId:
+                  format: uuid
+                  type: string
+                name:
+                  type: string
+                organizationId:
+                  format: uuid
+                  type: string
+                progress:
+                  maximum: 100
+                  minimum: 0
+                  type: number
+                selectedDomainIds:
+                  items:
+                    format: uuid
+                    type: string
+                  type: array
+                status:
+                  enum:
+                  - concept
+                  - in-progress
+                  - content-complete
+                  - completed
+                  - reopened
+                  type: string
+                updatedAt:
+                  format: date-time
+                  type: string
+                version:
+                  minimum: 0
+                  type: integer
+              required:
+              - id
+              - organizationId
+              - name
+              - assessmentPeriod
+              - status
+              - progress
+              - modelSnapshotId
+              - selectedDomainIds
+              - version
+              - updatedAt
+              type: object
+              x-ref: '#/components/schemas/Scan'
+        description: Scan context, selection, goals, or revision state updated
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+      - kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+      - kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+      - organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+      - organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+      - organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+      - afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+      - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+    capabilityId: kennisgebieden_selecteren
+    contractScopeRef:
+      capabilityKey: kennisgebieden_selecteren
+      operationIds:
+      - updateScan
+    dependsOnSlices:
+    - slice-03-datavolwassenheidsmodel
+    - slice-06-scan-aanmaken
+    sliceId: slice-07-kennisgebieden-selecteren
+    sliceIndex: 6
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds:
+        - getScan
+        ownedOperationIds:
+        - updateScan
+        pageKey: Scanoverzicht
+        routeId: route_scan_overview
+      - allowedOperationIds:
+        - updateScan
+        - getScan
+        ownedOperationIds: []
+        pageKey: Maturity beoordeling
+        routeId: route_assessment
+      pageKeys:
+      - Scanoverzicht
+      - Maturity beoordeling
+      routeIds:
+      - route_scan_overview
+      - route_assessment
+frontendContext:
+  generationProfile:
+    authoringTimestamp: '2026-03-12T10:00:00Z'
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      seedDemoData: true
+      test:
+        devServices: false
+        flyway:
+          enabled: true
+          migrateAtStart: true
+        jdbcUrl: jdbc:h2:mem:app;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        mode: in-memory
+        password: sa
+        type: h2
+        username: sa
+      type: postgresql
+    deliveryTopology: single-repo
+    frontend:
+      enabled: true
+      uiContractPolicy:
+        pageCoverage: bijection
+        requireContentPagePerProductPage: true
+        requireRoutePerProductPage: true
+      uiFidelityPolicy:
+        requireMockupPerPage: true
+        structuralParity:
+          enabled: true
+          minMediaCoverage: 0.5
+          minSectionCoverage: 0.5
+    qualityBar: mvp
+    revision: 1.0.0
+scope:
+  backend:
+    enabled: false
+  frontend:
+    enabled: true
+sliceId: slice-07-kennisgebieden-selecteren
+sliceType: paired-api
+uiScopeRef:
+  appShellMockupRef: mockups/app-shell.lock.html
+  contributesToPage: []
+  mockupRefs:
+  - mockups/scanoverzicht.lock.html
+  - mockups/maturity-beoordeling.lock.html
+  navigation:
+    defaultRouteByState:
+      anonymous: route_auth_start
+      member_with_organization: route_scan_overview
+      member_without_organization: route_auth_start
+    globalEntries:
+    - id: nav_assessment
+      label: Beoordeling
+      routeId: route_assessment
+      visibleWhen: member_with_active_scan
+    - id: nav_scans
+      label: Scanoverzicht
+      routeId: route_scan_overview
+      visibleWhen: member_with_organization
+    postAuthRouting:
+      desiredRoutePolicy: restore_allowed_member_route
+      fallbackRouteId: route_scan_overview
+      organizationRequiredRouteId: route_auth_start
+  pageBindings:
+  - allowedOperationIds:
+    - getScan
+    mockupRef: mockups/scanoverzicht.lock.html
+    ownedOperationIds:
+    - updateScan
+    page:
+      apiRefs:
+      - method: POST
+        operationId: createScan
+        path: /v1/organizations/{organizationId}/scans
+      - method: GET
+        operationId: getScan
+        path: /v1/scans/{scanId}
+      - method: GET
+        operationId: listScans
+        path: /v1/organizations/{organizationId}/scans
+      - method: PATCH
+        operationId: updateScan
+        path: /v1/scans/{scanId}
+      contentKeys:
+      - scan_overview
+      - scan_list
+      - scan_cards
+      - scan_status_filter
+      - create_scan
+      - resume_scan
+      - manage_completed_scan
+      forms:
+      - contentKey: create_scan
+        fields:
+        - name
+        - assessmentPeriod
+        - initialSelectedDomainIds
+        id: create_scan_form
+      - contentKey: scan_status_filter
+        fields:
+        - status
+        id: scan_filter_form
+      goals:
+      - Alle scans met status, voortgang en laatste wijziging bekijken
+      - Een nieuwe scan aanmaken met naam en beoordelingsperiode
+      - Een conceptscan hervatten
+      - Een afgeronde scan openen en beheren
+      lists:
+      - contentKey: scan_list
+        id: scan_list
+        itemFields:
+        - name
+        - status
+        - progress
+        - updatedAt
+        itemType: scan_card
+      pageKey: Scanoverzicht
+      pageTitle: Scanoverzicht
+      primaryActions:
+      - apiRef:
+          method: POST
+          operationId: createScan
+          path: /v1/organizations/{organizationId}/scans
+        id: create_scan
+        label: Nieuwe scan aanmaken
+      - apiRef:
+          method: GET
+          operationId: listScans
+          path: /v1/organizations/{organizationId}/scans
+        id: list_scans
+        label: Scans laden en filteren
+      - apiRef:
+          method: GET
+          operationId: getScan
+          path: /v1/scans/{scanId}
+        id: open_scan
+        label: Scan openen
+      - apiRef:
+          method: PATCH
+          operationId: updateScan
+          path: /v1/scans/{scanId}
+        id: manage_completed_scan
+        label: Afgeronde scan beheren
+      routeId: route_scan_overview
+      states:
+      - contentKey: scan_overview
+        description: Toon de aanmaakactie wanneer nog geen toegankelijke scans zijn
+          gevonden.
+        id: empty_scan_portfolio
+      - contentKey: scan_cards
+        description: De benoemde mockupkaarten zijn structurele voorbeelden; toon
+          uitsluitend scans uit de API.
+        id: mock_scan_cards_structural_only
+    pageKey: Scanoverzicht
+    route:
+      access: member
+      guard: authenticated_with_organization
+      id: route_scan_overview
+      pageKey: Scanoverzicht
+      path: /scans
+      title: Scanoverzicht
+    routeId: route_scan_overview
+    sectionOutline:
+      exists: true
+      id: Scanoverzicht
+      outline:
+        counts:
+          buttons: 5
+          cards: 3
+          fields: 2
+          formLabels: 1
+          forms: 0
+          headings: 5
+          images: 0
+          links: 0
+          navLabels: 0
+          sections: 3
+        formLabels:
+        - Alle statussen Concept Afgerond
+        headings:
+        - Scanoverzicht
+        - Maturity scans
+        - Organisatiebrede nulmeting 2025
+        - Data maturity scan 2024
+        - Governance verdiepingsscan
+        majorSectionSlugs:
+        - scanoverzicht
+        - maturity-scans
+        - organisatiebrede-nulmeting-2025
+        - data-maturity-scan-2024
+        - governance-verdiepingsscan
+        navLabels: []
+      path: mockups/scanoverzicht.lock.html
+      sourceItem:
+        description: Centrale pagina voor het aanmaken, hervatten, bekijken en beheren
+          van maturity scans binnen de organisatie.
+        goals:
+        - Alle scans met status, voortgang en laatste wijziging bekijken
+        - Een nieuwe scan aanmaken met naam en beoordelingsperiode
+        - Een conceptscan hervatten
+        - Een afgeronde scan openen en beheren
+        key: Scanoverzicht
+  - allowedOperationIds:
+    - updateScan
+    - getScan
+    mockupRef: mockups/maturity-beoordeling.lock.html
+    ownedOperationIds: []
+    page:
+      apiRefs:
+      - method: POST
+        operationId: completeScan
+        path: /v1/scans/{scanId}/completion
+      - method: POST
+        operationId: createAdminDomain
+        path: /v1/admin/domains
+      - method: POST
+        operationId: createAnswerOption
+        path: /v1/admin/questions/{questionId}/options
+      - method: GET
+        operationId: getActiveModel
+        path: /v1/models/active
+      - method: GET
+        operationId: getScan
+        path: /v1/scans/{scanId}
+      - method: GET
+        operationId: listAdminDomains
+        path: /v1/admin/domains
+      - method: PUT
+        operationId: saveAnswer
+        path: /v1/scans/{scanId}/answers/{questionId}
+      - method: PATCH
+        operationId: updateAdminDomain
+        path: /v1/admin/domains/{domainId}
+      - method: PATCH
+        operationId: updateAdminQuestion
+        path: /v1/admin/questions/{questionId}
+      - method: PATCH
+        operationId: updateAnswerOption
+        path: /v1/admin/options/{optionId}
+      - method: PATCH
+        operationId: updateScan
+        path: /v1/scans/{scanId}
+      contentKeys:
+      - maturity_assessment
+      - domain_selection
+      - domain_progress
+      - current_question
+      - answer_evidence
+      - organization_goals
+      - assessment_completion
+      - admin_content_management
+      forms:
+      - contentKey: current_question
+        fields:
+        - optionId
+        - explanation
+        - evidenceReferences
+        id: answer_form
+      - contentKey: organization_goals
+        fields:
+        - goals
+        id: organization_goals_form
+      - contentKey: domain_selection
+        fields:
+        - selectedDomainIds
+        id: domain_selection_form
+      - access: administrator
+        contentKey: admin_content_management
+        fields:
+        - domain
+        - question
+        - answerOption
+        id: admin_content_form
+      goals:
+      - Vragen beantwoorden voor strategie, kwaliteit, governance, technologie, processen,
+        vaardigheden en datagedreven besluitvorming
+      - Per vraag een score, toelichting en eventueel bewijs vastleggen
+      - Voortgang per domein zien
+      - Tussentijds opslaan en later verdergaan
+      - De beoordeling afronden voor resultaatberekening
+      lists:
+      - contentKey: domain_progress
+        id: domain_progress_list
+        itemType: selected_domain_progress
+      - contentKey: maturity_assessment
+        id: assessment_question_list
+        itemType: model_question
+      pageKey: Maturity beoordeling
+      pageTitle: Maturity beoordeling
+      primaryActions:
+      - apiRef:
+          method: POST
+          operationId: completeScan
+          path: /v1/scans/{scanId}/completion
+        id: complete_assessment
+        label: Beoordeling afronden
+      - apiRef:
+          method: POST
+          operationId: createAnswerOption
+          path: /v1/admin/questions/{questionId}/options
+        id: create_answer_option
+        label: Antwoordoptie toevoegen
+      - apiRef:
+          method: POST
+          operationId: createAdminDomain
+          path: /v1/admin/domains
+        id: create_domain
+        label: Kennisgebied toevoegen
+      - apiRef:
+          method: GET
+          operationId: getActiveModel
+          path: /v1/models/active
+        id: load_active_model
+        label: Beoordelingsmodel laden
+      - apiRef:
+          method: GET
+          operationId: getScan
+          path: /v1/scans/{scanId}
+        id: load_assessment
+        label: Beoordeling hervatten
+      - apiRef:
+          method: GET
+          operationId: listAdminDomains
+          path: /v1/admin/domains
+        id: load_managed_domains
+        label: Beheerde kennisgebieden laden
+      - apiRef:
+          method: PUT
+          operationId: saveAnswer
+          path: /v1/scans/{scanId}/answers/{questionId}
+        id: save_answer
+        label: Antwoord opslaan
+      - apiRef:
+          method: PATCH
+          operationId: updateScan
+          path: /v1/scans/{scanId}
+        id: save_assessment_context
+        label: Selecties en doelen opslaan
+      - apiRef:
+          method: PATCH
+          operationId: updateAnswerOption
+          path: /v1/admin/options/{optionId}
+        id: update_answer_option
+        label: Antwoordoptie bijwerken
+      - apiRef:
+          method: PATCH
+          operationId: updateAdminDomain
+          path: /v1/admin/domains/{domainId}
+        id: update_domain
+        label: Kennisgebied bijwerken
+      - apiRef:
+          method: PATCH
+          operationId: updateAdminQuestion
+          path: /v1/admin/questions/{questionId}
+        id: update_question
+        label: Vraag bijwerken
+      routeId: route_assessment
+      states:
+      - contentKey: assessment_completion
+        description: Toon welke verplichte invoer nog aandacht vereist.
+        id: completion_blocked
+      - contentKey: answer_evidence
+        description: Bevestig opslag zonder een niet-geautoriseerde beginwaarde te
+          tonen.
+        id: answer_saved
+    pageKey: Maturity beoordeling
+    route:
+      access: member
+      guard: authenticated_with_organization
+      id: route_assessment
+      navigation:
+        parentRouteId: route_scan_overview
+      pageKey: Maturity beoordeling
+      path: /scans/:scanId/assessment
+      title: Maturity beoordeling
+    routeId: route_assessment
+    sectionOutline:
+      exists: true
+      id: Maturity beoordeling
+      outline:
+        counts:
+          buttons: 13
+          cards: 0
+          fields: 7
+          formLabels: 7
+          forms: 1
+          headings: 3
+          images: 0
+          links: 0
+          navLabels: 7
+          sections: 2
+        formLabels:
+        - 0 — Niet beoordeeld / uitgesloten Geen maturiteitsscore De vraag kan niet
+          worden beoordeeld of is aantoonbaar niet van toepassing op de organisatie.
+        - 1 — Initieel / Ad hoc Datakwaliteit wordt incidenteel onderzocht, meestal
+          pas wanneer problemen ontstaan.
+        - 2 — Herhaalbaar Enkele teams voeren terugkerende controles uit, maar een
+          organisatiebrede aanpak ontbreekt.
+        - 3 — Gedefinieerd Voor kritieke datasets zijn kwaliteitsregels, verantwoordelijken
+          en vaste controles vastgelegd.
+        - 4 — Beheerst Kwaliteitsmetingen worden centraal gevolgd en afwijkingen leiden
+          aantoonbaar tot verbeteracties.
+        - 5 — Geoptimaliseerd Datakwaliteit wordt proactief, grotendeels geautomatiseerd
+          en continu verbeterd.
+        - Onderbouwing
+        headings:
+        - Maturity beoordeling
+        - Voortgang
+        - In hoeverre wordt de kwaliteit van kritieke data structureel bewaakt?
+        majorSectionSlugs:
+        - maturity-beoordeling
+        - voortgang
+        - in-hoeverre-wordt-de-kwaliteit-van-kritieke-data-structureel-bewaakt
+        navLabels:
+        - Datastrategie 8/8
+        - Datakwaliteit 3/8
+        - Governance 2/8
+        - Technologie 1/8
+        - Processen 1/8
+        - Vaardigheden 1/7
+        - Besluitvorming 1/8
+      path: mockups/maturity-beoordeling.lock.html
+      sourceItem:
+        description: Gestructureerde invulflow waarin de gebruiker per datavolwassenheidsdomein
+          vragen beantwoordt en onderbouwing vastlegt.
+        goals:
+        - Vragen beantwoorden voor strategie, kwaliteit, governance, technologie,
+          processen, vaardigheden en datagedreven besluitvorming
+        - Per vraag een score, toelichting en eventueel bewijs vastleggen
+        - Voortgang per domein zien
+        - Tussentijds opslaan en later verdergaan
+        - De beoordeling afronden voor resultaatberekening
+        key: Maturity beoordeling
+  pageKeys:
+  - Scanoverzicht
+  - Maturity beoordeling
+  projectContextMockupRef: mockups/project_context.lock.md
+  routeIds:
+  - route_scan_overview
+  - route_assessment
+  uiSectionsRef: locks/ui-sections.lock.yaml

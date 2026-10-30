@@ -1,0 +1,289 @@
+slices:
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - accounttoegang.niet_aangemeld__aangemeld
+    - accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+  capabilityId: accounttoegang
+  contractScopeRef:
+    capabilityKey: accounttoegang
+    operationIds:
+    - registerMember
+    - createSession
+  dependsOnSlices: []
+  sliceId: slice-01-accounttoegang
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - organisatiecontext_en_scanrechten.organisatiecontext_ontbreekt__organisatiecontext_actief
+  capabilityId: organisatiecontext_en_scanrechten
+  contractScopeRef:
+    capabilityKey: organisatiecontext_en_scanrechten
+    operationIds:
+    - createOrganization
+  dependsOnSlices:
+  - slice-01-accounttoegang
+  sliceId: slice-02-organisatiecontext-en-scanrechten
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - datavolwassenheidsmodel.beoordelingsmodel_niet_beschikbaar__beoordeling_geblokkeerd
+    - datavolwassenheidsmodel.modelinhoud_beschikbaar__scan_kan_worden_gestart
+  capabilityId: datavolwassenheidsmodel
+  contractScopeRef:
+    capabilityKey: datavolwassenheidsmodel
+    operationIds:
+    - getActiveModel
+  dependsOnSlices: []
+  sliceId: slice-03-datavolwassenheidsmodel
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - adminomgeving_en_scaninhoudbeheer.kennisgebied_actief__kennisgebied_inactief
+    - adminomgeving_en_scaninhoudbeheer.vraag_actief__vraag_inactief
+    - adminomgeving_en_scaninhoudbeheer.antwoordoptie_beschikbaar__antwoordoptie_buiten_gebruik
+    - adminomgeving_en_scaninhoudbeheer.antwoordoptie_buiten_gebruik__antwoordoptie_beschikbaar
+    - adminomgeving_en_scaninhoudbeheer.vraag_zonder_uitleg__vraag_met_uitleg
+  capabilityId: adminomgeving_en_scaninhoudbeheer
+  contractScopeRef:
+    capabilityKey: adminomgeving_en_scaninhoudbeheer
+    operationIds:
+    - listAdminDomains
+    - createAdminDomain
+    - updateAdminDomain
+    - updateAdminQuestion
+    - createAnswerOption
+    - updateAnswerOption
+  dependsOnSlices:
+  - slice-01-accounttoegang
+  - slice-03-datavolwassenheidsmodel
+  sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+    - organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+    - kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+    - beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+    - beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+    - beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd
+  capabilityId: scanportfolio
+  contractScopeRef:
+    capabilityKey: scanportfolio
+    operationIds:
+    - listScans
+    - getScan
+  dependsOnSlices:
+  - slice-01-accounttoegang
+  - slice-02-organisatiecontext-en-scanrechten
+  sliceId: slice-05-scanportfolio
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - scan_aanmaken.scan_bestaat_niet__concept
+    - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+  capabilityId: scan_aanmaken
+  contractScopeRef:
+    capabilityKey: scan_aanmaken
+    operationIds:
+    - createScan
+  dependsOnSlices:
+  - slice-02-organisatiecontext-en-scanrechten
+  - slice-03-datavolwassenheidsmodel
+  sliceId: slice-06-scan-aanmaken
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+    - kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+    - kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+    - organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+    - organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+    - organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+    - afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+    - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+  capabilityId: kennisgebieden_selecteren
+  contractScopeRef:
+    capabilityKey: kennisgebieden_selecteren
+    operationIds:
+    - updateScan
+  dependsOnSlices:
+  - slice-03-datavolwassenheidsmodel
+  - slice-06-scan-aanmaken
+  sliceId: slice-07-kennisgebieden-selecteren
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+    - beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+    - beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+  capabilityId: beoordeling_vastleggen_en_hervatten
+  contractScopeRef:
+    capabilityKey: beoordeling_vastleggen_en_hervatten
+    operationIds:
+    - saveAnswer
+  dependsOnSlices:
+  - slice-07-kennisgebieden-selecteren
+  sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - beoordelingsinhoud_voltooien.in_uitvoering__inhoud_compleet
+    - beoordelingsinhoud_voltooien.inhoud_compleet__afgerond
+    - afgeronde_beoordeling_verfijnen.opnieuw_in_beoordeling__opnieuw_afgerond
+    - afgeronde_beoordeling_verfijnen.bestaande_resultaten__vervangen_geversioneerd_of_gekopieerd
+  capabilityId: beoordelingsinhoud_voltooien
+  contractScopeRef:
+    capabilityKey: beoordelingsinhoud_voltooien
+    operationIds:
+    - completeScan
+  dependsOnSlices:
+  - slice-08-beoordeling-vastleggen-en-hervatten
+  sliceId: slice-09-beoordelingsinhoud-voltooien
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+    - organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+    - resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+    - resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+    - afgeronde_beoordeling_verfijnen.bestaande_doelprioriteiten__behouden_gekopieerd_of_opnieuw_te_beoordelen
+  capabilityId: maturiteitsscores_berekenen
+  contractScopeRef:
+    capabilityKey: maturiteitsscores_berekenen
+    operationIds:
+    - getResults
+  dependsOnSlices:
+  - slice-09-beoordelingsinhoud-voltooien
+  sliceId: slice-10-maturiteitsscores-berekenen
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: organisatiedoelen_en_prioriteiten
+  contractScopeRef:
+    capabilityKey: organisatiedoelen_en_prioriteiten
+    operationIds: []
+  dependsOnSlices:
+  - slice-07-kennisgebieden-selecteren
+  - slice-10-maturiteitsscores-berekenen
+  sliceId: slice-11-organisatiedoelen-en-prioriteiten
+  sliceType: ui-only
+  streamScopeRef:
+    backend:
+      enabled: false
+    frontend:
+      enabled: true
+- capabilityId: resultaatinzichten_en_doelcontext
+  contractScopeRef:
+    capabilityKey: resultaatinzichten_en_doelcontext
+    operationIds: []
+  dependsOnSlices:
+  - slice-10-maturiteitsscores-berekenen
+  sliceId: slice-12-resultaatinzichten-en-doelcontext
+  sliceType: ui-only
+  streamScopeRef:
+    backend:
+      enabled: false
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+    - ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+  capabilityId: ontwikkelprioriteiten_selecteren
+  contractScopeRef:
+    capabilityKey: ontwikkelprioriteiten_selecteren
+    operationIds:
+    - saveDevelopmentPriorities
+  dependsOnSlices:
+  - slice-10-maturiteitsscores-berekenen
+  sliceId: slice-13-ontwikkelprioriteiten-selecteren
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- behaviorScopeRef:
+    ownedTransitionIds:
+    - resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+    - resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf
+  capabilityId: resultaten_exporteren
+  contractScopeRef:
+    capabilityKey: resultaten_exporteren
+    operationIds:
+    - exportScanPdf
+  dependsOnSlices:
+  - slice-10-maturiteitsscores-berekenen
+  - slice-13-ontwikkelprioriteiten-selecteren
+  sliceId: slice-14-resultaten-exporteren
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: afgeronde_beoordeling_verfijnen
+  contractScopeRef:
+    capabilityKey: afgeronde_beoordeling_verfijnen
+    operationIds: []
+  dependsOnSlices:
+  - slice-06-scan-aanmaken
+  - slice-07-kennisgebieden-selecteren
+  - slice-08-beoordeling-vastleggen-en-hervatten
+  - slice-09-beoordelingsinhoud-voltooien
+  - slice-10-maturiteitsscores-berekenen
+  sliceId: slice-15-afgeronde-beoordeling-verfijnen
+  sliceType: ui-only
+  streamScopeRef:
+    backend:
+      enabled: false
+    frontend:
+      enabled: true

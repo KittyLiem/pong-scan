@@ -1,0 +1,60 @@
+artifactRefs:
+- reports/contracts/full-contract-set.attempt-1.validation-report.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+finishedAt: '2026-03-12T10:00:00Z'
+gates:
+- evidence:
+    authScheme: bearerAuth
+    declaredOperationCount: 19
+    declaredPathCount: 16
+    idempotencyParameter: '#/components/parameters/IdempotencyKey'
+    observedOperationCount: 19
+    observedPathCount: 16
+    openapiVersion: 3.1.0
+  gateId: GATE_INTERFACE_CONTRACT_VALIDITY
+  status: passed
+- evidence:
+    artifactFormat: openapi-3.1
+    contractPath: locks/contracts/openapi.yaml
+    interfaceModel: rest-openapi
+    versionPrefix: /v1
+  gateId: GATE_DETERMINISTIC_CONTRACT_GENERATION
+  status: passed
+- evidence:
+    resolvedOperationCount: 19
+    transitionBindingCount: 39
+  gateId: GATE_TRANSITION_BINDING_SEMANTICS
+  status: passed
+- evidence:
+    scope: full-contract-set
+    uiLiteralInitialStateClaims: 0
+  gateId: GATE_UI_INITIAL_STATE_PARITY
+  status: passed
+- evidence:
+    apiBasePath: /v1
+    uiContentRevision: 1.0.0
+    uiRoutesRevision: 1.0.0
+  gateId: GATE_FULL_CONTRACT_SET
+  status: passed
+inputRefs:
+- productLock
+- interfaceContractLock
+- interfaceContractDocument
+- uiRoutesLock
+- uiContentLock
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.0.0
+runId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+sliceId: null
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: contract-validator
+stream: integration
+warnings: []

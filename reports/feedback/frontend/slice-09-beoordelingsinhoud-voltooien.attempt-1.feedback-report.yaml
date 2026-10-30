@@ -1,0 +1,98 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-09-beoordelingsinhoud-voltooien
+attemptNumber: 1
+status: fail
+startedAt: '2026-10-13T16:32:18Z'
+finishedAt: '2026-10-13T16:32:36Z'
+durationMs: 18000
+inputRefs:
+  - referenceId:00e3fb56-8084-4b07-a9d4-49c6836403ad
+artifactRefs:
+  - reports/check/frontend/slice-09-beoordelingsinhoud-voltooien.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-09-beoordelingsinhoud-voltooien.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+gates:
+  - id: GATE_TESTS
+    checkId: CHK_UNIT_TESTS
+    status: fail
+    evidence:
+      commandRef: stack-profile.test
+      resolvedCommand: npx npm run test -- --no-watch
+      exitCode: 1
+      excerpt: "TS2345: status 'completed' is not assignable to inferred status 'in-progress'"
+warnings: []
+errors:
+  - gateId: GATE_TESTS
+    failureCategory: slice_local
+    evidence: src/app/maturity-assessment/maturity-assessment.component.spec.ts line 14
+failedGateIds: [GATE_TESTS]
+failedChecks: [CHK_UNIT_TESTS]
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-09-beoordelingsinhoud-voltooien
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_TESTS]
+  failedChecks: [CHK_UNIT_TESTS]
+  checkerSummary: "GATE_TESTS failed after the build and lint gates passed: Angular cannot compile the maturity-assessment component spec because its ScanStub signal is inferred as in-progress-only, so the completion-flow test cannot run."
+  gateFailureContext:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: npx npm run test -- --no-watch
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS]
+    primaryCommand: npx npm run test -- --no-watch
+    notes: Type-check and verify are not substitutes for the test command when unit tests failed.
+  testFailures:
+    - file: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      suite: MaturityAssessmentComponent
+      test: completes with the current optimistic-lock version and optional comments
+      locationHint: 'line 14, ScanStub.complete'
+      assertionSummary: completion fixture changes the selected scan to status completed
+      observed: "TS2345: completed status cannot be passed to a signal inferred from an in-progress-only fixture"
+      expected: Stub state type accepts the Scan status union, including completed
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: Component spec does not compile, preventing all test execution.
+      rootCauseHypothesis: The scan constant uses `status: in-progress as const`, and the unannotated signal infers a narrower object type than the completed fixture constructed by ScanStub.complete.
+      requiredOutcome: Type the fixture/signal as the Scan contract or a union that permits completed, then the existing completion test and unit suite execute successfully.
+      blocking: true
+      observed: "TS2345 at component spec line 14"
+      expected: completed API response fixture is accepted by selected.set
+  targets:
+    - file: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      suite: MaturityAssessmentComponent
+      test: completes with the current optimistic-lock version and optional comments
+      locationHint: 'line 14, ScanStub.complete'
+      component: MaturityAssessmentComponent
+      operation: completeScan
+      observed: status completed rejected by narrow inferred stub type
+      expected: typed Scan stub accommodates completed response
+  editScope:
+    allowedEditPaths:
+      - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+    suspectPaths:
+      - path: src/app/core/scans/scan.service.ts
+        confidence: low; inspect only if importing the Scan type exposes a contract mismatch
+    forbiddenOrOutOfScope:
+      - src/generated/**
+      - reports/**
+      - unrelated production components
+  buildAgentBrief:
+    - Run `npx npm run test -- --no-watch` from frontendAppRoot and confirm the TS2345 failure matches the listed component-spec fixture before editing.
+    - Read src/app/maturity-assessment/maturity-assessment.component.spec.ts and use the Scan type from src/app/core/scans/scan.service.ts, or explicitly widen the stub signal state, so both in-progress and completed responses are valid.
+    - Preserve the completeScan version and optional-comments assertions; do not weaken the completion behavior coverage.
+    - Re-run the mandatory test command and confirm it reaches and passes the completion-flow test.
+  nonGoals:
+    - Do not alter completeScan production behavior, route configuration, or authentication storage for this fixture-only type error.
+    - Do not relax or delete the completion assertion merely to bypass compilation.

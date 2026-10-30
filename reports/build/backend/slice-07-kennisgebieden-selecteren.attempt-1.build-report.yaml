@@ -1,0 +1,52 @@
+artifactRefs:
+- src/main/java/com/example/scan/api/ScanDtos.java
+- src/main/java/com/example/scan/api/ScanResource.java
+- src/main/java/com/example/scan/application/ScanService.java
+- src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-07-kennisgebieden-selecteren.behavior-evidence.yaml
+- reports/build/backend/slice-07-kennisgebieden-selecteren.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 55000
+errors: []
+finishedAt: '2026-10-13T16:04:20Z'
+gates:
+- command: mvn -B -ntp -q -DskipTests compile
+  evidence: Main backend sources compiled successfully.
+  exitCode: 0
+  outcome: completed
+  scope: compile preflight
+- command: mvn -B -ntp -q -Dtest=ScanUpdateBehaviorTest test
+  evidence: Targeted updateScan behavior, authentication, and version-conflict tests
+    completed successfully.
+  exitCode: 0
+  outcome: completed
+  scope: targeted ScanUpdateBehaviorTest
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-07-kennisgebieden-selecteren
+startedAt: '2026-10-13T16:03:25Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+summary: Added the authenticated updateScan PATCH endpoint, validated update records,
+  transactional persistence for selections and goals, optimistic locking, revision
+  policies, and isolated behavior tests.
+warnings:
+- The existing dec-005 behavior decision was preserved rather than silently overwritten.
+  Its createScan policy differs from the slice-scoped updateScan new-revision transition;
+  updateScan implements the explicit slice transition while retaining the prior lock
+  choice.
+- The targeted test run logged non-blocking OpenTelemetry exporter connection warnings
+  because no local collector was running.
+- Local verification is diagnostic only; Backend Check retains formal gate authority.

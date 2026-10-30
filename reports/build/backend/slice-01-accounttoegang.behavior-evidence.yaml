@@ -1,0 +1,24 @@
+decisions:
+- choice: Zelfbediend credentialherstel valt buiten deze slice; herstel gebeurt door
+    opnieuw aanmelden met geldige gegevens.
+  unspecifiedId: asm-002
+- choice: Accountregistratie en aanmelden zijn binnen scope omdat de contractoperaties
+    registerMember en createSession dit expliciet vereisen.
+  unspecifiedId: asm-006
+transitions:
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: createSession
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/account/AccountResourceTest.java
+  testMethod: loginChangesStatusFromNotSignedInToSignedIn
+  transitionId: accounttoegang.niet_aangemeld__aangemeld
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: createSession
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/account/AccountResourceTest.java
+  testMethod: loginAfterExpiredSessionChangesStatusToAccessRestored
+  transitionId: accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld

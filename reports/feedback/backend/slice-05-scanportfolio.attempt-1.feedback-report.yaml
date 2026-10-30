@@ -1,0 +1,144 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runBackendCheck
+stream: backend
+sliceId: slice-05-scanportfolio
+attemptNumber: 1
+status: fail
+startedAt: not-recorded
+finishedAt: not-recorded
+durationMs: 13300
+inputRefs: [backendSliceContext@slice-05-scanportfolio, conformanceLock@1.0.0, backendStackProfile@1.1.0]
+artifactRefs:
+  - reports/check/backend/slice-05-scanportfolio.attempt-1.check-report.yaml
+  - reports/feedback/backend/slice-05-scanportfolio.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+failureDomain: slice_local
+failedGateIds: [GATE_ENDPOINT_SECURITY, GATE_BEHAVIOR_EVIDENCE, GATE_BUILD, GATE_TESTS, GATE_LINT]
+failedChecks: [CHK_ENDPOINT_SECURITY, CHK_BUILD, CHK_UNIT_TESTS, CHK_LINT]
+gates:
+  - gateId: GATE_TESTS
+    status: failed
+    checkId: CHK_UNIT_TESTS
+    evidence:
+      command: mvn -B -ntp -q test
+      exitCode: 1
+      failure: ScanResourceTest.java lines 54, 64, 74, and 84 call unavailable JsonPath.path(String).
+  - gateId: GATE_ENDPOINT_SECURITY
+    status: failed
+    checkId: CHK_ENDPOINT_SECURITY
+    evidence:
+      operations: [listScans, getScan]
+      missing: unauthenticated 401 assertions
+warnings: []
+errors:
+  - gateId: GATE_BUILD
+    failureCategory: compilation_failure
+    evidence: Package testCompile fails on JsonPath.path(String).
+  - gateId: GATE_ENDPOINT_SECURITY
+    failureCategory: conformance_failure
+    evidence: Neither protected scan operation has a 401/unauthorized test.
+reprocessHint: backend-build
+reprocessInputs:
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_ENDPOINT_SECURITY, GATE_BEHAVIOR_EVIDENCE, GATE_BUILD, GATE_TESTS, GATE_LINT]
+  failedChecks: [CHK_ENDPOINT_SECURITY, CHK_BUILD, CHK_UNIT_TESTS, CHK_LINT]
+  checkerSummary: Test compilation fails first because ScanResourceTest uses unavailable JsonPath.path(String) calls; this blocks build, tests, lint, and behavior-evidence execution. After correcting the test API usage, add explicit unauthenticated 401 coverage for both bearer-protected scan operations.
+  gateFailureContext:
+    - gateId: GATE_ENDPOINT_SECURITY
+      checkId: CHK_ENDPOINT_SECURITY
+      commandRef: deterministic-endpoint-security
+      resolvedCommand: builtin deterministic endpoint-security review
+      exitCode: 1
+    - gateId: GATE_BEHAVIOR_EVIDENCE
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+    - gateId: GATE_BUILD
+      checkId: CHK_BUILD
+      commandRef: stack-profile.build
+      resolvedCommand: mvn -B -ntp -q -DskipTests package
+      exitCode: 1
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      commandRef: stack-profile.lint
+      resolvedCommand: mvn -B -ntp -q verify -DskipTests
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS, CHK_BUILD, CHK_LINT]
+    primaryCommand: mvn -B -ntp -q test
+    notes: Compile/type-check-only verification is not a substitute for the failed unit-test gate.
+  testFailures:
+    - file: src/test/java/com/example/scan/ScanResourceTest.java
+      suite: ScanResourceTest
+      test: testCompile
+      locationHint: ScanResourceTest.java:54,64,74,84
+      assertionSummary: JsonPath results are read through unavailable path(String) calls.
+      observed: Maven compiler cannot find JsonPath.path(String).
+      expected: Test source compiles and then behavior methods execute.
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: Test compilation stops before any ScanResourceTest method runs.
+      rootCauseHypothesis: The RestAssured JsonPath version exposes get(String), not path(String), for the returned type.
+      requiredOutcome: Replace the incompatible calls with the supported accessor and make mvn -B -ntp -q test pass.
+      blocking: true
+      observed: cannot find symbol JsonPath.path(String) at lines 54, 64, 74, and 84.
+      expected: All scan behavior tests compile and execute.
+    - gateId: GATE_ENDPOINT_SECURITY
+      checkId: CHK_ENDPOINT_SECURITY
+      symptom: Protected handlers have enforcement annotations but no 401 assertion.
+      rootCauseHypothesis: The test suite only exercises authenticated and cross-organization requests.
+      requiredOutcome: Add unauthenticated requests for listScans and getScan that assert 401/unauthorized behavior.
+      blocking: true
+      observed: No test in ScanResourceTest invokes either scan endpoint without Authorization and asserts 401.
+      expected: Each protected operation has at least one 401/unauthorized assertion.
+    - gateId: GATE_BEHAVIOR_EVIDENCE
+      checkId: CHK_UNIT_TESTS
+      symptom: Behavior evidence references valid methods that were not run.
+      rootCauseHypothesis: Test compilation failure prevents suite execution.
+      requiredOutcome: After fixing compilation, run the full test command and preserve execution of all six evidence methods.
+      blocking: true
+      observed: CHK_UNIT_TESTS exits in testCompile.
+      expected: Evidence methods run in the executed suite.
+  targets:
+    - suite: ScanResourceTest
+      test: missingDomainSelectionKeepsContinuationBlocked; interruptedInProgressScanCanBeResumed; missingRequiredContentBlocksCompletion; missingRequiredContentBlocksCompletion
+      operation: getScan
+      observed: JsonPath.path(String) compile error at lines 54, 64, 74, and 84.
+      expected: Use the supported JsonPath accessor and execute assertions.
+    - suite: ScanResourceTest
+      test: add listScansRequiresBearer and getScanRequiresBearer coverage
+      operation: GET /v1/organizations/{organizationId}/scans; GET /v1/scans/{scanId}
+      observed: No unauthenticated 401 test exists.
+      expected: Missing Authorization produces a 401/unauthorized response for each operation.
+  editScope:
+    allowedEditPaths:
+      - src/test/java/com/example/scan/ScanResourceTest.java
+    suspectPaths:
+      - path: src/main/java/com/example/scan/api/ScanResource.java
+        confidence: low; inspect only if added unauthenticated tests reveal enforcement failure
+    forbiddenOrOutOfScope:
+      - src/main/resources/db/migration/V6__scan_portfolio.sql
+      - unrelated auth/session implementation files
+      - reports/**
+  buildAgentBrief:
+    - Run mvn -B -ntp -q test from backendAppRoot and confirm the testCompile failure at ScanResourceTest.java lines 54, 64, 74, and 84 before editing.
+    - Read src/test/java/com/example/scan/ScanResourceTest.java and replace incompatible JsonPath.path(String) calls with the supported accessor for this dependency version.
+    - Add explicit no-Authorization requests for listScans and getScan with 401/unauthorized assertions; retain existing cross-organization 404 isolation behavior.
+    - Re-run mvn -B -ntp -q test, then mvn -B -ntp -q -DskipTests package and mvn -B -ntp -q verify -DskipTests.
+  nonGoals:
+    - Do not weaken existing status or behavior assertions.
+    - Do not replace bearer enforcement annotations or broaden access control.
+    - Do not refactor unrelated persistence or authentication code.

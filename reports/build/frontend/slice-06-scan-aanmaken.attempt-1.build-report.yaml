@@ -1,0 +1,46 @@
+artifactRefs:
+- src/app/core/scans/scan.service.ts
+- src/app/core/scans/scan.service.spec.ts
+- src/app/scan-overview/scan-overview.component.ts
+- src/app/scan-overview/scan-overview.component.spec.ts
+- src/app/account-access/account-access.component.ts
+- src/app/account-access/account-access.component.html
+- src/app/account-access/account-access.component.spec.ts
+- reports/build/frontend/slice-06-scan-aanmaken.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 34019
+errors: []
+finishedAt: '2026-10-13T15:48:52.019Z'
+gates:
+- command: npx npm run build
+  evidence: Angular production build completed successfully. An initial template type-check
+    failure was corrected before the successful rerun.
+  exitCode: 0
+  id: LOCAL_BUILD_PREFLIGHT
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-06-scan-aanmaken
+startedAt: '2026-10-13T15:48:18.000Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Implemented API-backed concept-scan creation for the start and scan-overview
+  pages, including bearer authentication, idempotency, problem-details errors, model-domain
+  selection, and post-creation routing.
+warnings:
+- The stack profile typeCheck command maps to the same command as build; that mapped
+  preflight was used.
+- Unit tests and lint were not run locally on this first-pass build; formal CHK_UNIT_TESTS
+  and CHK_LINT execution remains owned by Frontend Check.
+- The successful build emitted the existing Sass @import deprecation warning for src/styles.scss.

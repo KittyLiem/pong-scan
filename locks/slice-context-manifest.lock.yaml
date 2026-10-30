@@ -1,0 +1,183 @@
+buildPlanPath: locks/build-plan.lock.yaml
+revision: 1.0.0
+slices:
+- capabilityId: accounttoegang
+  expectedLocks:
+    backend: locks/slices/backend/slice-01-accounttoegang/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-01-accounttoegang/slice-context.lock.yaml
+  sliceId: slice-01-accounttoegang
+  sliceIndex: 0
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: organisatiecontext_en_scanrechten
+  expectedLocks:
+    backend: locks/slices/backend/slice-02-organisatiecontext-en-scanrechten/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-02-organisatiecontext-en-scanrechten/slice-context.lock.yaml
+  sliceId: slice-02-organisatiecontext-en-scanrechten
+  sliceIndex: 1
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: datavolwassenheidsmodel
+  expectedLocks:
+    backend: locks/slices/backend/slice-03-datavolwassenheidsmodel/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-03-datavolwassenheidsmodel/slice-context.lock.yaml
+  sliceId: slice-03-datavolwassenheidsmodel
+  sliceIndex: 2
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: adminomgeving_en_scaninhoudbeheer
+  expectedLocks:
+    backend: locks/slices/backend/slice-04-adminomgeving-en-scaninhoudbeheer/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-04-adminomgeving-en-scaninhoudbeheer/slice-context.lock.yaml
+  sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+  sliceIndex: 3
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: scanportfolio
+  expectedLocks:
+    backend: locks/slices/backend/slice-05-scanportfolio/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-05-scanportfolio/slice-context.lock.yaml
+  sliceId: slice-05-scanportfolio
+  sliceIndex: 4
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: scan_aanmaken
+  expectedLocks:
+    backend: locks/slices/backend/slice-06-scan-aanmaken/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-06-scan-aanmaken/slice-context.lock.yaml
+  sliceId: slice-06-scan-aanmaken
+  sliceIndex: 5
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: kennisgebieden_selecteren
+  expectedLocks:
+    backend: locks/slices/backend/slice-07-kennisgebieden-selecteren/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-07-kennisgebieden-selecteren/slice-context.lock.yaml
+  sliceId: slice-07-kennisgebieden-selecteren
+  sliceIndex: 6
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: beoordeling_vastleggen_en_hervatten
+  expectedLocks:
+    backend: locks/slices/backend/slice-08-beoordeling-vastleggen-en-hervatten/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-08-beoordeling-vastleggen-en-hervatten/slice-context.lock.yaml
+  sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+  sliceIndex: 7
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: beoordelingsinhoud_voltooien
+  expectedLocks:
+    backend: locks/slices/backend/slice-09-beoordelingsinhoud-voltooien/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-09-beoordelingsinhoud-voltooien/slice-context.lock.yaml
+  sliceId: slice-09-beoordelingsinhoud-voltooien
+  sliceIndex: 8
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: maturiteitsscores_berekenen
+  expectedLocks:
+    backend: locks/slices/backend/slice-10-maturiteitsscores-berekenen/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-10-maturiteitsscores-berekenen/slice-context.lock.yaml
+  sliceId: slice-10-maturiteitsscores-berekenen
+  sliceIndex: 9
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: organisatiedoelen_en_prioriteiten
+  expectedLocks:
+    backend: null
+    frontend: locks/slices/frontend/slice-11-organisatiedoelen-en-prioriteiten/slice-context.lock.yaml
+  sliceId: slice-11-organisatiedoelen-en-prioriteiten
+  sliceIndex: 10
+  sliceType: ui-only
+  streamScopeRef:
+    backend:
+      enabled: false
+    frontend:
+      enabled: true
+- capabilityId: resultaatinzichten_en_doelcontext
+  expectedLocks:
+    backend: null
+    frontend: locks/slices/frontend/slice-12-resultaatinzichten-en-doelcontext/slice-context.lock.yaml
+  sliceId: slice-12-resultaatinzichten-en-doelcontext
+  sliceIndex: 11
+  sliceType: ui-only
+  streamScopeRef:
+    backend:
+      enabled: false
+    frontend:
+      enabled: true
+- capabilityId: ontwikkelprioriteiten_selecteren
+  expectedLocks:
+    backend: locks/slices/backend/slice-13-ontwikkelprioriteiten-selecteren/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-13-ontwikkelprioriteiten-selecteren/slice-context.lock.yaml
+  sliceId: slice-13-ontwikkelprioriteiten-selecteren
+  sliceIndex: 12
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: resultaten_exporteren
+  expectedLocks:
+    backend: locks/slices/backend/slice-14-resultaten-exporteren/slice-context.lock.yaml
+    frontend: locks/slices/frontend/slice-14-resultaten-exporteren/slice-context.lock.yaml
+  sliceId: slice-14-resultaten-exporteren
+  sliceIndex: 13
+  sliceType: paired-api
+  streamScopeRef:
+    backend:
+      enabled: true
+    frontend:
+      enabled: true
+- capabilityId: afgeronde_beoordeling_verfijnen
+  expectedLocks:
+    backend: null
+    frontend: locks/slices/frontend/slice-15-afgeronde-beoordeling-verfijnen/slice-context.lock.yaml
+  sliceId: slice-15-afgeronde-beoordeling-verfijnen
+  sliceIndex: 14
+  sliceType: ui-only
+  streamScopeRef:
+    backend:
+      enabled: false
+    frontend:
+      enabled: true

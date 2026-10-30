@@ -1,0 +1,8 @@
+envFileConfigured: true
+missingConfig: []
+publishDisabled: false
+publishReady: true
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p6
+status: ready
+stepId: preflightPublishEnvironment
+stream: final-integration

@@ -1,0 +1,51 @@
+artifactRefs:
+- src/app/app.routes.ts
+- src/app/core/organization/organization.service.ts
+- src/app/core/scans/scan.service.ts
+- src/app/core/scans/scan.service.spec.ts
+- src/app/scan-overview/scan-overview.component.ts
+- src/app/scan-overview/scan-overview.component.spec.ts
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-05-scanportfolio.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 5938
+errors: []
+finishedAt: '2026-10-13T15:22:01.081Z'
+gates:
+- checkId: LOCAL_TYPECHECK_BUILD
+  command: npx npm run build
+  evidence: Angular application bundle generated successfully in 5.938 seconds; only
+    the existing Sass @import deprecation warning was reported.
+  exitCode: 0
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile@1.2.0
+- conformanceLock@1.0.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: interfaceContractSubset supplied for slice-05-scanportfolio
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-05-scanportfolio
+startedAt: '2026-10-13T15:21:55.143Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Implemented contract-backed scan portfolio listing and scan-detail resume
+  behavior with protected routes, bearer authentication, cursor pagination, problem-details
+  errors, visible unavailable create action, filtering, progress display, and tests.
+warnings:
+- The first-pass local preflight used the supplied typeCheck command, which maps to
+  the Angular build command. Formal build, unit-test, and lint gates remain owned
+  by Frontend Check.
+- Full unit tests and lint were not run locally on this first attempt to preserve
+  Build/Check separation.
+- createScan and updateScan are referenced by page goals but are outside this slice's
+  exact operation subset; the create action remains visibly disabled instead of issuing
+  an invented API call.
+- The existing global stylesheet emits a Sass @import deprecation warning.

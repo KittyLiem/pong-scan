@@ -1,0 +1,545 @@
+features:
+- behavior:
+    scenarios:
+    - id: datavolwassenheidsmodel.s1
+      text: Een nieuwe scan bevat vragen voor ieder vereist datavolwassenheidsdomein.
+    - id: datavolwassenheidsmodel.s2
+      text: Iedere vraag toont beschikbare antwoordopties in de beheerde volgorde.
+    - id: datavolwassenheidsmodel.s3
+      text: Vastgelegde vraaguitleg is zichtbaar.
+    - id: datavolwassenheidsmodel.s4
+      text: Een hervatte scan toont dezelfde modelinhoud als bij de start.
+    - id: datavolwassenheidsmodel.s5
+      text: Dezelfde antwoorden en modelregels leveren reproduceerbare resultaten.
+    transitions:
+    - from: beoordelingsmodel niet beschikbaar
+      id: datavolwassenheidsmodel.beoordelingsmodel_niet_beschikbaar__beoordeling_geblokkeerd
+      to: beoordeling geblokkeerd
+    - from: modelinhoud beschikbaar
+      id: datavolwassenheidsmodel.modelinhoud_beschikbaar__scan_kan_worden_gestart
+      to: scan kan worden gestart
+    unspecified:
+    - id: asm-015
+      text: Er is geen uitvoerbare applicatie of testbewijs; controle is op specificatieconsistentie
+        uitgevoerd.
+  key: datavolwassenheidsmodel
+  name: Datavolwassenheidsmodel
+  summary: Biedt de zeven vereiste domeinen, vragen, uitleg en scoreopties van 0 tot
+    en met 5; iedere scan behoudt de modelinhoud waarmee deze startte.
+- behavior:
+    scenarios:
+    - id: accounttoegang.s1
+      text: Een nieuwe gebruiker kan een account aanmaken.
+    - id: accounttoegang.s2
+      text: Een bestaande gebruiker kan met geldige gegevens inloggen.
+      transitionIds:
+      - accounttoegang.niet_aangemeld__aangemeld
+    - id: accounttoegang.s3
+      text: Een niet-aangemelde gebruiker ziet geen organisatie- of scaninhoud.
+    - id: accounttoegang.s4
+      text: Een verlopen sessie kan via opnieuw aanmelden worden hersteld.
+      transitionIds:
+      - accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+    transitions:
+    - from: niet aangemeld
+      id: accounttoegang.niet_aangemeld__aangemeld
+      to: aangemeld
+    - from: toegang geblokkeerd
+      id: accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+      to: accounttoegang hersteld
+    unspecified:
+    - id: asm-002
+      text: Zelfbediend herstel van vergeten of onbruikbare inloggegevens is niet
+        beschreven.
+    - id: asm-006
+      text: Een eerdere scope noemt accounts en login buiten scope, maar accounttoegang
+        blijft vereist door de aanmeldpagina.
+  key: accounttoegang
+  name: Accounttoegang
+  summary: Geeft nieuwe en bestaande gebruikers accounttoegang, herstelt de gewenste
+    route en schermt organisatie- en scangegevens af zonder geldige sessie.
+- behavior:
+    scenarios:
+    - id: organisatiecontext_en_scanrechten.s1
+      text: Een aangemelde gebruiker kan bedrijfscontext vastleggen.
+    - id: organisatiecontext_en_scanrechten.s2
+      text: Een geldige organisatiecontext leidt naar het scanoverzicht.
+      transitionIds:
+      - organisatiecontext_en_scanrechten.organisatiecontext_ontbreekt__organisatiecontext_actief
+    - id: organisatiecontext_en_scanrechten.s3
+      text: Een gebruiker zonder organisatietoegang ziet geen bijbehorende scans.
+      transitionIds:
+      - organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+    - id: organisatiecontext_en_scanrechten.s4
+      text: Het rechtenbeleid geldt voor bekijken, starten, wijzigen en beheren.
+    transitions:
+    - from: organisatiecontext ontbreekt
+      id: organisatiecontext_en_scanrechten.organisatiecontext_ontbreekt__organisatiecontext_actief
+      to: organisatiecontext actief
+    - from: organisatiecontext ontoegankelijk
+      id: organisatiecontext_en_scanrechten.organisatiecontext_ontoegankelijk__toegang_geblokkeerd
+      to: toegang geblokkeerd
+    - from: gebruiker aangemeld
+      id: organisatiecontext_en_scanrechten.gebruiker_aangemeld__organisatiecontext_toegankelijk
+      to: organisatiecontext toegankelijk
+    unspecified:
+    - id: asm-007
+      text: Het verplichtingsbeleid voor bedrijfstak is onbeslist doordat de bron
+        dit zowel verplicht als niet-verplicht beschrijft.
+  key: organisatiecontext_en_scanrechten
+  name: Organisatiecontext en scanrechten
+  summary: Verbindt een aangemelde gebruiker aan een actieve organisatiecontext en
+    begrenst zichtbare en wijzigbare scans volgens organisatierechten.
+- behavior:
+    scenarios:
+    - id: adminomgeving_en_scaninhoudbeheer.s1
+      text: Een gebruiker zonder beheerdersrecht kan scanconfiguratie niet wijzigen.
+    - id: adminomgeving_en_scaninhoudbeheer.s2
+      text: Een beheerder kan kennisgebieden, vragen en antwoordopties beheren.
+    - id: adminomgeving_en_scaninhoudbeheer.s3
+      text: Historisch gebruikte inhoud blijft voor bestaande scans beschikbaar.
+    - id: adminomgeving_en_scaninhoudbeheer.s4
+      text: Een nieuwe scan gebruikt alleen actieve kennisgebieden en vragen.
+    - id: adminomgeving_en_scaninhoudbeheer.s5
+      text: Een afgeronde scan behoudt na configuratiewijzigingen dezelfde resultaten.
+    - id: adminomgeving_en_scaninhoudbeheer.s6
+      text: Adminformulieren en overzichten blijven bruikbaar op ondersteunde schermformaten.
+    transitions:
+    - from: kennisgebied actief
+      id: adminomgeving_en_scaninhoudbeheer.kennisgebied_actief__kennisgebied_inactief
+      to: kennisgebied inactief
+    - from: vraag actief
+      id: adminomgeving_en_scaninhoudbeheer.vraag_actief__vraag_inactief
+      to: vraag inactief
+    - from: antwoordoptie beschikbaar
+      id: adminomgeving_en_scaninhoudbeheer.antwoordoptie_beschikbaar__antwoordoptie_buiten_gebruik
+      to: antwoordoptie buiten gebruik
+    - from: antwoordoptie buiten gebruik
+      id: adminomgeving_en_scaninhoudbeheer.antwoordoptie_buiten_gebruik__antwoordoptie_beschikbaar
+      to: antwoordoptie beschikbaar
+    - from: vraag zonder uitleg
+      id: adminomgeving_en_scaninhoudbeheer.vraag_zonder_uitleg__vraag_met_uitleg
+      to: vraag met uitleg
+    unspecified:
+    - id: asm-011
+      text: De adminomgeving is voor traceerbaarheid aan Maturity beoordeling gekoppeld
+        omdat geen afzonderlijke adminpagina bestaat.
+  key: adminomgeving_en_scaninhoudbeheer
+  name: Adminomgeving en scaninhoudbeheer
+  summary: Laat beheerders kennisgebieden, vragen, uitleg en antwoordopties beheren
+    zonder historische scans of resultaten te wijzigen.
+- behavior:
+    scenarios:
+    - id: scanportfolio.s1
+      text: De gebruiker ziet alle toegankelijke scans binnen de actieve organisatiecontext.
+    - id: scanportfolio.s2
+      text: Iedere scan vermeldt status, voortgang en laatste wijziging.
+    - id: scanportfolio.s3
+      text: De gebruiker kan een onvoltooide scan hervatten.
+    - id: scanportfolio.s4
+      text: De gebruiker kan een afgeronde scan openen.
+    - id: scanportfolio.s5
+      text: Een historische scan blijft met dezelfde opgeslagen resultaten beschikbaar.
+    unspecified:
+    - id: asm-009
+      text: Trend- en benchmarkhistorie vallen buiten scope; afzonderlijke scans blijven
+        beschikbaar.
+  key: scanportfolio
+  name: Scanportfolio
+  summary: Toont binnen de actieve organisatiecontext opgeslagen scans met status,
+    voortgang en laatste wijziging.
+- behavior:
+    scenarios:
+    - id: scan_aanmaken.s1
+      text: Een bevoegde gebruiker kan een eerste of nieuwe scan initiëren.
+    - id: scan_aanmaken.s2
+      text: Geldige scangegevens leveren één conceptscan op.
+      transitionIds:
+      - scan_aanmaken.scan_bestaat_niet__concept
+    - id: scan_aanmaken.s3
+      text: De conceptscan verschijnt met beginvoortgang in het scanportfolio.
+    - id: scan_aanmaken.s4
+      text: Ongeldige verplichte scangegevens voorkomen aanmaak.
+    - id: scan_aanmaken.s5
+      text: Na aanmaak kan de gebruiker doorgaan naar de kennisgebiedselectie.
+    transitions:
+    - from: scan bestaat niet
+      id: scan_aanmaken.scan_bestaat_niet__concept
+      to: concept
+    unspecified:
+    - id: asm-008
+      text: Homepage, introductie en survey-start zijn onderdelen van bestaande start-
+        en beoordelingspagina's.
+  key: scan_aanmaken
+  name: Scan aanmaken
+  summary: Laat een bevoegde gebruiker een benoemde maturity-scan voor een geldige
+    beoordelingsperiode aanmaken met de actieve modelinhoud.
+- behavior:
+    scenarios:
+    - id: kennisgebieden_selecteren.s1
+      text: Een scan met één geselecteerd kennisgebied bevat uitsluitend dat kennisgebied.
+    - id: kennisgebieden_selecteren.s2
+      text: Een scan met meerdere geselecteerde kennisgebieden bevat uitsluitend die
+        kennisgebieden.
+    - id: kennisgebieden_selecteren.s3
+      text: Selecteer alles selecteert alle actieve kennisgebieden.
+    - id: kennisgebieden_selecteren.s4
+      text: Doorgaan zonder selectie toont dat minimaal één kennisgebied vereist is.
+      transitionIds:
+      - kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+    - id: kennisgebieden_selecteren.s5
+      text: De voortgangsindicator gebruikt uitsluitend geselecteerde kennisgebieden
+        en vragen.
+    - id: kennisgebieden_selecteren.s6
+      text: Een hervatte scan toont dezelfde opgeslagen selectie.
+    transitions:
+    - from: kennisgebieden niet geselecteerd
+      id: kennisgebieden_selecteren.kennisgebieden_niet_geselecteerd__kennisgebieden_geselecteerd
+      to: kennisgebieden geselecteerd
+    - from: kennisgebieden geselecteerd
+      id: kennisgebieden_selecteren.kennisgebieden_geselecteerd__selectie_opgeslagen
+      to: selectie opgeslagen
+    - from: selectie ontbreekt
+      id: kennisgebieden_selecteren.selectie_ontbreekt__doorgaan_geblokkeerd
+      to: doorgaan geblokkeerd
+    - from: selectie opgeslagen
+      id: kennisgebieden_selecteren.selectie_opgeslagen__vragenlijst_beschikbaar
+      to: vragenlijst beschikbaar
+    unspecified:
+    - id: asm-014
+      text: Kennisgebiedselectie is een stap binnen Maturity beoordeling omdat geen
+        afzonderlijke pagina bestaat.
+  key: kennisgebieden_selecteren
+  name: Kennisgebieden selecteren
+  summary: Laat de gebruiker vóór de eerste vraag actieve kennisgebieden selecteren;
+    de opgeslagen selectie bepaalt scaninhoud, voortgang en rapportage.
+- behavior:
+    scenarios:
+    - id: beoordeling_vastleggen_en_hervatten.s1
+      text: De gebruiker ziet uitsluitend vragen uit geselecteerde kennisgebieden.
+    - id: beoordeling_vastleggen_en_hervatten.s2
+      text: De gebruiker kan per vraag één antwoordoptie selecteren.
+    - id: beoordeling_vastleggen_en_hervatten.s3
+      text: De vraaguitleg wordt bij de vraag getoond.
+    - id: beoordeling_vastleggen_en_hervatten.s4
+      text: De gebruiker kan een toelichting en eventueel bewijs vastleggen.
+      transitionIds:
+      - beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+    - id: beoordeling_vastleggen_en_hervatten.s5
+      text: De voortgangsindicator past zich aan de selectie aan.
+    - id: beoordeling_vastleggen_en_hervatten.s6
+      text: Opgeslagen gegevens blijven na hervatten beschikbaar.
+      transitionIds:
+      - beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+    transitions:
+    - from: concept
+      id: beoordeling_vastleggen_en_hervatten.concept__in_uitvoering
+      to: in uitvoering
+    - from: vraag onbeantwoord
+      id: beoordeling_vastleggen_en_hervatten.vraag_onbeantwoord__vraaggegevens_gedeeltelijk_of_volledig_vastgelegd
+      to: vraaggegevens gedeeltelijk of volledig vastgelegd
+    - from: concept opgeslagen
+      id: beoordeling_vastleggen_en_hervatten.concept_opgeslagen__concept_hervat
+      to: concept hervat
+    - from: in uitvoering onderbroken
+      id: beoordeling_vastleggen_en_hervatten.in_uitvoering_onderbroken__in_uitvoering_hervat
+      to: in uitvoering hervat
+    - from: in uitvoering hervat
+      id: beoordeling_vastleggen_en_hervatten.in_uitvoering_hervat__vraaggegevens_en_voortgang_bijgewerkt
+      to: vraaggegevens en voortgang bijgewerkt
+    unspecified:
+    - id: dec-010
+      text: Besluit vereist over berekening van domein- en totale scanvoortgang; aanbevolen
+        is het aandeel vragen dat aan alle verplichte invoervelden voldoet.
+    - id: dec-011
+      text: Besluit vereist over de vorm van bewijs bij een vraag; aanbevolen zijn
+        bestandsuploads en links met beveiligde opslag en toegang.
+  key: beoordeling_vastleggen_en_hervatten
+  name: Beoordeling vastleggen en hervatten
+  summary: Slaat per vraag één antwoordoptie, toelichting en eventueel bewijs op en
+    ondersteunt hervatten binnen geselecteerde kennisgebieden.
+- behavior:
+    scenarios:
+    - id: beoordelingsinhoud_voltooien.s1
+      text: De afrondingscontrole beoordeelt alleen vragen uit geselecteerde kennisgebieden.
+    - id: beoordelingsinhoud_voltooien.s2
+      text: Niet-geselecteerde kennisgebieden veroorzaken geen ontbrekende-invoermelding.
+    - id: beoordelingsinhoud_voltooien.s3
+      text: Een geldige beoordeling gaat naar afgerond.
+      transitionIds:
+      - beoordelingsinhoud_voltooien.in_uitvoering__inhoud_compleet
+      - beoordelingsinhoud_voltooien.inhoud_compleet__afgerond
+    - id: beoordelingsinhoud_voltooien.s4
+      text: Een onvolledige beoordeling blijft in uitvoering.
+    - id: beoordelingsinhoud_voltooien.s5
+      text: Afronding activeert de resultaatflow.
+    transitions:
+    - from: in uitvoering
+      id: beoordelingsinhoud_voltooien.in_uitvoering__inhoud_compleet
+      to: inhoud compleet
+    - from: inhoud compleet
+      id: beoordelingsinhoud_voltooien.inhoud_compleet__afgerond
+      to: afgerond
+    - from: verplichte invoer ontbreekt
+      id: beoordelingsinhoud_voltooien.verplichte_invoer_ontbreekt__voltooiing_geblokkeerd
+      to: voltooiing geblokkeerd
+    unspecified:
+    - id: dec-002
+      text: Besluit vereist over afrondingsvoorwaarden; aanbevolen is dat iedere verplichte
+        vraag een score en toelichting heeft.
+  key: beoordelingsinhoud_voltooien
+  name: Beoordelingsinhoud voltooien
+  summary: Valideert uitsluitend vragen uit geselecteerde kennisgebieden voordat afronding
+    en resultaatberekening starten.
+- behavior:
+    scenarios:
+    - id: organisatiedoelen_en_prioriteiten.s1
+      text: De gebruiker kan organisatiedoelen en een eigen doel selecteren.
+    - id: organisatiedoelen_en_prioriteiten.s2
+      text: De gebruiker kan ieder geselecteerd doel prioriteren.
+    - id: organisatiedoelen_en_prioriteiten.s3
+      text: De scan bewaart doel, prioriteit en eventuele eigen doeltekst.
+    - id: organisatiedoelen_en_prioriteiten.s4
+      text: Opgeslagen doelen en prioriteiten zijn op de resultatenpagina beschikbaar.
+      transitionIds:
+      - organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+    - id: organisatiedoelen_en_prioriteiten.s5
+      text: Doelprioriteiten veranderen geen maturity-score.
+    transitions:
+    - from: doel niet geselecteerd
+      id: organisatiedoelen_en_prioriteiten.doel_niet_geselecteerd__doel_geselecteerd
+      to: doel geselecteerd
+    - from: doel geselecteerd
+      id: organisatiedoelen_en_prioriteiten.doel_geselecteerd__doel_geprioriteerd
+      to: doel geprioriteerd
+    - from: doelprioriteit niet opgeslagen
+      id: organisatiedoelen_en_prioriteiten.doelprioriteit_niet_opgeslagen__doelprioriteit_opgeslagen
+      to: doelprioriteit opgeslagen
+    - from: doelprioriteiten opgeslagen
+      id: organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+      to: doelcontext beschikbaar in resultaten
+    unspecified:
+    - id: dec-016
+      text: Besluit vereist of organisatiedoelen optioneel of verplicht zijn; aanbevolen
+        is optionele context.
+    - id: asm-012
+      text: Doelselectie en prioritering zijn stappen binnen Maturity beoordeling
+        omdat geen afzonderlijke pagina bestaat.
+  key: organisatiedoelen_en_prioriteiten
+  name: Organisatiedoelen en prioriteiten
+  summary: Slaat geselecteerde organisatiedoelen en prioriteiten Hoog, Gemiddeld of
+    Laag op zonder de maturity-score te beïnvloeden.
+- behavior:
+    scenarios:
+    - id: maturiteitsscores_berekenen.s1
+      text: Een afgeronde beoordeling activeert de scoreberekening.
+      transitionIds:
+      - maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+    - id: maturiteitsscores_berekenen.s2
+      text: De berekening gebruikt alleen antwoorden uit geselecteerde kennisgebieden.
+    - id: maturiteitsscores_berekenen.s3
+      text: De radarvisualisatie bevat uitsluitend geselecteerde kennisgebieden.
+    - id: maturiteitsscores_berekenen.s4
+      text: Wijziging van doelen of prioriteiten verandert geen score.
+    - id: maturiteitsscores_berekenen.s5
+      text: Een bestaande scan behoudt haar berekende resultaten.
+    transitions:
+    - from: afgerond
+      id: maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+      to: resultaten beschikbaar
+    unspecified:
+    - id: dec-003
+      text: Besluit vereist over samenvoeging van vraag- en domeinscores; aanbevolen
+        zijn vooraf vastgelegde gewichten per vraag en domein.
+  key: maturiteitsscores_berekenen
+  name: Maturiteitsscores berekenen
+  summary: Berekent reproduceerbare domein- en totaalscores voor geselecteerde kennisgebieden
+    zonder invloed van organisatiedoelen.
+- behavior:
+    scenarios:
+    - id: resultaatinzichten_en_doelcontext.s1
+      text: De gebruiker ziet de maturity-score en kennisgebiedscores.
+    - id: resultaatinzichten_en_doelcontext.s2
+      text: De gebruiker ziet radar chart, maturity-levels en aanbevelingen.
+    - id: resultaatinzichten_en_doelcontext.s3
+      text: De gebruiker ziet sterktes, gaps en ontwikkelpunten.
+      transitionIds:
+      - resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+    - id: resultaatinzichten_en_doelcontext.s4
+      text: De doelensectie toont ieder opgeslagen doel met prioriteit en eigen tekst.
+      transitionIds:
+      - resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+    - id: resultaatinzichten_en_doelcontext.s5
+      text: Wijziging van doelen of prioriteiten verandert geen maturity-score.
+    - id: resultaatinzichten_en_doelcontext.s6
+      text: De gebruiker kan terugkeren naar de relevante beoordeling.
+    transitions:
+    - from: resultaten beschikbaar
+      id: resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+      to: ontwikkelpunten inzichtelijk
+    - from: doelprioriteiten opgeslagen
+      id: resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+      to: doelcontext zichtbaar
+    unspecified:
+    - id: dec-012
+      text: Besluit vereist over classificatie van sterktes, gaps en ontwikkelpunten;
+        aanbevolen zijn domeinspecifieke grenzen en teksten.
+    - id: asm-010
+      text: Aanbevelingen gelden als concrete ontwikkelpunten; een zelfstandige roadmapgenerator
+        is niet toegevoegd.
+  key: resultaatinzichten_en_doelcontext
+  name: Resultaatinzichten en doelcontext
+  summary: Toont maturity-resultaten, ontwikkelduiding en opgeslagen organisatiedoelen
+    als afzonderlijke resultaatonderdelen.
+- behavior:
+    scenarios:
+    - id: ontwikkelprioriteiten_selecteren.s1
+      text: De gebruiker kan impact en urgentie beoordelen.
+    - id: ontwikkelprioriteiten_selecteren.s2
+      text: De gebruiker kan een ontwikkelpunt selecteren of deselecteren.
+      transitionIds:
+      - ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+    - id: ontwikkelprioriteiten_selecteren.s3
+      text: Geselecteerde ontwikkelpunten verschijnen in het actieoverzicht.
+      transitionIds:
+      - ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+    - id: ontwikkelprioriteiten_selecteren.s4
+      text: Doelprioriteiten en ontwikkelprioriteiten zijn afzonderlijk herkenbaar.
+    - id: ontwikkelprioriteiten_selecteren.s5
+      text: De selectie blijft bij later openen beschikbaar.
+    transitions:
+    - from: ontwikkelprioriteiten niet geselecteerd
+      id: ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+      to: ontwikkelprioriteiten geselecteerd
+    - from: actieoverzicht onvolledig
+      id: ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+      to: actieoverzicht samengesteld
+    unspecified:
+    - id: dec-013
+      text: Besluit vereist over de schaal voor impact en urgentie; aanbevolen is
+        Laag, middel en hoog.
+  key: ontwikkelprioriteiten_selecteren
+  name: Ontwikkelprioriteiten selecteren
+  summary: Laat gebruikers afgeleide ontwikkelpunten op impact en urgentie beoordelen
+    en in een afzonderlijk actieoverzicht selecteren.
+- behavior:
+    scenarios:
+    - id: resultaten_exporteren.s1
+      text: Een bevoegde gebruiker kan een PDF van een afgeronde scan exporteren.
+      transitionIds:
+      - resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+    - id: resultaten_exporteren.s2
+      text: De PDF en resultatenpagina tonen dezelfde maturity-scores.
+    - id: resultaten_exporteren.s3
+      text: De PDF bevat de sectie Organisatiedoelen en prioriteiten.
+    - id: resultaten_exporteren.s4
+      text: De PDF toont ieder geselecteerd doel met prioriteit.
+    - id: resultaten_exporteren.s5
+      text: De PDF toont de eigen doeltekst wanneer deze is opgeslagen.
+    - id: resultaten_exporteren.s6
+      text: De PDF en resultatenpagina tonen dezelfde doelgegevens.
+    - id: resultaten_exporteren.s7
+      text: De doelensectie verandert geen maturity-score.
+    transitions:
+    - from: intern resultaat
+      id: resultaten_exporteren.intern_resultaat__pdf_geexporteerd
+      to: PDF geëxporteerd
+    - from: doelcontext opgeslagen
+      id: resultaten_exporteren.doelcontext_opgeslagen__doelcontext_opgenomen_in_pdf
+      to: doelcontext opgenomen in PDF
+  key: resultaten_exporteren
+  name: Resultaten exporteren
+  summary: Exporteert maturity-resultaten, doelen, prioriteiten en het actieoverzicht
+    met dezelfde opgeslagen gegevens als de resultatenpagina.
+- behavior:
+    scenarios:
+    - id: afgeronde_beoordeling_verfijnen.s1
+      text: Een bevoegde gebruiker kan de relevante vraag openen.
+    - id: afgeronde_beoordeling_verfijnen.s2
+      text: Een gebruiker zonder wijzigingsrecht blijft alleen-lezen.
+    - id: afgeronde_beoordeling_verfijnen.s3
+      text: Een wijziging activeert een nieuwe afrondingscontrole.
+    - id: afgeronde_beoordeling_verfijnen.s4
+      text: Een onvolledige aangepaste beoordeling levert geen definitieve herberekening
+        op.
+    - id: afgeronde_beoordeling_verfijnen.s5
+      text: De verfijnde beoordeling gebruikt de geldende selectie en modelinhoud.
+    - id: afgeronde_beoordeling_verfijnen.s6
+      text: Doelen en prioriteiten blijven volgens het revisiebeleid beschikbaar.
+    transitions:
+    - from: afgerond
+      id: afgeronde_beoordeling_verfijnen.afgerond__opnieuw_in_beoordeling_bij_heropeningsbeleid
+      to: opnieuw in beoordeling bij heropeningsbeleid
+    - from: afgerond
+      id: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_revisie_in_beoordeling_bij_revisiebeleid
+      to: nieuwe revisie in beoordeling bij revisiebeleid
+    - from: afgerond
+      id: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+      to: nieuwe conceptscan bij kopieerbeleid
+    - from: opnieuw in beoordeling
+      id: afgeronde_beoordeling_verfijnen.opnieuw_in_beoordeling__opnieuw_afgerond
+      to: opnieuw afgerond
+    - from: bestaande resultaten
+      id: afgeronde_beoordeling_verfijnen.bestaande_resultaten__vervangen_geversioneerd_of_gekopieerd
+      to: vervangen, geversioneerd of gekopieerd
+    - from: bestaande doelprioriteiten
+      id: afgeronde_beoordeling_verfijnen.bestaande_doelprioriteiten__behouden_gekopieerd_of_opnieuw_te_beoordelen
+      to: behouden, gekopieerd of opnieuw te beoordelen
+    unspecified:
+    - id: dec-005
+      text: Besluit vereist over wijzigingen aan afgeronde scans; aanbevolen is een
+        nieuwe revisie binnen dezelfde scan met behoud van eerdere resultaten.
+  key: afgeronde_beoordeling_verfijnen
+  name: Afgeronde beoordeling verfijnen
+  summary: Laat bevoegde gebruikers terugkeren naar vragen; revisie, modelinhoud,
+    selecties, resultaten en doelcontext volgen nog te nemen ownerbesluiten.
+pages:
+- description: Toegangspunt voor gebruikers om in te loggen en hun eerste organisatiecontext
+    te starten.
+  goals:
+  - Inloggen of een account aanmaken
+  - Organisatienaam en basiscontext vastleggen
+  - Een eerste maturity scan starten
+  - Gebruiker naar het scanoverzicht leiden
+  key: Aanmelden en organisatie starten
+- description: Centrale pagina voor het aanmaken, hervatten, bekijken en beheren van
+    maturity scans binnen de organisatie.
+  goals:
+  - Alle scans met status, voortgang en laatste wijziging bekijken
+  - Een nieuwe scan aanmaken met naam en beoordelingsperiode
+  - Een conceptscan hervatten
+  - Een afgeronde scan openen en beheren
+  key: Scanoverzicht
+- description: Gestructureerde invulflow waarin de gebruiker per datavolwassenheidsdomein
+    vragen beantwoordt en onderbouwing vastlegt.
+  goals:
+  - Vragen beantwoorden voor strategie, kwaliteit, governance, technologie, processen,
+    vaardigheden en datagedreven besluitvorming
+  - Per vraag een score, toelichting en eventueel bewijs vastleggen
+  - Voortgang per domein zien
+  - Tussentijds opslaan en later verdergaan
+  - De beoordeling afronden voor resultaatberekening
+  key: Maturity beoordeling
+- description: Resultaatweergave die scores per domein vertaalt naar inzichtelijke
+    ontwikkelpunten en geprioriteerde vervolgstappen.
+  goals:
+  - Totale maturiteitsscore en domeinscores bekijken
+  - Sterktes, gaps en concrete ontwikkelpunten begrijpen
+  - Prioriteiten selecteren op impact en urgentie
+  - Resultaten en actieoverzicht delen of exporteren
+  - Terugkeren naar de beoordeling om antwoorden te verfijnen
+  key: Scanresultaten en ontwikkelprioriteiten
+project:
+  description: Een data maturity scan waarmee organisaties hun datavolwassenheid gestructureerd
+    beoordelen en uitkomsten vertalen naar ontwikkelpunten en prioriteiten.
+  name: Pong data maturity scan versie 2
+  projectId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+  stack:
+    backend: quarkus
+    database: postgresql
+    frontend: angular
+  status: CREATED
+roles:
+- Gebruiker
+- Beheerder
+- system

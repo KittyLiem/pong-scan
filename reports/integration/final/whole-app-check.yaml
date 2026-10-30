@@ -1,0 +1,65 @@
+durationMs: 107000
+errors: []
+finishedAt: '2026-10-13T17:49:05Z'
+gates:
+- checkId: CHK_BUILD
+  command: npx npm run build
+  evidence: Exit 0; Angular application bundle generated successfully.
+  gateId: frontend.CHK_BUILD
+  status: passed
+  workingDirectory: frontend
+- checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 'Exit 0; Vitest: 12 test files and 49 tests passed.'
+  gateId: frontend.CHK_UNIT_TESTS
+  status: passed
+  workingDirectory: frontend
+- checkId: CHK_LINT
+  command: npx npm run lint
+  evidence: Exit 0; all frontend files pass linting.
+  gateId: frontend.CHK_LINT
+  status: passed
+  workingDirectory: frontend
+- checkId: CHK_BUILD
+  command: mvn -B -ntp -q -DskipTests package
+  evidence: Exit 0.
+  gateId: backend.CHK_BUILD
+  status: passed
+  workingDirectory: backend
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: Exit 0; Quarkus test profile started; Flyway validated and applied 11
+    migrations.
+  gateId: backend.CHK_UNIT_TESTS
+  status: passed
+  workingDirectory: backend
+- checkId: CHK_LINT
+  command: mvn -B -ntp -q verify -DskipTests
+  evidence: Exit 0.
+  gateId: backend.CHK_LINT
+  status: passed
+  workingDirectory: backend
+- evidence: backend/src/main/resources/db/migration/V90__demo_seed.sql exists and
+    seeds organization, maturity-model/admin-content, scans, selected domains, and
+    goals. Backend tests report Flyway migration version 90 applied.
+  gateId: GATE_DEMO_SEED_DATA
+  status: passed
+- evidence: Seed targets durable migration tables including organizations, maturity_model_domains,
+    maturity_model_questions, admin_domains, admin_questions, admin_answer_options,
+    scans, scan_selected_domains, and scan_goals; referenced tables are defined by
+    preceding migrations.
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence: runtimeSmokeEnabled is false; no runtime smoke sequence was requested.
+  gateId: GATE_RUNTIME_SMOKE
+  status: skipped
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p6
+startedAt: '2026-10-13T17:47:18Z'
+status: ok
+stepId: whole-app-check
+stream: final-integration
+warnings:
+- Frontend build and tests emit a Sass @import deprecation warning for frontend/src/styles.scss.
+- Frontend tests emit a Vite native config-loader future-compatibility warning.
+- Backend test run reports Flyway H2 version-verification and unavailable local OTLP
+  exporter warnings; command completed successfully.

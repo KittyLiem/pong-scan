@@ -1,0 +1,15 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* Specs en testhulpmiddelen. `vitest/globals` maakt describe/it/expect/vi ook voor editors bekend. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "vitest/globals"
+    ]
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts",
+    "src/testing/**/*.ts"
+  ]
+}
