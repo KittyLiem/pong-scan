@@ -1,0 +1,168 @@
+artifactRefs:
+- reports/integration/slices/slice-13-ontwikkelprioriteiten-selecteren.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/priority/api/DevelopmentPriorityResource.java
+        purpose: verify REST method/path, operationId, bearer enforcement, and resource
+          DTO usage
+      - path: backend/src/main/java/com/example/priority/api/DevelopmentPriorityDtos.java
+        purpose: verify request and response fields, UUIDs, enum bounds, and optimistic-lock
+          version validation
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: verify route_results registration and authenticated route guard
+      - path: frontend/src/app/core/scans/scan-results.service.ts
+        purpose: verify PUT client, DTO shape, bearer header, URI versioning, and
+          problem-details parsing
+      - path: frontend/src/app/scan-results/scan-results.component.ts
+        purpose: verify version source, save action, selection state, and action-overview
+          update
+      - path: frontend/src/app/scan-results/scan-results.component.html
+        purpose: verify primary UI action and impact, urgency, selection controls
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/core/scans/scan-results.service.ts
+      - app/frontend/src/app/core/scans/scan-results.service.spec.ts
+      - app/frontend/src/app/scan-results/scan-results.component.ts
+      - app/frontend/src/app/scan-results/scan-results.component.html
+      - app/frontend/src/app/scan-results/scan-results.component.spec.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    source: combinedSliceScope
+  endpointParity:
+    method: PUT
+    operationId: saveDevelopmentPriorities
+    path: /v1/scans/{scanId}/development-priorities
+    source: endpointParityPreGate
+    valid: true
+  policyAlignment:
+    auth: bearer token in Authorization header on frontend and BearerAuthenticated
+      on backend
+    errorModel: frontend parses problem-details and backend security evidence observes
+      application/problem+json
+    idempotency: not applicable because policy applies X-Idempotency-Key to POST operations
+    optimisticLocking: request version is sourced from API-backed scan state and backend
+      DTO requires nonnegative version
+    pagination: not applicable to scoped PUT operation
+    versioning: both anchors use URI prefix /v1
+  transitionCoverage:
+    source: backendSliceContext.behaviorSubset.transitions and upstreamEvidence.backendCheckOutput
+      GATE_BEHAVIOR_EVIDENCE
+    transitions:
+    - backendTest: DevelopmentPriorityBehaviorTest.saveDevelopmentPrioritiesSelectsDevelopmentPoint
+      id: ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+      operationId: saveDevelopmentPriorities
+      startsFrom: api-fixture
+      uiEvidence: scan-results.component.html checkbox invokes togglePriority and
+        save button invokes savePriorities, which calls saveDevelopmentPriorities
+    - backendTest: DevelopmentPriorityBehaviorTest.saveDevelopmentPrioritiesComposesActionOverviewFromSelectedItems
+      id: ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+      operationId: saveDevelopmentPriorities
+      startsFrom: api-fixture
+      uiEvidence: selectedDevelopmentPoints renders the action overview and savePriorities
+        persists it through saveDevelopmentPriorities
+  upstreamChecks:
+    backendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    backendStatus: ok
+    frontendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_FRONTEND_AUTH_STORAGE
+    frontendStatus: ok
+finishedAt: '2026-10-13T17:20:02Z'
+gates:
+- evidence:
+    observed: frontend route, client, request fields, response fields, bearer header,
+      problem-details handling, version field, and primary save action match the scoped
+      PUT contract
+    sources:
+    - frontendSliceContext.contractSubset.operations[saveDevelopmentPriorities]
+    - frontendSliceContext.uiScopeRef.pageBindings[route_results]
+    - interfaceContractSubset.operations[saveDevelopmentPriorities]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput.gates
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observed: backend resource exposes the scoped PUT operationId at the versioned
+      path, enforces bearer authentication, and uses DTOs matching required request
+      and response fields
+    sources:
+    - backendSliceContext.contractSubset.operations[saveDevelopmentPriorities]
+    - interfaceContractSubset.operations[saveDevelopmentPriorities]
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput.gates
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observed: endpoint parity is deterministically valid; both check streams are ok;
+      FE and BE agree on method, path, DTOs, auth, errors, versioning, and optimistic-lock
+      version semantics
+    sources:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - precomputedDiskVerification
+    - upstreamEvidence.frontendCheckOutput
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    observed: both owned transitions have api-fixture backend tests and the hosted
+      primary UI action invokes saveDevelopmentPriorities while updating selection
+      and action-overview state
+    sources:
+    - backendSliceContext.behaviorSubset.transitions
+    - behaviorEvidencePreGate
+    - upstreamEvidence.backendCheckOutput.GATE_BEHAVIOR_EVIDENCE
+    - frontend/src/app/scan-results/scan-results.component.ts
+    - frontend/src/app/scan-results/scan-results.component.html
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- combinedSliceScope
+- interfaceContractSubset
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+startedAt: '2026-10-13T17:20:02Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Upstream frontend checks reported existing Sass and Vitest compatibility warnings;
+  both were non-blocking.
+- Upstream backend tests reported non-blocking OTLP exporter connection-refused warnings.

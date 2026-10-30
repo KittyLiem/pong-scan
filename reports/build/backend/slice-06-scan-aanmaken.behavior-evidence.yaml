@@ -1,0 +1,26 @@
+decisions:
+- choice: Scancreatie blijft onderdeel van de bestaande organisatie-start en scanoverzichtflows;
+    er wordt geen afzonderlijke backendroute buiten createScan toegevoegd.
+  unspecifiedId: asm-008
+- choice: Een wijziging na afronding maakt via createScan een nieuwe conceptscan tegen
+    het actuele modelsnapshot; de afgeronde scan en resultaten blijven ongewijzigd
+    bewaard.
+  unspecifiedId: dec-005
+transitions:
+- kind: mutation
+  mutatedFields:
+  - status
+  - progress
+  operationId: createScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+  testMethod: createScanChangesMissingScanToPersistedConcept
+  transitionId: scan_aanmaken.scan_bestaat_niet__concept
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: createScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+  testMethod: createScanAfterCompletedAssessmentCreatesNewConceptAndPreservesCompletedScan
+  transitionId: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid

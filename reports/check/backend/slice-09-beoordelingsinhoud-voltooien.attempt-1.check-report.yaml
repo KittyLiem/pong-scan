@@ -1,0 +1,108 @@
+artifactRefs:
+- reports/check/backend/slice-09-beoordelingsinhoud-voltooien.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 122709
+errors: []
+finishedAt: '2026-10-13T16:40:09.903Z'
+gates:
+- evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/main/java/com/example/scan/application/ScanService.java
+      reason: completeScan application entry point for operationId completeScan
+    - path: src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+      reason: representative slice API and behavior-transition coverage
+    missingPaths: []
+    verifiedPaths:
+    - src/main/java/com/example/scan/application/ScanService.java
+    - src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    missingEnforcement: []
+    missingTests: []
+    observed401Tests:
+    - src/test/java/com/example/scan/ScanCompletionBehaviorTest.java#completeScanRequiresBearerAuthentication
+    observedEnforcement: runtime unauthenticated completion test returns 401 application/problem+json
+    protectedOperations:
+    - method: POST
+      operationId: completeScan
+      path: /v1/scans/{scanId}/completion
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    inspectedPath: src/main/java/com/example/scan/application/ScanService.java
+    observed: idempotency keys and request fingerprints are persisted as SHA-256 hashes;
+      completion fingerprints include version and normalized comments, not credential
+      request fields
+    rawCredentialPersistence: none observed in slice implementation
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    observed: ScanEntity is loaded through Panache and completion uses persistAndFlush;
+      required answers are counted through AnswerEntity
+    operationId: completeScan
+    primaryStore: configured Hibernate ORM/Panache persistence
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    executedBy: CHK_UNIT_TESTS
+    kind: mutation
+    mutatedFieldsPresent: true
+    operationId: completeScan
+    source: buildOutput.artifacts behavior-evidence content
+    startsFrom: api-fixture
+    testFile: src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+    transitionIds:
+    - beoordelingsinhoud_voltooien.in_uitvoering__inhoud_compleet
+    - beoordelingsinhoud_voltooien.inhoud_compleet__afgerond
+    - afgeronde_beoordeling_verfijnen.opnieuw_in_beoordeling__opnieuw_afgerond
+    - afgeronde_beoordeling_verfijnen.bestaande_resultaten__vervangen_geversioneerd_of_gekopieerd
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext:completeScan
+- buildOutput:attempt-2
+- conformanceLock:1.0.0
+- backendStackProfile:1.1.0
+provenance:
+  conformanceRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-09-beoordelingsinhoud-voltooien
+startedAt: '2026-10-13T16:38:07.194Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: Test runtime emitted non-blocking OTLP exporter connection-refused warnings
+    for localhost:4317; Maven exited 0.
+  failureCategory: non_blocking_runtime_warning
+  gateId: GATE_TESTS

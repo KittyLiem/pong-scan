@@ -1,0 +1,118 @@
+artifactRefs:
+- reports/check/frontend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 48000
+errors: []
+finishedAt: '2026-10-13T15:06:01.000Z'
+gates:
+- evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: frontend/src/app/maturity-assessment/maturity-assessment.component.html
+      reason: slice page entry point and UI structural/initial-state review
+    - path: frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      reason: representative slice regression coverage
+    missingPaths: []
+    verifiedPaths:
+    - frontend/src/app/maturity-assessment/maturity-assessment.component.html
+    - frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  id: GATE_BUILD_HANDOFF
+  status: passed
+- evidence:
+    expectedNavLabels:
+    - Beoordeling
+    expectedRoutePaths:
+    - /scans/:scanId/assessment
+    observedNavLabels:
+    - Beoordeling
+    observedRoutePaths:
+    - /scans/:scanId/assessment
+    routeConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  id: GATE_APP_SHELL_NAV
+  status: passed
+- evidence:
+    expectedCounts:
+      buttons: 13
+      fields: 7
+      forms: 1
+      headings: 3
+      sections: 2
+    observed: visible assessment heading, progress section, score inputs, evidence
+      field, assessment actions, and admin content-management forms/actions
+    pagePath: src/app/maturity-assessment/maturity-assessment.component.html
+    route: /scans/:scanId/assessment
+  id: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: passed
+- evidence:
+    authModel: bearer/JWT
+    observedStorage: in-memory Angular signal
+    prohibitedStorageUse: none
+    reviewedPath: src/app/core/auth/auth.service.ts
+  id: GATE_AUTH_STORAGE
+  status: passed
+- evidence:
+    observed: progress is explicitly rendered unavailable when no scoped API response
+      supplies progress fields; no invented zero-valued progress literal remains
+    reviewedPath: src/app/maturity-assessment/maturity-assessment.component.html
+  id: GATE_UI_INITIAL_STATE_PARITY
+  status: passed
+- evidence:
+    observed: command versions are read from loaded domain/question/option API response
+      objects; no literal or default token is used
+    operations:
+    - createAdminDomain
+    - updateAdminDomain
+    - updateAdminQuestion
+    - createAnswerOption
+    - updateAnswerOption
+    reviewedPaths:
+    - src/app/maturity-assessment/maturity-assessment.component.ts
+    - src/app/core/admin-content/admin-content.service.ts
+  id: GATE_VERSION_SOURCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  id: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    summary: 9 test files and 26 tests passed
+    workingDirectory: .
+  id: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  id: GATE_LINT
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: inline-slice-authority
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+startedAt: '2026-10-13T15:05:13.000Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Angular Sass reported a deprecated '@import' in src/styles.scss.
+- Vitest reported a future Vite native-config-loader compatibility warning.

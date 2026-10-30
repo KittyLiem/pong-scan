@@ -1,0 +1,165 @@
+artifactRefs:
+- reports/integration/slices/slice-09-beoordelingsinhoud-voltooien.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  contractScope:
+    auth: bearer-token
+    errorMediaType: application/problem+json
+    idempotencyHeader: X-Idempotency-Key
+    method: POST
+    operationIds:
+    - completeScan
+    path: /v1/scans/{scanId}/completion
+    requestRequiredFields:
+    - version
+    versioning: uri-versioned-v1
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/scan/api/ScanResource.java
+        purpose: Verify completeScan resource method, v1 route, bearer enforcement,
+          and required idempotency header.
+      - path: backend/src/main/java/com/example/scan/api/ScanDtos.java
+        purpose: Verify CompletionInput and Scan response DTO alignment.
+      - path: backend/src/main/java/com/example/scan/application/ScanService.java
+        purpose: Verify optimistic locking, completion rules, persistence, idempotency,
+          and state mutations.
+      - path: backend/src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+        purpose: Verify API-fixture transition, auth, and problem-details tests for
+          completeScan.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/main/java/com/example/scan/application/ScanService.java
+      - app/backend/src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify route_assessment registration and authenticated route guard.
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.ts
+        purpose: Verify the hosted completeScan UI action, request DTO construction,
+          response handling, and problem-details binding.
+      - path: frontend/src/app/maturity-assessment/maturity-assessment.component.html
+        purpose: Verify the primary completion form invokes the completeAssessment
+          client action and renders completion errors.
+      - path: frontend/src/app/core/scans/scan.service.ts
+        purpose: Verify POST path, bearer Authorization, X-Idempotency-Key, DTOs,
+          and problem-details parsing.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    observation: Per-stream context scopes are correctly stream-local and were not
+      treated as contradictory.
+    source: combinedSliceScope
+  endpointParity:
+    missingBackend: []
+    missingFrontend: []
+    source: endpointParityPreGate
+    valid: true
+  upstreamChecks:
+    backendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    backendStatus: ok
+    frontendPassedChecks:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_FRONTEND_AUTH_STORAGE
+    frontendStatus: ok
+finishedAt: null
+gates:
+- evidence:
+  - frontendSliceContext.contractSubset.operationIds contains completeScan and page
+    binding route_assessment owns completeScan.
+  - frontend/src/app/app.routes.ts registers scans/:scanId/assessment with authenticatedGuard.
+  - frontend/src/app/maturity-assessment/maturity-assessment.component.html hosts
+    the completion operation as a primary submit action.
+  - frontend/src/app/maturity-assessment/maturity-assessment.component.ts sends version
+    plus optional generalComments and consumes the returned Scan status.
+  - frontend/src/app/core/scans/scan.service.ts calls POST /v1/scans/{scanId}/completion,
+    attaches Authorization and X-Idempotency-Key, uses the v1 prefix, and maps problem-details
+    fields type/title/status/detail/instance.
+  - upstreamEvidence.frontendCheckOutput is ok; CHK_BUILD, CHK_UNIT_TESTS, CHK_LINT,
+    and CHK_FRONTEND_AUTH_STORAGE passed.
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+  - backendSliceContext.interfaceContractSubset defines POST /v1/scans/{scanId}/completion
+    as completeScan with bearerAuth and X-Idempotency-Key.
+  - backend/src/main/java/com/example/scan/api/ScanResource.java exposes operationId
+    completeScan on the v1 completion route, requires bearer authentication, and binds
+    the required idempotency header.
+  - backend/src/main/java/com/example/scan/api/ScanDtos.java requires non-negative
+    version and exposes the contracted Scan response fields.
+  - backend/src/main/java/com/example/scan/application/ScanService.java enforces version
+    locking, completion prerequisites, hashed idempotency data, transactional persistence,
+    and contracted status values.
+  - upstreamEvidence.backendCheckOutput is ok; CHK_ENDPOINT_SECURITY confirms unauthenticated
+    requests return 401 application/problem+json, and build/tests/lint passed.
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+  - combinedSliceScope authoritatively enables both streams; opposing per-stream scope
+    flags are valid stream-local metadata.
+  - endpointParityPreGate.valid is true with no missing frontend or backend endpoint
+    for completeScan.
+  - FE and BE agree on POST /v1/scans/{scanId}/completion, CompletionInput.version/generalComments,
+    Scan response, bearer Authorization, X-Idempotency-Key, URI v1 versioning, and
+    problem-details errors.
+  - apiChoiceLock and contractDecisionsLock policies for bearer auth, URI versioning,
+    problem-details, UUID identity, idempotent POST, transactional writes, and version-field
+    optimistic locking are reflected in the reviewed anchors.
+  - Pagination is not applicable to the scoped mutation operation.
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+  - backendSliceContext.behaviorSubset owns four completeScan transitions.
+  - behaviorEvidencePreGate.valid is true and lists all four expected transition IDs.
+  - upstreamEvidence.backendCheckOutput GATE_BEHAVIOR_EVIDENCE passed and cites src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+    with startsFrom api-fixture and CHK_UNIT_TESTS execution.
+  - The reviewed test file contains explicit tests for in-progress to content-complete,
+    content-complete to completed, reopened to completed-again, and preservation/versioning
+    of existing results.
+  - The scoped UI page hosts completeScan and its submit action invokes ScanService.complete.
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext:slice-09-beoordelingsinhoud-voltooien
+- backendSliceContext:slice-09-beoordelingsinhoud-voltooien
+- combinedSliceScope:frontend+backend
+- interfaceContractSubset:completeScan
+- conformanceLock:1.0.0
+- apiChoiceLock:1.0.0
+- contractDecisionsLock:1.0.0
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+- precomputedDiskVerification
+- endpointParityPreGate
+provenance:
+  backendStackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+  contractRevision: api-choice-lock@1.0.0/contract-decisions-lock@1.0.0
+  frontendStackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-09-beoordelingsinhoud-voltooien
+startedAt: null
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Initial anchor reads using an extra app/ prefix failed because the integration agent
+  already runs from the app workspace; reads were retried with frontend/ and backend/
+  roots and succeeded. Precomputed existence evidence remained authoritative and was
+  not re-probed.
+- Frontend upstream checks reported non-blocking Sass and Vite compatibility warnings.
+- Backend upstream tests reported non-blocking OTLP exporter connection-refused warnings
+  while Maven exited successfully.

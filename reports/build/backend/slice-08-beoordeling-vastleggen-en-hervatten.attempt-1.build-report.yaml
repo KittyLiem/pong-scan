@@ -1,0 +1,45 @@
+artifactRefs:
+- src/main/java/com/example/answer/api/AnswerDtos.java
+- src/main/java/com/example/answer/api/AnswerResource.java
+- src/main/java/com/example/answer/application/AnswerService.java
+- src/main/java/com/example/answer/domain/AnswerEntity.java
+- src/main/resources/db/migration/V8__scan_answers.sql
+- src/test/java/com/example/scan/SaveAnswerBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-08-beoordeling-vastleggen-en-hervatten.behavior-evidence.yaml
+- reports/build/backend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 9984
+errors: []
+finishedAt: '2026-03-12T10:00:10Z'
+gates:
+- check: typeCheck
+  command: mvn -B -ntp -q -DskipTests compile
+  durationMs: 9984
+  evidence: Compile-focused preflight completed successfully with no output.
+  exitCode: 0
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+summary: Added the exact PUT /v1/scans/{scanId}/answers/{questionId} operation with
+  bearer enforcement, durable answer and evidence storage, optimistic answer versioning,
+  persisted scan status/progress updates, and problem-details failures. Added stand-alone
+  transition and error-path tests.
+warnings:
+- The full unit-test command was not run during this first-pass build; Backend Check
+  retains formal CHK_UNIT_TESTS authority.

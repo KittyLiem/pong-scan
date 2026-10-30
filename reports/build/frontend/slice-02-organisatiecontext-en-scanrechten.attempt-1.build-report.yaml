@@ -1,0 +1,49 @@
+artifactRefs:
+- src/app/core/organization/organization.service.ts
+- src/app/core/organization/organization.service.spec.ts
+- src/app/account-access/account-access.component.ts
+- src/app/account-access/account-access.component.html
+- src/app/account-access/account-access.component.spec.ts
+- reports/build/frontend/slice-02-organisatiecontext-en-scanrechten.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 348000
+errors: []
+finishedAt: '2026-10-13T14:32:48Z'
+gates:
+- check: local-type-check
+  command: npx npm run build
+  evidence: Angular production build completed successfully; bundle generation emitted
+    only the existing Sass @import deprecation warning.
+  exitCode: 0
+  status: passed
+inputRefs:
+  contractOperationIds:
+  - createOrganization
+  mockupRefs:
+  - mockups/aanmelden-en-organisatie-starten.lock.html
+  - mockups/app-shell.lock.html
+  referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interfaceContractSubset supplied for slice-02-organisatiecontext-en-scanrechten
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-02-organisatiecontext-en-scanrechten
+startedAt: '2026-10-13T14:27:00Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added API-backed organization-context creation, authenticated contract-compliant
+  request handling, problem-details presentation, scan-overview routing, and automated
+  tests.
+warnings:
+- Routine full lint and unit-test commands were not run on this first implementation
+  attempt; formal CHK_LINT and CHK_UNIT_TESTS execution remains with Frontend Check.
+- The mapped typeCheck command is identical to the full build command in stack profile
+  revision 1.2.0.
+- The first-scan controls remain visibly disabled because createScan and getActiveModel
+  are outside this slice's owned operation set.
+- The industry requirement remains optional because asm-007 identifies its obligation
+  policy as unresolved.

@@ -1,0 +1,45 @@
+artifactRefs:
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 9257
+errors: []
+finishedAt: '2026-10-13T16:21:30.000Z'
+gates:
+- command: npx npm run test -- --no-watch
+  evidence: 10 test files and 36 tests passed, including all 6 MaturityAssessmentComponent
+    tests.
+  exitCode: 0
+  id: local-repair-unit-tests
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+startedAt: '2026-10-13T16:21:20.743Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Removed the fabricated answer-version default. saveAnswer now accepts only
+  the API-loaded version for the current question, blocks calls when that token is
+  unavailable, and adopts the SavedAnswer version returned after a successful PUT.
+  Tests cover missing-version blocking, forwarding the loaded version, and response-version
+  reuse.
+warnings:
+- The built-in deterministic version-source review was not exposed as a locally executable
+  stack command; Frontend Check remains responsible for its formal rerun.
+- The successful test run emitted existing Sass import deprecation and Vite native-config-loader
+  warnings.

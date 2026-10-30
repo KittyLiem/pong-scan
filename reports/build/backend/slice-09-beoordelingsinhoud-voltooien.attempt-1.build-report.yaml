@@ -1,0 +1,50 @@
+artifactRefs:
+- src/main/java/com/example/scan/api/ScanDtos.java
+- src/main/java/com/example/scan/api/ScanResource.java
+- src/main/java/com/example/scan/application/ScanService.java
+- src/main/java/com/example/scan/domain/ScanEntity.java
+- src/main/resources/db/migration/V9__scan_completion.sql
+- src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-09-beoordelingsinhoud-voltooien.behavior-evidence.yaml
+- reports/build/backend/slice-09-beoordelingsinhoud-voltooien.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 54000
+errors: []
+finishedAt: '2026-10-13T16:28:14Z'
+gates:
+- command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight exited 0.
+  id: LOCAL_TYPE_CHECK
+  status: passed
+- command: mvn -B -ntp -q -Dtest=ScanCompletionBehaviorTest test
+  evidence: Targeted six-test completion behavior suite exited 0; Flyway applied migrations
+    through V9 on H2.
+  id: LOCAL_TARGETED_TEST
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile@1.1.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- conformanceLock@1.0.0
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-09-beoordelingsinhoud-voltooien
+startedAt: '2026-10-13T16:27:20Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+summary: Added contract-exact scan completion with bearer authentication, required
+  idempotency header, optimistic version validation, durable state mutation, completion-condition
+  validation, general comments persistence, and behavior evidence.
+warnings:
+- The full mapped unit-test suite, build, and lint commands were not run because this
+  first-pass implementation used compile preflight plus a targeted slice test; Backend
+  Check owns formal gate execution.
+- The targeted test emitted non-failing OpenTelemetry exporter connection warnings
+  because no local collector was running.

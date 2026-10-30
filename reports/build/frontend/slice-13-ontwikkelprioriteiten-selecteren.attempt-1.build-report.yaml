@@ -1,0 +1,48 @@
+artifactRefs:
+- src/app/core/scans/scan-results.service.ts
+- src/app/core/scans/scan-results.service.spec.ts
+- src/app/scan-results/scan-results.component.ts
+- src/app/scan-results/scan-results.component.html
+- src/app/scan-results/scan-results.component.spec.ts
+- reports/build/frontend/slice-13-ontwikkelprioriteiten-selecteren.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 480000
+errors: []
+finishedAt: '2026-10-13T17:11:00Z'
+gates:
+- command: npx npm run build
+  evidence: Angular production compilation completed successfully; bundle generation
+    succeeded.
+  exitCode: 0
+  id: LOCAL_TYPE_CHECK
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+- mockups/app-shell.lock.html
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interfaceContractSubset supplied for slice-13-ontwikkelprioriteiten-selecteren
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+startedAt: '2026-10-13T17:03:00Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Implemented saveDevelopmentPriorities through PUT /v1/scans/{scanId}/development-priorities
+  with bearer authentication, exact priority fields, scan version, problem-details
+  handling, selection controls, and a live action overview.
+warnings:
+- The profile typeCheck command maps to the full build command; it was used as the
+  lightweight local compile preflight.
+- Full lint and unit-test commands were not run on this first build attempt; Frontend
+  Check retains formal gate authority.
+- The build emitted the existing Sass @import deprecation warning from src/styles.scss.

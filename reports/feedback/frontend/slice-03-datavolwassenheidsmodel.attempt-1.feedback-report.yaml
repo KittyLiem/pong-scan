@@ -1,0 +1,87 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-03-datavolwassenheidsmodel
+attemptNumber: 1
+status: fail
+startedAt: '2026-10-13T14:44:20.000Z'
+finishedAt: '2026-10-13T14:44:36.000Z'
+durationMs: 16000
+inputRefs:
+  - referenceId:00e3fb56-8084-4b07-a9d4-49c6836403ad
+artifactRefs:
+  - reports/check/frontend/slice-03-datavolwassenheidsmodel.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-03-datavolwassenheidsmodel.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+gates:
+  - id: GATE_MOCKUP_STRUCTURAL_PARITY
+    checkId: CHK_UI_STRUCTURAL_PARITY
+    status: fail
+    evidence:
+      route: /start
+      template: src/app/account-access/account-access.component.html
+      expected: Mockup has 18 visible fields and 18 visible labels; minimum parity threshold is 9 each.
+      observed: Template has 6 visible form controls and 6 visible labels.
+      rootCauseHypothesis: The account and organization forms implement only a subset of the mockup-derived start flow.
+      requiredOutcome: Add visible, functional/meaningful form structure so both field and label counts reach at least 9 without hidden placeholder markup.
+warnings:
+  - Build, unit tests, lint, shell navigation, and auth-storage checks passed.
+errors:
+  - gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+    failureCategory: slice_local
+    evidence: src/app/account-access/account-access.component.html is below structural-parity threshold.
+failedGateIds: [GATE_MOCKUP_STRUCTURAL_PARITY]
+failedChecks: [CHK_UI_STRUCTURAL_PARITY]
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-03-datavolwassenheidsmodel
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_MOCKUP_STRUCTURAL_PARITY]
+  failedChecks: [CHK_UI_STRUCTURAL_PARITY]
+  checkerSummary: Build, unit tests, lint, shell navigation, and auth-storage checks passed; GATE_MOCKUP_STRUCTURAL_PARITY then failed because the /start page exposes only six visible fields and labels where the mockup requires at least nine at the configured threshold.
+  gateFailureContext:
+    - gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+      checkId: CHK_UI_STRUCTURAL_PARITY
+      commandRef: deterministic-mockup-structural-parity
+      resolvedCommand: built-in deterministic source review
+      exitCode: 1
+  primaryFailures:
+    - gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+      checkId: CHK_UI_STRUCTURAL_PARITY
+      symptom: Start page falls below visible mockup form-structure threshold.
+      observed: 6 visible fields and labels.
+      expected: At least 9 visible fields and labels (50% of mockup count 18).
+      rootCauseHypothesis: The start flow renders only the account and basic organization fields, omitting meaningful visible inputs from the supplied start-page form outline.
+      requiredOutcome: Render at least nine meaningful, visible fields with associated labels in the /start flow while preserving model-dependent scan blocking.
+      blocking: true
+  targets:
+    - route: /start
+      component: AccountAccessComponent
+      file: src/app/account-access/account-access.component.html
+      observed: 6 visible fields and labels
+      expected: minimum 9 visible fields and labels; mockup outline is 18
+  editScope:
+    allowedEditPaths:
+      - src/app/account-access/account-access.component.html
+      - src/app/account-access/account-access.component.ts
+      - src/app/account-access/account-access.component.spec.ts
+    suspectPaths: []
+    forbiddenOrOutOfScope:
+      - src/app/core/maturity-model/**
+      - src/app/maturity-assessment/**
+      - src/app/core/auth/**
+  buildAgentBrief:
+    - Inspect src/app/account-access/account-access.component.html and its component/spec, then reproduce the structural count against the supplied /start mockup outline before editing.
+    - Add meaningful visible start-flow inputs and associated labels until the page has at least nine of each; do not use hidden or screen-reader-only elements for parity credit.
+    - Keep the active-model availability state and scan-start blocking behavior intact.
+    - Update the focused component test if needed and run the applicable frontend test command after the change.
+  nonGoals:
+    - Do not change auth token storage or the protected assessment route.
+    - Do not weaken or remove model-availability behavior.
+    - Do not perform unrelated shell or shared-service refactors.

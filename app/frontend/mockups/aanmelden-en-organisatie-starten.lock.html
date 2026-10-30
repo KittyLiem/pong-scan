@@ -1,0 +1,169 @@
+<main class="mx-auto w-full max-w-6xl px-4 py-8 md:px-6 md:py-12">
+  <div class="grid gap-10 lg:grid-cols-5 lg:items-start">
+    <header class="lg:col-span-2 lg:sticky lg:top-8">
+      <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-content">
+        <i class="fa-solid fa-chart-simple text-xl"></i>
+      </div>
+      <h1 class="text-3xl font-semibold tracking-tight text-body-color md:text-4xl">Start met de data maturity scan</h1>
+      <p class="mt-4 text-base leading-7 text-body-color">Maak een organisatieomgeving aan en kies de kennisgebieden die je wilt meenemen in de eerste scan.</p>
+
+      <ol class="mt-8 space-y-4 text-sm text-body-color">
+        <li class="flex items-center gap-3">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-content">1</span>
+          <span>Vul je accountgegevens in</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-content">2</span>
+          <span>Leg de organisatiecontext vast</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-content">3</span>
+          <span>Selecteer de relevante kennisgebieden</span>
+        </li>
+      </ol>
+    </header>
+
+    <section class="rounded-xl border border-primary bg-secondary p-5 md:p-8 lg:col-span-3" aria-labelledby="start-heading">
+      <div class="mb-7">
+        <p class="mb-2 text-sm font-medium text-primary">Nieuwe organisatie</p>
+        <h2 id="start-heading" class="text-2xl font-semibold text-body-color">Aanmelden en organisatie starten</h2>
+        <p class="mt-2 text-sm leading-6 text-body-color">Vul je gegevens in en stel de inhoud van de eerste scan samen.</p>
+      </div>
+
+      <form class="space-y-7">
+        <fieldset class="space-y-5">
+          <legend class="mb-4 text-lg font-semibold text-body-color">Accountgegevens</legend>
+          <div>
+            <label for="name" class="mb-2 block text-sm font-medium text-body-color">Naam</label>
+            <input id="name" type="text" placeholder="Voor- en achternaam" class="w-full rounded-lg border border-primary bg-body-bg px-4 py-3 text-body-color placeholder:text-body-color">
+          </div>
+          <div>
+            <label for="email" class="mb-2 block text-sm font-medium text-body-color">Zakelijk e-mailadres</label>
+            <input id="email" type="email" placeholder="naam@organisatie.nl" class="w-full rounded-lg border border-primary bg-body-bg px-4 py-3 text-body-color placeholder:text-body-color">
+          </div>
+          <div>
+            <label for="password" class="mb-2 block text-sm font-medium text-body-color">Wachtwoord</label>
+            <div class="relative">
+              <input id="password" type="password" placeholder="Minimaal 8 tekens" class="w-full rounded-lg border border-primary bg-body-bg px-4 py-3 pr-12 text-body-color placeholder:text-body-color">
+              <button type="button" class="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-primary">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="border-t border-primary pt-6">
+          <legend class="mb-4 text-lg font-semibold text-body-color">Organisatiegegevens</legend>
+          <div class="grid gap-5 md:grid-cols-2">
+            <div>
+              <label for="organization" class="mb-2 block text-sm font-medium text-body-color">Organisatienaam</label>
+              <input id="organization" type="text" placeholder="Naam organisatie" class="w-full rounded-lg border border-primary bg-body-bg px-4 py-3 text-body-color placeholder:text-body-color">
+            </div>
+            <div>
+              <label for="sector" class="mb-2 block text-sm font-medium text-body-color">Sector</label>
+              <select id="sector" class="w-full rounded-lg border border-primary bg-body-bg px-4 py-3 text-body-color">
+                <option>Selecteer een sector</option>
+                <option>Zakelijke dienstverlening</option>
+                <option>Overheid</option>
+                <option>Zorg en welzijn</option>
+                <option>Onderwijs</option>
+                <option>Industrie</option>
+                <option>Anders</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="border-t border-primary pt-6">
+          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <legend class="text-lg font-semibold text-body-color">Kennisgebieden</legend>
+              <p class="mt-1 text-sm leading-6 text-body-color">Selecteer minimaal één kennisgebied voor de eerste scan.</p>
+            </div>
+            <button type="button" class="self-start text-sm font-semibold text-primary hover:underline">Alles selecteren</button>
+          </div>
+
+          <div class="grid gap-3 md:grid-cols-2">
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" checked class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-scale-balanced w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Ethics</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" checked class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-landmark w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Governance</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" checked class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-sitemap w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Architecture</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-diagram-project w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Modeling &amp; Design</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-database w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Storage &amp; Operations</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" checked class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-shield-halved w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Security</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-arrows-to-circle w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Integration &amp; Operability</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-folder-open w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Document &amp; Content Management</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-table-list w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Reference &amp; Master Data</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" checked class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-chart-column w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Warehousing &amp; BI</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-tags w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Metadata Management</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-body-bg p-4">
+              <input type="checkbox" checked class="h-5 w-5 shrink-0 accent-primary">
+              <i class="fa-solid fa-circle-check w-5 text-center text-primary"></i>
+              <span class="font-medium text-body-color">Data Quality</span>
+            </label>
+          </div>
+
+          <div class="mt-4 flex gap-3 rounded-lg border border-primary bg-secondary p-4 text-sm text-body-color">
+            <i class="fa-solid fa-circle-info mt-1 text-primary"></i>
+            <p><span class="font-semibold">6 van 12 geselecteerd.</span> De scan wordt samengesteld op basis van jouw selectie.</p>
+          </div>
+        </fieldset>
+
+        <label class="flex gap-3 text-sm leading-6 text-body-color">
+          <input type="checkbox" class="mt-1 h-5 w-5 shrink-0 accent-primary">
+          <span>Ik ga akkoord met de voorwaarden en het privacybeleid.</span>
+        </label>
+
+        <button type="button" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-6 py-3 font-semibold text-accent-content hover:bg-accent-hover">
+          Organisatie en scan starten
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-body-color">Heb je al een account? <button type="button" class="font-semibold text-primary hover:underline">Log in</button></p>
+    </section>
+  </div>
+</main>

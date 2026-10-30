@@ -1,0 +1,61 @@
+decisions:
+- choice: Organisatiedoelen zijn optionele context; wanneer ze worden aangeleverd
+    zijn naam en prioriteit verplicht.
+  unspecifiedId: dec-016
+- choice: Doelselectie en prioritering zijn stappen binnen de Maturity-beoordeling
+    en gebruiken updateScan; er wordt geen afzonderlijke route toegevoegd.
+  unspecifiedId: asm-012
+- choice: Iedere vraag weegt gelijk binnen het domein en de totaalscore is het gemiddelde
+    van alle beantwoorde vragen; scores worden op twee decimalen afgerond.
+  unspecifiedId: dec-003
+- choice: Een domeinscore vanaf 4,0 is een strength, lager dan 2,5 een gap en alle
+    tussenliggende scores een development-point.
+  unspecifiedId: dec-012
+- choice: Niet-sterke domeininzichten vormen concrete ontwikkelprioriteiten in actionOverview;
+    er wordt geen zelfstandige roadmap gegenereerd.
+  unspecifiedId: asm-010
+- choice: Een wijziging na afronding maakt via createScan een nieuwe conceptscan tegen
+    het actuele modelsnapshot; de afgeronde scan en resultaten blijven ongewijzigd
+    bewaard.
+  unspecifiedId: dec-005
+transitions:
+- kind: recompute
+  mutatedFields:
+  - totalScore
+  operationId: getResults
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ResultsBehaviorTest.java
+  testMethod: completedAssessmentRecomputesAvailableScores
+  transitionId: maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+- kind: recompute
+  mutatedFields:
+  - goals
+  operationId: getResults
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ResultsBehaviorTest.java
+  testMethod: storedGoalPrioritiesAreRecomputedIntoResultsContext
+  transitionId: organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+- kind: recompute
+  mutatedFields:
+  - developmentPoints
+  operationId: getResults
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ResultsBehaviorTest.java
+  testMethod: availableResultsExposeClassifiedDevelopmentPoints
+  transitionId: resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+- kind: recompute
+  mutatedFields:
+  - goals
+  operationId: getResults
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ResultsBehaviorTest.java
+  testMethod: storedCustomGoalTextIsVisibleInResults
+  transitionId: resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+- kind: recompute
+  mutatedFields:
+  - goals
+  operationId: getResults
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ResultsBehaviorTest.java
+  testMethod: existingGoalPrioritiesRemainStableWhenResultsAreRecomputed
+  transitionId: afgeronde_beoordeling_verfijnen.bestaande_doelprioriteiten__behouden_gekopieerd_of_opnieuw_te_beoordelen

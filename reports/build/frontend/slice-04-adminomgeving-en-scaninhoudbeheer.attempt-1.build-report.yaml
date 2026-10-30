@@ -1,0 +1,46 @@
+artifactRefs:
+- src/app/core/admin-content/admin-content.service.ts
+- src/app/core/admin-content/admin-content.service.spec.ts
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.html
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 5684
+errors: []
+finishedAt: '2026-10-13T14:54:14.976Z'
+gates:
+- check: local-type-check-build
+  command: npx npm run build
+  evidence: Angular production bundle generated successfully.
+  exitCode: 0
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- mockups/maturity-beoordeling.lock.html
+- mockups/app-shell.lock.html
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+startedAt: '2026-10-13T14:54:09.292Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added API-backed admin management for maturity domains, questions, and answer
+  options to the existing assessment route, including bearer authorization, cursor
+  pagination, idempotency keys, problem-details errors, visible UI controls, and isolated
+  tests.
+warnings:
+- The stack profile maps typeCheck to the full build command; this mapped command
+  was used as the local implementation preflight.
+- Formal lint and unit-test commands were not run on this first build attempt; Frontend
+  Check retains formal gate authority.
+- Angular build reported the pre-existing Sass @import deprecation for src/styles.scss.

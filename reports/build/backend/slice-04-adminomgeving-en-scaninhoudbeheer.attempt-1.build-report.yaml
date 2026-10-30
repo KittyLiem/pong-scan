@@ -1,0 +1,67 @@
+artifactRefs:
+- src/main/java/com/example/admin/api/AdminDtos.java
+- src/main/java/com/example/admin/api/AdminContentResource.java
+- src/main/java/com/example/admin/application/AdminContentService.java
+- src/main/java/com/example/admin/domain/AdminDomainEntity.java
+- src/main/java/com/example/admin/domain/AdminQuestionEntity.java
+- src/main/java/com/example/admin/domain/AnswerOptionEntity.java
+- src/main/resources/db/migration/V5__admin_content.sql
+- src/test/java/com/example/admin/AdminContentBehaviorTest.java
+- src/test/java/com/example/admin/AdminContentContractTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-04-adminomgeving-en-scaninhoudbeheer.behavior-evidence.yaml
+- reports/build/backend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 176000
+errors: []
+finishedAt: '2026-10-13T14:52:56Z'
+gates:
+- check: local-type-check
+  command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight completed without output or errors.
+  exitCode: 0
+  status: passed
+- check: targeted-behavior-tests
+  command: mvn -B -ntp -q -Dtest=AdminContentBehaviorTest test
+  evidence: Five transition tests passed against the H2 PostgreSQL-compatible test
+    database.
+  exitCode: 0
+  status: passed
+- check: targeted-admin-tests-initial
+  command: mvn -B -ntp -q -Dtest=AdminContentBehaviorTest,AdminContentContractTest
+    test
+  evidence: Initial contract test used an incompatible problem-only Accept header
+    and received 406 before authentication; the test request was corrected to exercise
+    bearer rejection.
+  exitCode: 1
+  status: failed-then-corrected
+- check: targeted-admin-tests-final
+  command: mvn -B -ntp -q -Dtest=AdminContentBehaviorTest,AdminContentContractTest
+    test
+  evidence: Final targeted suite completed with 7 tests and no failures.
+  exitCode: 0
+  status: passed
+inputRefs:
+- backendSliceContext
+- interfaceContractSubset
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- conformanceLock@1.0.0
+- backendStackProfile@1.1.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+startedAt: '2026-10-13T14:50:00Z'
+status: completed
+stepId: runBackendBuild
+stream: backend
+warnings:
+- The full backend test suite was deferred to Backend Check; local verification covered
+  compile and the new admin behavior/contract tests.
+- Flyway reported that H2 2.4.240 is newer than its latest verified H2 version; all
+  five migrations nevertheless validated and applied successfully.
+- OpenTelemetry export attempts to the absent local collector were refused during
+  tests and did not affect test results.

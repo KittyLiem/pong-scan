@@ -1,0 +1,116 @@
+artifactRefs:
+- reports/check/backend/slice-06-scan-aanmaken.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 120000
+errors: []
+finishedAt: '2026-10-13T16:00:00Z'
+gates:
+- evidence:
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      reason: representative slice test and behavior-evidence test file
+    missingPaths: []
+    verifiedPaths:
+    - src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    missingEnforcement: []
+    missingTests: []
+    observedEnforcement: ScanCreationBehaviorTest.createScanRequiresBearerAndProblemDetails
+      passed with HTTP 401 for a request without Bearer authorization.
+    observedUnauthorizedTests:
+    - src/test/java/com/example/scan/ScanCreationBehaviorTest.java#createScanRequiresBearerAndProblemDetails
+    protectedOperations:
+    - method: POST
+      operationId: createScan
+      path: /v1/organizations/{organizationId}/scans
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    observedProtectedFlow: The representative test obtains a bearer token through
+      the existing session endpoint and confirms an unauthenticated createScan request
+      receives 401.
+    scopeAssessment: The delivered slice artifact contains no credential persistence,
+      hashing, token persistence, or credential-derived fingerprint implementation.
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    durableOperation: createScan
+    observedPersistenceEvidence: ScanCreationBehaviorTest uses ScanEntity counts before
+      and after createScan and asserts one persisted scan; the executed test run applied
+      Flyway migrations through v7 against the configured H2 PostgreSQL-compatible
+      test database.
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    executedSuite: mvn -B -ntp -q test
+    transitions:
+    - kind: mutation
+      mutatedFields:
+      - status
+      - progress
+      operationId: createScan
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      testMethod: createScanChangesMissingScanToPersistedConcept
+      transitionId: scan_aanmaken.scan_bestaat_niet__concept
+    - kind: mutation
+      mutatedFields:
+      - status
+      operationId: createScan
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      testMethod: createScanAfterCompletedAssessmentCreatesNewConceptAndPreservesCompletedScan
+      transitionId: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    note: Full suite passed; OpenTelemetry exporter connection-refused warnings were
+      non-blocking.
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext
+- buildOutput
+- conformanceLock@1.0.0
+- backendStackProfile@1.1.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-06-scan-aanmaken
+startedAt: '2026-10-13T15:58:00Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: Test output contained OpenTelemetry exporter connection-refused warnings
+    for localhost:4317; Maven exited 0.
+  failureCategory: non_blocking_runtime_warning
+  gateId: GATE_TESTS

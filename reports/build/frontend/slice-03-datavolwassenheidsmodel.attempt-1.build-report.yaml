@@ -1,0 +1,50 @@
+artifactRefs:
+- src/app/core/maturity-model/maturity-model.service.ts
+- src/app/core/maturity-model/maturity-model.service.spec.ts
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.html
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- src/app/account-access/account-access.component.ts
+- src/app/account-access/account-access.component.html
+- src/app/account-access/account-access.component.spec.ts
+- src/app/core/auth/auth.guard.ts
+- src/app/core/auth/auth.guard.spec.ts
+- src/app/core/organization/organization.service.ts
+- src/app/app.routes.ts
+- src/app/app.html
+- reports/build/frontend/slice-03-datavolwassenheidsmodel.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 49597
+errors: []
+finishedAt: '2026-10-13T14:42:09.597Z'
+gates:
+- command: npx npm run build
+  evidence: Angular production build was rerun after incremental edits; final bundle
+    generation completed successfully.
+  executions: 3
+  exitCode: 0
+  id: local-typecheck-build
+  status: passed
+inputRefs:
+- referenceId:00e3fb56-8084-4b07-a9d4-49c6836403ad
+- operationId:getActiveModel
+- routeId:route_auth_start
+- routeId:route_assessment
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-03-datavolwassenheidsmodel
+startedAt: '2026-10-13T14:41:20.000Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Implemented the protected active maturity-model client, model-dependent start
+  and assessment states, assessment route and guard, shell navigation, and isolated
+  tests.
+warnings:
+- The first-pass local preflight used the profile's typeCheck command, which maps
+  to the Angular build. Unit tests and lint were not run locally; Frontend Check remains
+  responsible for formal gates.
+- Angular build reported the existing Sass @import deprecation for src/styles.scss.

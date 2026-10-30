@@ -1,0 +1,22 @@
+decisions:
+- choice: Een ontbrekend actief model blokkeert beoordeling met een 404 problem detail;
+    zodra een actief model met domeinen en vragen beschikbaar is, levert getActiveModel
+    die actuele database-inhoud en kan een scan starten.
+  unspecifiedId: asm-015
+transitions:
+- kind: recompute
+  mutatedFields:
+  - status
+  operationId: getActiveModel
+  startsFrom: initialize
+  testFile: src/test/java/com/example/model/MaturityModelBehaviorTest.java
+  testMethod: unavailableModelBlocksAssessmentWithProblemDetails
+  transitionId: datavolwassenheidsmodel.beoordelingsmodel_niet_beschikbaar__beoordeling_geblokkeerd
+- kind: recompute
+  mutatedFields:
+  - domains
+  operationId: getActiveModel
+  startsFrom: initialize
+  testFile: src/test/java/com/example/model/MaturityModelBehaviorTest.java
+  testMethod: availableModelContentAllowsScanToStart
+  transitionId: datavolwassenheidsmodel.modelinhoud_beschikbaar__scan_kan_worden_gestart

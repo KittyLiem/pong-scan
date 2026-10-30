@@ -1,0 +1,121 @@
+artifactRefs:
+- reports/check/frontend/slice-09-beoordelingsinhoud-voltooien.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 9314
+errors: []
+finishedAt: null
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      reason: representative slice test coverage for completeScan behavior
+    - path: src/app/app.routes.ts
+      reason: route_assessment registration verification
+    - path: src/app/maturity-assessment/maturity-assessment.component.ts
+      reason: owned route entry point and optimistic-lock source verification
+    - path: src/app/maturity-assessment/maturity-assessment.component.html
+      reason: mockup structural parity verification
+    - path: src/app/core/scans/scan.service.ts
+      reason: completeScan API client verification
+    missingPaths: []
+    verifiedPaths:
+    - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavLabel: Beoordeling
+    expectedRoutePath: /scans/:scanId/assessment
+    observed: shell contains a non-bare header/navigation and Beoordeling link; route
+      config registers scans/:scanId/assessment.
+    routeConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedMinimums:
+      buttons: 13
+      fields: 7
+      forms: 1
+      headings: 3
+      sections: 2
+    observed: visible assessment template includes multiple heading, form, field,
+      button, progress, domain-navigation, evidence, and completion structures.
+    route: /scans/:scanId/assessment
+    templatePath: src/app/maturity-assessment/maturity-assessment.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: pass
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    authPath: src/app/core/auth/auth.service.ts
+    observed: bearer token is retained in an in-memory signal; no localStorage or
+      sessionStorage persistence found in reviewed production auth service.
+  gateId: GATE_AUTH_STORAGE
+  status: pass
+- checkId: CHK_VERSION_SOURCE
+  evidence:
+    componentPath: src/app/maturity-assessment/maturity-assessment.component.ts
+    observed: completion payload version is sourced from scans.selected().version
+      populated by get/update responses; completion response is stored through storeScan.
+    operation: completeScan
+    servicePath: src/app/core/scans/scan.service.ts
+  gateId: GATE_VERSION_SOURCE
+  status: pass
+- checkId: CHK_UI_INITIAL_STATE_PARITY
+  evidence:
+    observed: displayed progress and completion state bind to scan API fields; no
+      unauthorized initialized domain, score, currency, balance, or starter-entity
+      literals found.
+    templatePath: src/app/maturity-assessment/maturity-assessment.component.html
+  gateId: GATE_UI_INITIAL_STATE_PARITY
+  status: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    excerpt: Application bundle generation complete.
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    excerpt: 10 test files and 37 tests passed; MaturityAssessmentComponent test file
+      passed all 6 tests.
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    excerpt: All files pass linting.
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: pass
+inputRefs:
+- frontendSliceContext:slice-09-beoordelingsinhoud-voltooien
+- buildOutput:repairFrontendBuild
+- conformanceLock:1.0.0
+- frontendStackProfile:1.2.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-09-beoordelingsinhoud-voltooien
+startedAt: null
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Build and test emit the existing Sass @import deprecation warning from src/styles.scss.
+- Test emits an existing Vite native config-loader compatibility warning for vitest.config.ts.

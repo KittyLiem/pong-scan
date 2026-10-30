@@ -1,0 +1,68 @@
+artifactRefs:
+- src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-06-scan-aanmaken.behavior-evidence.yaml
+- reports/build/backend/slice-06-scan-aanmaken.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 228000
+errors: []
+finishedAt: '2026-10-13T15:57:06Z'
+gates:
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: 'Reproduced the three reported ScanCreationBehaviorTest failures: valid
+    domain requests returned HTTP 400; 39 tests ran with 3 failures.'
+  exitCode: 1
+  phase: initial-full-reproduction
+  status: failed-diagnostic
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q -Dtest=ScanCreationBehaviorTest test
+  evidence: The isolated scan suite passed against fresh Flyway seed data, identifying
+    cross-suite maturity-model state leakage rather than a production domain-mapping
+    defect.
+  exitCode: 0
+  phase: isolated-suite-diagnosis
+  status: passed-diagnostic
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: 'First fixture revision exposed an insert-order issue: five setup errors
+    because model_id was assigned after persist. The fixture was corrected before
+    handoff.'
+  exitCode: 1
+  phase: intermediate-full-reproduction
+  status: failed-diagnostic
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: Final full mapped unit-test command completed with exit code 0; 40 tests
+    ran, including both owned transitions, idempotency replay, and invalid-domain
+    rejection.
+  exitCode: 0
+  phase: final-full-reproduction
+  status: passed-diagnostic
+inputRefs:
+- backendSliceContext
+- interfaceContractSubset
+- reprocessInputs
+- backendStackProfile@1.1.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- conformanceLock@1.0.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-06-scan-aanmaken
+startedAt: '2026-10-13T15:53:18Z'
+status: completed
+stepId: repairBackendBuild
+stream: backend
+summary: Made ScanCreationBehaviorTest self-contained by restoring the V4 model and
+  domain relationship before each test. This addresses the three HTTP 400 failures
+  caused by maturity-model tests replacing shared database state, while retaining
+  active-model validation and adding an invalid-domain regression assertion.
+warnings:
+- Local command outcomes are implementation diagnostics only; Backend Check retains
+  formal gate authority.
+- The passing test run emitted non-blocking OpenTelemetry exporter connection-refused
+  warnings for the unavailable local collector.

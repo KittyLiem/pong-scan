@@ -1,0 +1,91 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+attemptNumber: 1
+status: fail
+startedAt: 2026-10-13T16:15:54.000Z
+finishedAt: 2026-10-13T16:16:12.000Z
+durationMs: 18000
+inputRefs: [frontendSliceContext, frontendStackProfile, conformanceLock, buildOutput]
+artifactRefs:
+  - reports/check/frontend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+gates:
+  - gateId: GATE_VERSION_SOURCE
+    checkId: CHK_VERSION_SOURCE
+    status: fail
+    evidence:
+      file: src/app/maturity-assessment/maturity-assessment.component.ts
+      operation: saveAnswer
+      observed: literal/default version 0 is available to the PUT payload
+      expected: version from API-loaded current answer only
+warnings:
+  - Existing Sass and Vitest configuration deprecation warnings did not fail required gates.
+errors:
+  - gateId: GATE_VERSION_SOURCE
+    failureCategory: slice_local
+    evidence: The component uses both an initial literal 0 and an answer?.version ?? 0 fallback for the optimistic-lock version.
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_VERSION_SOURCE]
+  failedChecks: [CHK_VERSION_SOURCE]
+  checkerSummary: All executable gates passed; the deterministic version-source gate failed because saveAnswer can submit version 0 rather than a version supplied by the API for the current answer.
+  gateFailureContext:
+    - gateId: GATE_VERSION_SOURCE
+      checkId: CHK_VERSION_SOURCE
+      commandRef: deterministic-version-source-review
+      resolvedCommand: built-in deterministic source review
+      exitCode: 1
+  primaryFailures:
+    - gateId: GATE_VERSION_SOURCE
+      checkId: CHK_VERSION_SOURCE
+      symptom: Answer saving can issue a PUT with a fabricated optimistic-lock token.
+      rootCauseHypothesis: The form's default and patch fallback use 0 instead of treating a missing server answer version as unavailable.
+      requiredOutcome: The selected question's API-returned answer version is the sole source for the saveAnswer version, and saving is prevented until it exists.
+      blocking: true
+      observed: answerForm version is initialized and reset with 0
+      expected: API response-derived version
+  targets:
+    - file: src/app/maturity-assessment/maturity-assessment.component.ts
+      route: /scans/:scanId/assessment
+      component: MaturityAssessmentComponent
+      operation: saveAnswer
+      observed: "version: [0] and answer?.version ?? 0"
+      expected: current API answer version
+    - file: src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      suite: MaturityAssessmentComponent
+      test: saveAnswer optimistic version handling
+      expected: test proves no default version is sent
+  editScope:
+    allowedEditPaths:
+      - src/app/maturity-assessment/maturity-assessment.component.ts
+      - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+      - src/app/core/maturity-model/maturity-model.service.ts
+      - src/app/core/scans/scan.service.ts
+    suspectPaths:
+      - path: src/app/core/maturity-model/maturity-model.service.ts
+        confidence: medium
+    forbiddenOrOutOfScope:
+      - reports/**
+      - unrelated UI and admin features
+  buildAgentBrief:
+    - Read the assessment component, focused test, and API model/service types implicated by the version flow.
+    - Make the version unavailable until it has been received with the current question answer from an API response; do not substitute 0.
+    - Ensure saveAnswer does not invoke ScanService without that API-derived token and keeps successful response updates to progress and version.
+    - Extend focused tests for both blocked missing-version behavior and forwarding a loaded API version.
+  nonGoals:
+    - Do not remove optimistic concurrency.
+    - Do not hardcode, default, randomize, or infer a version token.
+    - Do not change unrelated files or reports.
+failedGateIds: [GATE_VERSION_SOURCE]
+failedChecks: [CHK_VERSION_SOURCE]

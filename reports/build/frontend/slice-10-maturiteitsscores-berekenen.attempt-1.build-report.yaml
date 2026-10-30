@@ -1,0 +1,59 @@
+artifactRefs:
+- src/app/core/scans/scan-results.service.ts
+- src/app/core/scans/scan-results.service.spec.ts
+- src/app/scan-results/scan-results.component.ts
+- src/app/scan-results/scan-results.component.html
+- src/app/scan-results/scan-results.component.spec.ts
+- src/app/app.routes.ts
+- src/app/app.ts
+- src/app/app.html
+- src/app/app.spec.ts
+- reports/build/frontend/slice-10-maturiteitsscores-berekenen.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 398000
+errors: []
+finishedAt: '2026-10-13T16:46:38.000Z'
+gates:
+- check: local-type-check
+  command: npx npm run build
+  evidence: Angular production bundle generated successfully; only the pre-existing
+    Sass @import deprecation warning was reported.
+  exitCode: 0
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+- mockups/app-shell.lock.html
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interfaceContractSubset supplied for slice-10-maturiteitsscores-berekenen
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-10-maturiteitsscores-berekenen
+startedAt: '2026-10-13T16:40:00.000Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added the guarded /scans/:scanId/results route and a structurally faithful
+  result page driven exclusively by GET /v1/scans/{scanId}/results. The client uses
+  the in-memory bearer token and parses problem-details errors. The page renders total
+  and domain scores, grouped strengths/gaps/development points, saved organization
+  goals, action-overview count, refinement navigation, and local priority selection
+  controls. Navigation exposes Resultaten when a completed scan is available.
+warnings:
+- Formal lint and unit-test gate commands were not run on this first-pass build; Frontend
+  Check retains gate authority. The available typeCheck command was used as the lightweight
+  local preflight.
+- The page mockup includes export and development-priority persistence actions, but
+  the authoritative slice contract owns only getResults. Those unavailable controls
+  remain visible and disabled rather than inventing exportScanPdf or saveDevelopmentPriorities
+  calls.
+- The Sass build emitted a pre-existing deprecation warning for the global Tailwind
+  @import.

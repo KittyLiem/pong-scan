@@ -1,0 +1,246 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState:
+  - fields:
+      progress: unspecified
+      status: concept
+    operationId: createScan
+  scenarios:
+  - id: scan_aanmaken.s2
+    text: Geldige scangegevens leveren één conceptscan op.
+    transitionIds:
+    - scan_aanmaken.scan_bestaat_niet__concept
+  transitions:
+  - from: scan bestaat niet
+    id: scan_aanmaken.scan_bestaat_niet__concept
+    kind: mutation
+    operationId: createScan
+    to: concept
+  - from: afgerond
+    id: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+    kind: mutation
+    operationId: createScan
+    to: nieuwe conceptscan bij kopieerbeleid
+  unspecified:
+  - id: asm-008
+    text: Homepage, introductie en survey-start zijn onderdelen van bestaande start-
+      en beoordelingspagina's.
+  - id: dec-005
+    text: Besluit vereist over wijzigingen aan afgeronde scans; aanbevolen is een
+      nieuwe revisie binnen dezelfde scan met behoud van eerdere resultaten.
+capabilityId: scan_aanmaken
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: scan_aanmaken
+    operationIds:
+    - createScan
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - createScan
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/organizations/{organizationId}/scans
+    method: POST
+    operationId: createScan
+    parameters:
+    - in: path
+      name: organizationId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/OrganizationId'
+    - in: header
+      name: X-Idempotency-Key
+      required: true
+      schema:
+        minLength: 1
+        type: string
+      x-ref: '#/components/parameters/IdempotencyKey'
+    path: /v1/organizations/{organizationId}/scans
+    requestBody:
+      content:
+        application/json:
+          schema:
+            properties:
+              assessmentPeriod:
+                type: string
+              initialSelectedDomainIds:
+                items:
+                  format: uuid
+                  type: string
+                type: array
+              name:
+                type: string
+            required:
+            - name
+            - assessmentPeriod
+            type: object
+            x-ref: '#/components/schemas/ScanCreateInput'
+      required: true
+    responses:
+      '201':
+        content:
+          application/json:
+            schema:
+              properties:
+                assessmentPeriod:
+                  type: string
+                goals:
+                  items:
+                    properties:
+                      customText:
+                        type: string
+                      name:
+                        type: string
+                      priority:
+                        enum:
+                        - high
+                        - medium
+                        - low
+                        type: string
+                    required:
+                    - name
+                    - priority
+                    type: object
+                    x-ref: '#/components/schemas/OrganizationGoal'
+                  type: array
+                id:
+                  format: uuid
+                  type: string
+                modelSnapshotId:
+                  format: uuid
+                  type: string
+                name:
+                  type: string
+                organizationId:
+                  format: uuid
+                  type: string
+                progress:
+                  maximum: 100
+                  minimum: 0
+                  type: number
+                selectedDomainIds:
+                  items:
+                    format: uuid
+                    type: string
+                  type: array
+                status:
+                  enum:
+                  - concept
+                  - in-progress
+                  - content-complete
+                  - completed
+                  - reopened
+                  type: string
+                updatedAt:
+                  format: date-time
+                  type: string
+                version:
+                  minimum: 0
+                  type: integer
+              required:
+              - id
+              - organizationId
+              - name
+              - assessmentPeriod
+              - status
+              - progress
+              - modelSnapshotId
+              - selectedDomainIds
+              - version
+              - updatedAt
+              type: object
+              x-ref: '#/components/schemas/Scan'
+        description: Concept scan created against active model snapshot
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - scan_aanmaken.scan_bestaat_niet__concept
+      - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+    capabilityId: scan_aanmaken
+    contractScopeRef:
+      capabilityKey: scan_aanmaken
+      operationIds:
+      - createScan
+    dependsOnSlices:
+    - slice-02-organisatiecontext-en-scanrechten
+    - slice-03-datavolwassenheidsmodel
+    sliceId: slice-06-scan-aanmaken
+    sliceIndex: 5
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - createScan
+        pageKey: Aanmelden en organisatie starten
+        routeId: route_auth_start
+      - allowedOperationIds:
+        - createScan
+        ownedOperationIds: []
+        pageKey: Scanoverzicht
+        routeId: route_scan_overview
+      pageKeys:
+      - Aanmelden en organisatie starten
+      - Scanoverzicht
+      routeIds:
+      - route_auth_start
+      - route_scan_overview
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-06-scan-aanmaken
+sliceType: paired-api

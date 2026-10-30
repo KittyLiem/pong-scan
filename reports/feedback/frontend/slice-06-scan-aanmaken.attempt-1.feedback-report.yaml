@@ -1,0 +1,92 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-06-scan-aanmaken
+attemptNumber: 1
+status: fail
+startedAt: '2026-10-13T15:51:52Z'
+finishedAt: '2026-10-13T15:52:10Z'
+durationMs: 18000
+inputRefs: [frontendSliceContext, frontendStackProfile, conformanceLock, buildOutput]
+artifactRefs:
+  - reports/check/frontend/slice-06-scan-aanmaken.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-06-scan-aanmaken.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+failureDomain: slice_local
+failedGateIds: [GATE_TESTS]
+failedChecks: [CHK_UNIT_TESTS]
+gates:
+  - id: GATE_TESTS
+    checkId: CHK_UNIT_TESTS
+    status: failed
+    evidence:
+      command: npx npm run test -- --no-watch
+      exitCode: 1
+      file: src/app/scan-overview/scan-overview.component.spec.ts
+      locationHint: 'line 17'
+      excerpt: "TS2339: Property 'mockReturnValue' does not exist on type '(organizationId: string, input: ScanCreateInput) => Observable<Scan>'."
+warnings: []
+errors:
+  - gateId: GATE_TESTS
+    failureCategory: slice_local
+    evidence: ScanStub.create must remain a configurable Vitest mock for the problem-details test.
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-06-scan-aanmaken
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_TESTS]
+  failedChecks: [CHK_UNIT_TESTS]
+  checkerSummary: 'GATE_TESTS alone failed: the ScanOverviewComponent problem-details test cannot compile because its ScanStub.create member is not typed as a Vitest mock; the user-visible error state is otherwise not evaluated.'
+  gateFailureContext:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: npx npm run test -- --no-watch
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS]
+    primaryCommand: npx npm run test -- --no-watch
+    notes: type-check and verify are not substitutes for the test command when unit tests failed.
+  testFailures:
+    - file: src/app/scan-overview/scan-overview.component.spec.ts
+      suite: ScanOverviewComponent
+      test: surfaces problem-details creation failures
+      locationHint: 'line 17'
+      assertionSummary: Configure create to return a problem-details Observable and assert createError title.
+      observed: create.mockReturnValue is rejected by test compilation.
+      expected: The mock is type-valid and the error-state test executes.
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: Test compilation stops at ScanStub.create.mockReturnValue.
+      rootCauseHypothesis: The class method inferred type hides Vitest mock APIs.
+      requiredOutcome: Keep create as an explicitly typed/configurable Vitest mock and make the full test command pass.
+      blocking: true
+      observed: TS2339 at line 17.
+      expected: Problem-details behavior is exercised rather than blocked at compilation.
+  targets:
+    - file: src/app/scan-overview/scan-overview.component.spec.ts
+      suite: ScanOverviewComponent
+      test: surfaces problem-details creation failures
+      locationHint: 'line 17'
+      component: ScanOverviewComponent
+      operation: createScan
+      observed: mockReturnValue is unavailable on inferred create type.
+      expected: Error Observable setup and createError assertion execute.
+  editScope:
+    allowedEditPaths: [src/app/scan-overview/scan-overview.component.spec.ts]
+    suspectPaths: []
+    forbiddenOrOutOfScope: [src/app/core/scans/scan.service.ts, src/app/scan-overview/scan-overview.component.ts, src/generated/**]
+  buildAgentBrief:
+    - Run `npx npm run test -- --no-watch` from frontendAppRoot and confirm the ScanOverviewComponent compilation failure matches the reported test failure before editing code.
+    - Read src/app/scan-overview/scan-overview.component.spec.ts and repair only the ScanStub.create Vitest mock typing/configuration.
+    - Preserve the problem-details error-path assertion, then rerun the mandatory test command.
+  nonGoals:
+    - Do not remove or weaken the failing test.
+    - Do not modify production scan creation or unrelated shared code.

@@ -1,0 +1,45 @@
+artifactRefs:
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-05-scanportfolio.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 37000
+errors: []
+finishedAt: '2026-10-13T15:36:37.000Z'
+gates:
+- authority: local-diagnostic
+  checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 'Reproduced the reported failure: ScanService.get had zero calls in the
+    maturity-assessment resume test.'
+  exitCode: 1
+  phase: before-fix
+  status: failed
+- authority: local-diagnostic
+  checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 10 test files passed; 25 tests passed, including the getScan(scan-1) resume
+    assertion.
+  exitCode: 0
+  phase: after-fix
+  status: passed
+inputRefs:
+- frontendSliceContext:slice-05-scanportfolio
+- interfaceContractSubset:scanportfolio
+- reprocessInputs:attempt-2
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-05-scanportfolio
+startedAt: '2026-10-13T15:36:00.000Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Corrected the manually created component fixture so ActivatedRoute exposes
+  scan-1. Production API behavior and the getScan(scan-1) assertion were preserved.
+warnings:
+- Build and lint were not rerun because this narrow repair was reinjected only for
+  CHK_UNIT_TESTS; the checker evidence reported those gates had passed.
+- The test run emitted existing Sass @import deprecation and Vite native-config compatibility
+  warnings.

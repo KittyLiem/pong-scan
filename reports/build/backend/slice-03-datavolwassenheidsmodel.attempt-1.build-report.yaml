@@ -1,0 +1,49 @@
+artifactRefs:
+- src/main/java/com/example/model/api/ModelDtos.java
+- src/main/java/com/example/model/api/MaturityModelResource.java
+- src/main/java/com/example/model/application/MaturityModelService.java
+- src/main/java/com/example/model/domain/MaturityModelEntity.java
+- src/main/java/com/example/model/domain/ModelDomainEntity.java
+- src/main/java/com/example/model/domain/ModelQuestionEntity.java
+- src/main/resources/db/migration/V4__maturity_models.sql
+- src/test/java/com/example/model/MaturityModelBehaviorTest.java
+- src/test/java/com/example/model/MaturityModelContractTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-03-datavolwassenheidsmodel.behavior-evidence.yaml
+- reports/build/backend/slice-03-datavolwassenheidsmodel.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 9639
+errors: []
+finishedAt: '2026-03-12T10:00:09.639Z'
+gates:
+- check: local-type-check
+  command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused local preflight completed with exit code 0; this is diagnostic
+    and not a formal CHK_BUILD result.
+  exitCode: 0
+  status: completed
+inputRefs:
+- backendSliceContext:datavolwassenheidsmodel
+- interfaceContractSubset:getActiveModel
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- backendStackProfile@1.1.0
+- conformanceLock@1.0.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-03-datavolwassenheidsmodel
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+summary: Added a bearer-protected getActiveModel endpoint backed by Hibernate ORM
+  and Flyway-managed PostgreSQL-compatible tables. Missing active models produce application/problem+json
+  through the existing problem mapper. Added standalone behavior and contract tests
+  and recorded asm-015.
+warnings:
+- The full unit-test command was not run because this was a first-pass implementation
+  and the local-verification policy prefers the compile-focused typeCheck; Backend
+  Check owns formal test execution.

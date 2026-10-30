@@ -1,0 +1,156 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState: []
+  scenarios: []
+  transitions:
+  - from: beoordelingsmodel niet beschikbaar
+    id: datavolwassenheidsmodel.beoordelingsmodel_niet_beschikbaar__beoordeling_geblokkeerd
+    kind: recompute
+    operationId: getActiveModel
+    to: beoordeling geblokkeerd
+  - from: modelinhoud beschikbaar
+    id: datavolwassenheidsmodel.modelinhoud_beschikbaar__scan_kan_worden_gestart
+    kind: recompute
+    operationId: getActiveModel
+    to: scan kan worden gestart
+  unspecified:
+  - id: asm-015
+    text: Er is geen uitvoerbare applicatie of testbewijs; controle is op specificatieconsistentie
+      uitgevoerd.
+capabilityId: datavolwassenheidsmodel
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: datavolwassenheidsmodel
+    operationIds:
+    - getActiveModel
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - getActiveModel
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/models/active
+    method: GET
+    operationId: getActiveModel
+    path: /v1/models/active
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                domains:
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/DomainWrite'
+                    - properties:
+                        id:
+                          format: uuid
+                          type: string
+                        questions:
+                          items:
+                            $ref: '#/components/schemas/Question'
+                          type: array
+                      required:
+                      - id
+                      - questions
+                      type: object
+                    x-ref: '#/components/schemas/Domain'
+                  type: array
+                id:
+                  format: uuid
+                  type: string
+              required:
+              - id
+              - domains
+              type: object
+              x-ref: '#/components/schemas/MaturityModel'
+        description: Active maturity model
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - datavolwassenheidsmodel.beoordelingsmodel_niet_beschikbaar__beoordeling_geblokkeerd
+      - datavolwassenheidsmodel.modelinhoud_beschikbaar__scan_kan_worden_gestart
+    capabilityId: datavolwassenheidsmodel
+    contractScopeRef:
+      capabilityKey: datavolwassenheidsmodel
+      operationIds:
+      - getActiveModel
+    dependsOnSlices: []
+    sliceId: slice-03-datavolwassenheidsmodel
+    sliceIndex: 2
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - getActiveModel
+        pageKey: Aanmelden en organisatie starten
+        routeId: route_auth_start
+      - allowedOperationIds:
+        - getActiveModel
+        ownedOperationIds: []
+        pageKey: Maturity beoordeling
+        routeId: route_assessment
+      pageKeys:
+      - Aanmelden en organisatie starten
+      - Maturity beoordeling
+      routeIds:
+      - route_auth_start
+      - route_assessment
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-03-datavolwassenheidsmodel
+sliceType: paired-api

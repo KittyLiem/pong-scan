@@ -1,0 +1,45 @@
+artifactRefs:
+- reports/readiness/readiness-report.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+finishedAt: null
+gates:
+- evidence: 'Workflow pre-validation loaded and validated supplied top-level documents:
+    productIntent, generationProfile, constraints, workspaceLock, conformanceLock,
+    frontendStackProfile, backendStackProfile, apiChoiceLock, contractDecisionsLock.'
+  gateId: GATE_DOCS_PRESENT
+  passed: true
+- evidence: Semantic structures contain required project, generation, constraint,
+    workspace, conformance, stack, API, and contract-decision fields; file parseability
+    was already enforced by workflow.
+  gateId: GATE_DOCS_STRUCTURAL
+  passed: true
+- evidence: Project stack (Angular, Quarkus, PostgreSQL) matches enabled generation
+    streams and supplied stack profiles; REST/OpenAPI, bearer-token authentication,
+    PostgreSQL persistence, and contract policies are mutually consistent.
+  gateId: GATE_PRECEDENCE_CONSISTENT
+  passed: true
+inputRefs:
+- product-intent.json
+- generation-profile.yaml
+- constraints.yaml
+- workspace.lock.yaml
+- conformance.lock.yaml
+- frontend-stack-profile.yaml
+- backend-stack-profile.yaml
+- api-choice.lock.yaml
+- contract-decisions.lock.yaml
+provenance:
+  apiChoiceLockRevision: 1.0.0
+  backendStackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+  contractDecisionsLockRevision: 1.0.0
+  frontendStackProfileRevision: 1.2.0
+runId: run-unknown
+sliceId: null
+startedAt: null
+status: ok
+stepId: readiness-validator
+stream: null
+warnings: []

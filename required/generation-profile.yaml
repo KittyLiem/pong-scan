@@ -1,0 +1,39 @@
+revision: "1.0.0"
+authoringTimestamp: "2026-03-12T10:00:00Z"
+
+frontend:
+  enabled: true
+  uiContractPolicy:
+    pageCoverage: bijection
+    requireContentPagePerProductPage: true
+    requireRoutePerProductPage: true
+  uiFidelityPolicy:
+    requireMockupPerPage: true
+    structuralParity:
+      enabled: true
+      minSectionCoverage: 0.5
+      minMediaCoverage: 0.5
+
+backend:
+  enabled: true
+
+database:
+  enabled: true
+  type: postgresql
+  seedDemoData: true
+
+
+  test:
+    type: h2
+    mode: in-memory
+    devServices: false
+    jdbcUrl: "jdbc:h2:mem:app;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+    username: sa
+    password: sa
+    flyway:
+      enabled: true
+      migrateAtStart: true
+
+deliveryTopology: single-repo
+
+qualityBar: mvp

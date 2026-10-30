@@ -1,0 +1,352 @@
+<div class="mx-auto w-full max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <nav aria-label="Kruimelpad" class="text-sm">
+    <a routerLink="/scans" class="font-medium text-primary underline-offset-4 hover:underline">Scanoverzicht</a>
+    <span aria-hidden="true"> / </span><span>{{ scan()?.name ?? 'Beoordeling' }}</span>
+  </nav>
+
+  <header class="mt-3 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Volwassenheidsbeoordeling</h1>
+      @if (scan(); as s) {
+        <p class="mt-1 text-sm text-secondary-color">
+          {{ s.name }} · periode {{ s.assessmentPeriod }}
+          @if (s.revision > 1) { · revisie {{ s.revision }} }
+          · <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold" [class]="statusBadge[s.status]">{{ statusLabel(s.status) }}</span>
+        </p>
+      }
+    </div>
+  </header>
+
+  <div aria-live="polite">
+    @if (conflict(); as message) {
+      <div class="alert-error mt-5 flex flex-wrap items-center justify-between gap-3" role="alert">
+        <span>{{ message }}</span>
+        <button type="button" class="btn btn-secondary" (click)="load()">Herladen</button>
+      </div>
+    }
+  </div>
+
+  @if (loading() && !content()) {
+    <p class="mt-8" role="status">Beoordeling laden…</p>
+  } @else if (loadProblem() && !content()) {
+    <div class="alert-error mt-8" role="alert">
+      <strong>{{ loadProblem()!.title }}</strong>
+      <p>{{ loadProblem()!.detail || 'De bestaande gegevens konden niet worden geladen.' }}</p>
+    </div>
+    <button type="button" class="btn btn-secondary mt-3" (click)="load()">Opnieuw proberen</button>
+  } @else if (content(); as c) {
+    @if (allDomains().length === 0) {
+      <div class="card mt-8 p-6" role="status">
+        <p class="font-semibold">Geen actieve kennisgebieden beschikbaar</p>
+        <p class="mt-1 text-sm text-secondary-color">Deze scan bevat geen kennisgebieden. Neem contact op met een beheerder.</p>
+      </div>
+    } @else if (!editable()) {
+      <!-- Alleen-lezen weergave -->
+      <div class="alert-info mt-6" role="status">
+        Deze beoordeling is afgerond en kan niet meer worden gewijzigd.
+        @if (scan()?.status === 'completed') {
+          <a class="ml-1 font-semibold underline" [routerLink]="['/scans', scanId(), 'results']">Bekijk de resultaten</a>
+        }
+      </div>
+      @for (domain of selectedDomains(); track domain.id) {
+        <section class="card mt-6 p-5" [attr.aria-labelledby]="'ro-' + domain.id">
+          <h2 [id]="'ro-' + domain.id" class="text-lg font-semibold">{{ domain.name }}</h2>
+          <ol class="mt-4 space-y-4">
+            @for (question of orderedQuestions(domain); track question.id) {
+              <li class="rounded-lg border border-border bg-body-bg p-4">
+                <p class="font-semibold">{{ question.title }}</p>
+                <p class="mt-1 text-sm">{{ question.text }}</p>
+                <dl class="mt-3 grid gap-2 text-sm sm:grid-cols-[10rem_1fr]">
+                  <dt class="font-medium text-secondary-color">Score</dt><dd>{{ optionLabel(question) }}</dd>
+                  <dt class="font-medium text-secondary-color">Toelichting</dt><dd class="whitespace-pre-line">{{ question.answer?.explanation || '–' }}</dd>
+                  <dt class="font-medium text-secondary-color">Bewijs</dt>
+                  <dd>
+                    @if (question.answer?.evidenceReferences?.length) {
+                      <ul class="list-disc pl-5">@for (ref of question.answer!.evidenceReferences!; track $index) { <li class="break-all">{{ ref }}</li> }</ul>
+                    } @else { – }
+                  </dd>
+                </dl>
+              </li>
+            } @empty {
+              <li class="text-sm text-secondary-color">Geen vragen in dit kennisgebied.</li>
+            }
+          </ol>
+        </section>
+      }
+    } @else {
+      <!-- Stappen -->
+      <nav class="mt-6" aria-label="Stappen van de beoordeling">
+        <ol class="grid gap-2 sm:grid-cols-3">
+          <li>
+            <button type="button" class="btn w-full justify-start" [class.btn-primary]="step() === 'domains'" [class.btn-secondary]="step() !== 'domains'"
+              [attr.aria-current]="step() === 'domains' ? 'step' : null" (click)="goTo('domains')">1. Selecteer kennisgebieden</button>
+          </li>
+          <li>
+            <button type="button" class="btn w-full justify-start" [class.btn-primary]="step() === 'questions'" [class.btn-secondary]="step() !== 'questions'"
+              [attr.aria-current]="step() === 'questions' ? 'step' : null" [attr.aria-disabled]="!hasSavedSelection()" (click)="goTo('questions')">2. Vragen</button>
+          </li>
+          <li>
+            <button type="button" class="btn w-full justify-start" [class.btn-primary]="step() === 'complete'" [class.btn-secondary]="step() !== 'complete'"
+              [attr.aria-current]="step() === 'complete' ? 'step' : null" [attr.aria-disabled]="!hasSavedSelection()" (click)="goTo('complete')">3. Beoordeling afronden</button>
+          </li>
+        </ol>
+      </nav>
+
+      @switch (step()) {
+        @case ('domains') {
+          <section class="mt-6" aria-labelledby="domains-heading">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 id="domains-heading" class="text-xl font-semibold">Selecteer kennisgebieden</h2>
+                <p class="mt-1 text-sm text-secondary-color">Alleen de geselecteerde kennisgebieden worden bevraagd, gescoord en gerapporteerd.</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <p class="text-sm font-medium" aria-live="polite" data-testid="selection-counter">{{ selection().length }} van {{ allDomains().length }} geselecteerd</p>
+                <button type="button" class="btn btn-secondary" (click)="toggleAll()">{{ allSelected() ? 'Selectie wissen' : 'Selecteer alles' }}</button>
+              </div>
+            </div>
+
+            <ul class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              @for (domain of allDomains(); track domain.id) {
+                <li>
+                  <div class="flex h-full gap-3 rounded-lg border p-4" [class.border-primary]="isSelected(domain.id)" [class.bg-primary-bg-subtle]="isSelected(domain.id)" [class.border-border]="!isSelected(domain.id)">
+                    <input type="checkbox" class="mt-1 h-5 w-5 shrink-0" [id]="'domain-' + domain.id" [checked]="isSelected(domain.id)"
+                      [attr.aria-describedby]="'domain-desc-' + domain.id" (change)="toggleDomain(domain.id, $any($event.target).checked)" />
+                    <div>
+                      <label [for]="'domain-' + domain.id" class="cursor-pointer font-semibold">{{ domain.name }}</label>
+                      <p [id]="'domain-desc-' + domain.id" class="mt-1 text-sm text-secondary-color">
+                        @if (domain.description) { {{ domain.description }} · }{{ domain.questionCount }} {{ domain.questionCount === 1 ? 'vraag' : 'vragen' }}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+
+            <fieldset class="card mt-8 p-5">
+              <legend class="px-1 text-lg font-semibold">Organisatiedoelen (optioneel)</legend>
+              <app-field-error [control]="goals" />
+              <p class="text-sm text-secondary-color">Kies de doelen die de organisatie met data wil bereiken en geef per doel een prioriteit. Doelen beïnvloeden de volwassenheidsscore niet. Maximaal 10.</p>
+              <ul class="mt-4 space-y-3">
+                @for (goal of goals.controls; track $index; let i = $index) {
+                  <li class="rounded-lg border border-border bg-body-bg p-3" [formGroup]="goal">
+                    <div class="flex items-center gap-3">
+                      <input type="checkbox" class="h-5 w-5" [id]="'goal-' + i" formControlName="selected" />
+                      <label [for]="'goal-' + i" class="font-medium">{{ goal.controls.name.value }}</label>
+                      <app-field-error [control]="goal.controls.name" />
+                    </div>
+                    @if (goal.controls.selected.value) {
+                      <app-field-error [control]="goal.controls.priority" />
+                      <div class="mt-3 grid gap-3 sm:grid-cols-[12rem_1fr]">
+                        <div>
+                          <label [for]="'goal-' + i + '-priority'" class="form-label">Prioriteit</label>
+                          <select [id]="'goal-' + i + '-priority'" class="form-control" formControlName="priority">
+                            @for (p of priorities; track p) { <option [value]="p">{{ priorityLabels[p] }}</option> }
+                          </select>
+                        </div>
+                        <div>
+                          <label [for]="'goal-' + i + '-text'" class="form-label">{{ goal.controls.name.value === 'Anders' ? 'Eigen doeltekst' : 'Toelichting (optioneel)' }}</label>
+                          <textarea [id]="'goal-' + i + '-text'" rows="2" class="form-control" formControlName="customText"
+                            [attr.aria-invalid]="showError(goal.controls.customText, goalsSubmitted())" [attr.aria-describedby]="'goal-' + i + '-error'"></textarea>
+                          <app-field-error [fieldId]="'goal-' + i + '-error'" [control]="goal.controls.customText" [submitted]="goalsSubmitted()" />
+                        </div>
+                      </div>
+                    }
+                  </li>
+                }
+              </ul>
+              @if (selectedGoalCount() > 10) {
+                <p class="mt-2 text-sm font-medium text-error-text-emphasis" role="alert">Selecteer maximaal 10 organisatiedoelen.</p>
+              }
+            </fieldset>
+
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button type="button" class="btn btn-primary" [attr.aria-disabled]="selection().length === 0 || savingSelection()" aria-describedby="domain-error"
+                (click)="continueToQuestions()">{{ savingSelection() ? 'Opslaan…' : 'Doorgaan' }}</button>
+              <div id="domain-error" aria-live="assertive">
+                <app-field-error fieldId="selected-domains-error" [control]="selectedDomainIds" />
+                @if (domainError(); as message) {
+                  <p class="text-sm font-semibold text-error-text-emphasis" role="alert">{{ message }}</p>
+                }
+              </div>
+            </div>
+            @if (selectionProblem(); as p) {
+              <div class="alert-error mt-4" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+            }
+          </section>
+        }
+
+        @case ('questions') {
+          <div class="mt-6 grid gap-6 lg:grid-cols-[18rem_1fr]">
+            <aside class="lg:sticky lg:top-6 lg:self-start">
+              <div class="card p-4">
+                <p class="text-sm font-semibold">Voortgang</p>
+                <div class="mt-2 flex items-center gap-3">
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg" role="progressbar" aria-label="Totale voortgang" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="overallProgress()">
+                    <div class="h-full rounded-full bg-info" [style.width.%]="overallProgress()"></div>
+                  </div>
+                  <span class="text-sm font-semibold">{{ overallProgress() }}%</span>
+                </div>
+                <p class="mt-1 text-xs text-secondary-color" aria-live="polite">{{ answeredQuestions() }} van {{ totalQuestions() }} vragen beantwoord</p>
+              </div>
+              <nav class="card mt-4 p-2" aria-label="Kennisgebieden">
+                <ul>
+                  @for (domain of selectedDomains(); track domain.id) {
+                    <li>
+                      <button type="button" class="flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-tertiary-bg"
+                        [class.bg-primary-bg-subtle]="activeDomain()?.id === domain.id" [class.font-semibold]="activeDomain()?.id === domain.id"
+                        [attr.aria-current]="activeDomain()?.id === domain.id ? 'true' : null" (click)="selectDomain(domain.id)">
+                        <span>{{ domain.name }}</span>
+                        <span class="text-xs" [attr.aria-label]="answeredIn(domain) + ' van ' + domain.questions.length + ' beantwoord'">{{ answeredIn(domain) }}/{{ domain.questions.length }}</span>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </nav>
+            </aside>
+
+            <section [attr.aria-labelledby]="'active-domain-heading'">
+              @if (activeDomain(); as domain) {
+                <h2 id="active-domain-heading" class="text-xl font-semibold">{{ domain.name }}</h2>
+                @if (domain.description) { <p class="mt-1 text-sm text-secondary-color">{{ domain.description }}</p> }
+
+                @if (domain.questions.length === 0) {
+                  <div class="card mt-5 p-5" role="status">Geen actieve vragen beschikbaar in dit kennisgebied.</div>
+                }
+
+                <ol class="mt-5 space-y-6">
+                  @for (question of orderedQuestions(domain); track question.id; let qi = $index) {
+                    <li class="card p-5" [formGroup]="formFor(question.id)" [attr.data-question]="question.id">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">Vraag {{ qi + 1 }} van {{ domain.questions.length }}</p>
+                      <h3 class="mt-1 text-lg font-semibold">{{ question.title }}</h3>
+                      <p class="mt-2">{{ question.text }}</p>
+                      @if (question.explanation) {
+                        <details class="mt-3 rounded-md bg-tertiary-bg p-3 text-sm">
+                          <summary class="cursor-pointer font-medium">Uitleg bij deze vraag</summary>
+                          <p class="mt-2 whitespace-pre-line">{{ question.explanation }}</p>
+                        </details>
+                      }
+
+                      @if (question.options.length === 0) {
+                        <p class="alert-error mt-4" role="alert">Geen geldige antwoordopties beschikbaar voor deze vraag.</p>
+                      } @else {
+                        <fieldset class="mt-4" [attr.aria-describedby]="'score-error-' + question.id">
+                          <legend class="form-label">Score <span aria-hidden="true">*</span></legend>
+                          <div class="space-y-2">
+                            @for (option of orderedOptions(question); track option.id) {
+                              <div class="flex gap-3 rounded-md border border-border bg-body-bg p-3">
+                                <input type="radio" class="mt-1 h-4 w-4 shrink-0" formControlName="optionId" [value]="option.id"
+                                  [id]="'opt-' + question.id + '-' + option.id" [attr.name]="'score-' + question.id" />
+                                <label [for]="'opt-' + question.id + '-' + option.id" class="cursor-pointer text-sm">
+                                  <span class="font-semibold">{{ option.score }} — {{ option.label }}</span>
+                                  @if (option.description) { <span class="mt-0.5 block text-secondary-color">{{ option.description }}</span> }
+                                </label>
+                              </div>
+                            }
+                          </div>
+                          <div [id]="'score-error-' + question.id">
+                            @if (formFor(question.id).controls.optionId.hasError('server')) {
+                              <app-field-error [control]="formFor(question.id).controls.optionId" [submitted]="wasSubmitted(question.id)" />
+                            } @else if (scoreMissing(question.id)) {
+                              <p class="mt-1 text-sm font-medium text-error-text-emphasis" role="alert">{{ scoreRequired }}</p>
+                            }
+                          </div>
+                        </fieldset>
+                      }
+
+                      <div class="mt-4">
+                        <label [for]="'expl-' + question.id" class="form-label">Toelichting</label>
+                        <textarea [id]="'expl-' + question.id" rows="3" class="form-control" formControlName="explanation"
+                          [attr.aria-invalid]="showError(formFor(question.id).controls.explanation, wasSubmitted(question.id))"
+                          [attr.aria-describedby]="'expl-hint-' + question.id + ' expl-error-' + question.id"></textarea>
+                        <p [id]="'expl-hint-' + question.id" class="form-hint">Verplicht om de beoordeling af te ronden. Beschrijf waarop de score is gebaseerd.</p>
+                        <app-field-error [fieldId]="'expl-error-' + question.id" [control]="formFor(question.id).controls.explanation" [submitted]="wasSubmitted(question.id)" />
+                      </div>
+
+                      <div class="mt-4">
+                        <label [for]="'evid-' + question.id" class="form-label">Bewijsverwijzingen (optioneel)</label>
+                        <textarea [id]="'evid-' + question.id" rows="2" class="form-control" formControlName="evidence"
+                          [attr.aria-invalid]="showError(formFor(question.id).controls.evidence, wasSubmitted(question.id))"
+                          [attr.aria-describedby]="'evid-hint-' + question.id + ' evid-error-' + question.id"></textarea>
+                        <p [id]="'evid-hint-' + question.id" class="form-hint">Eén verwijzing per regel (bijv. documentnaam of URL), maximaal 10.</p>
+                        <app-field-error [fieldId]="'evid-error-' + question.id" [control]="formFor(question.id).controls.evidence" [submitted]="wasSubmitted(question.id)" />
+                      </div>
+
+                      <div class="mt-4 flex flex-wrap items-center gap-3">
+                        <button type="button" class="btn btn-primary" [disabled]="saveState(question.id) === 'saving'" (click)="saveQuestion(question)">
+                          {{ saveState(question.id) === 'saving' ? 'Opslaan…' : 'Antwoord opslaan' }}
+                        </button>
+                        <div aria-live="polite" class="text-sm">
+                          @if (saveState(question.id) === 'saved' && !formFor(question.id).dirty) {
+                            <span class="font-medium text-success-text-emphasis" role="status">✓ Opgeslagen</span>
+                          } @else if (saveState(question.id) === 'error' && saveMessage(question.id)) {
+                            <span class="font-medium text-error-text-emphasis" role="alert">{{ saveMessage(question.id) }}</span>
+                          } @else if (formFor(question.id).dirty) {
+                            <span class="text-secondary-color">Niet opgeslagen wijzigingen</span>
+                          } @else if (question.answer) {
+                            <span class="text-secondary-color">Eerder opgeslagen</span>
+                          }
+                        </div>
+                      </div>
+                    </li>
+                  }
+                </ol>
+
+                <div class="mt-6 flex justify-end">
+                  <button type="button" class="btn btn-secondary" (click)="goTo('complete')">Naar afronden →</button>
+                </div>
+              } @else {
+                <div class="card p-5" role="status">Geen geselecteerde kennisgebieden. Ga terug naar stap 1.</div>
+              }
+            </section>
+          </div>
+        }
+
+        @case ('complete') {
+          <section class="card mt-6 p-5" aria-labelledby="complete-heading">
+            <h2 id="complete-heading" class="text-xl font-semibold">Beoordeling afronden</h2>
+            <p class="mt-1 text-sm text-secondary-color">{{ completeQuestions() }} van {{ totalQuestions() }} vragen hebben een score en toelichting.</p>
+
+            @if (totalQuestions() === 0) {
+              <p class="alert-info mt-4" role="status">De geselecteerde kennisgebieden bevatten geen vragen; afronden is niet mogelijk.</p>
+            } @else if (incomplete().length > 0) {
+              <div class="mt-4 rounded-lg border border-warning-border-subtle bg-warning-bg-subtle p-4 text-warning-text-emphasis">
+                <p class="font-semibold">Nog niet compleet</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
+                  @for (item of incomplete(); track item.questionId) {
+                    <li>
+                      <button type="button" class="underline" (click)="selectDomain(item.domainId)">{{ item.domainName }}: {{ item.title }}</button>
+                      — ontbreekt: {{ item.missing }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+            @if (hasUnsavedChanges()) {
+              <p class="alert-info mt-4" role="status">Er zijn niet-opgeslagen antwoorden. Alleen opgeslagen antwoorden tellen mee.</p>
+            }
+
+            <div class="mt-5">
+              <label for="general-comments" class="form-label">Algemene opmerkingen (optioneel)</label>
+              <textarea id="general-comments" rows="4" class="form-control" [formControl]="generalComments" aria-describedby="general-comments-error"></textarea>
+              <app-field-error fieldId="general-comments-error" [control]="generalComments" />
+            </div>
+
+            <div class="mt-5 flex flex-wrap items-center gap-3">
+              <button type="button" class="btn btn-primary" [disabled]="!canComplete() || completing()" aria-describedby="complete-explanation" (click)="complete()">
+                {{ completing() ? 'Afronden…' : 'Beoordeling afronden' }}
+              </button>
+              <p id="complete-explanation" class="text-sm text-secondary-color">
+                @if (canComplete()) { Na afronden worden de resultaten berekend; de scan is daarna niet meer te wijzigen. }
+                @else { Afronden kan pas als iedere vraag van de geselecteerde kennisgebieden een score én toelichting heeft. }
+              </p>
+            </div>
+            @if (completionProblem(); as p) {
+              <div class="alert-error mt-4" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+            }
+          </section>
+        }
+      }
+    }
+  }
+</div>

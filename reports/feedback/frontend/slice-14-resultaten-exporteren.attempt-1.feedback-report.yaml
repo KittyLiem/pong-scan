@@ -1,0 +1,114 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-14-resultaten-exporteren
+attemptNumber: 1
+status: fail
+startedAt: 2026-10-13T17:27:38Z
+finishedAt: 2026-10-13T17:27:55Z
+durationMs: 17000
+inputRefs: [frontendSliceContext, frontendStackProfile, conformanceLock, buildOutput.artifactRefs]
+artifactRefs:
+  - reports/check/frontend/slice-14-resultaten-exporteren.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-14-resultaten-exporteren.attempt-1.feedback-report.yaml
+provenance:
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+gates:
+  - gateId: GATE_TESTS
+    checkId: CHK_UNIT_TESTS
+    status: fail
+    evidence: scan-results.service.spec.ts:74 supplies an object to HttpTestingController.flush although exportScanPdf requests responseType blob.
+  - gateId: GATE_LINT
+    checkId: CHK_LINT
+    status: fail
+    evidence: scan-results.service.ts:93 triggers no-useless-assignment for the initial body assignment.
+warnings: []
+errors:
+  - gateId: GATE_TESTS
+    failureCategory: slice_local
+    evidence: Automatic conversion to Blob is not supported for response type.
+  - gateId: GATE_LINT
+    failureCategory: slice_local
+    evidence: no-useless-assignment at scan-results.service.ts:93:13.
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-14-resultaten-exporteren
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  scope: narrow-fix
+  failedGateIds: [GATE_TESTS, GATE_LINT]
+  failedChecks: [CHK_UNIT_TESTS, CHK_LINT]
+  checkerSummary: CHK_UNIT_TESTS failed first because the PDF-export Problem Details test feeds a non-Blob error body to a blob request; CHK_LINT then failed on a useless temporary assignment. The user-visible PDF export error path must remain able to surface Problem Details.
+  gateFailureContext:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: npx npm run test -- --no-watch
+      exitCode: 1
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      commandRef: stack-profile.lint
+      resolvedCommand: npx npm run lint
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS, CHK_LINT]
+    primaryCommand: npx npm run test -- --no-watch
+    notes: Type-check and verify are not substitutes for the test command when unit tests fail; run lint after the test repair.
+  testFailures:
+    - file: src/app/core/scans/scan-results.service.spec.ts
+      suite: ScanResultsService
+      test: surfaces problem details when PDF export fails
+      locationHint: src/app/core/scans/scan-results.service.spec.ts:74
+      assertionSummary: The blob-response export failure must expose a 409 Problem Details object.
+      observed: HttpTestingController throws Automatic conversion to Blob is not supported for response type before the assertion.
+      expected: Flush a Blob with application/problem+json content (or otherwise use the testing API's valid blob error setup) so asExportProblem receives and parses the error.
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: PDF-export error-path unit test aborts at HttpTestingController.flush.
+      rootCauseHypothesis: The test provides a plain object for an HTTP request configured with responseType blob, which Angular testing cannot convert automatically.
+      requiredOutcome: The test passes while verifying that a 409 application/problem+json Blob becomes the expected Problem Details state.
+      blocking: true
+      observed: Automatic conversion to Blob is not supported for response type.
+      expected: Valid Blob-backed error fixture and passing Problem Details assertion.
+    - gateId: GATE_LINT
+      checkId: CHK_LINT
+      symptom: ESLint rejects the PDF Problem Details parser.
+      rootCauseHypothesis: body is initialized to null although every subsequent branch replaces or immediately uses it.
+      requiredOutcome: Refactor the local parse flow without changing PDF error behavior and satisfy no-useless-assignment.
+      blocking: true
+      observed: no-useless-assignment at scan-results.service.ts:93:13.
+      expected: Lint passes with the parser retaining safe invalid-JSON fallback behavior.
+  targets:
+    - file: src/app/core/scans/scan-results.service.spec.ts
+      suite: ScanResultsService
+      test: surfaces problem details when PDF export fails
+      operation: exportScanPdf
+      observed: Plain object flush rejects for blob response type.
+      expected: Blob-backed Problem Details fixture reaches the service error assertion.
+    - file: src/app/core/scans/scan-results.service.ts
+      locationHint: src/app/core/scans/scan-results.service.ts:93:13
+      operation: exportScanPdf
+      observed: Useless body initialization.
+      expected: Parse blob text with no lint violation while retaining Problem Details fallback.
+  editScope:
+    allowedEditPaths:
+      - src/app/core/scans/scan-results.service.spec.ts
+      - src/app/core/scans/scan-results.service.ts
+    suspectPaths: []
+    forbiddenOrOutOfScope:
+      - src/app/scan-results/scan-results.component.ts
+      - src/app/scan-results/scan-results.component.html
+      - src/app/app.routes.ts
+      - reports/**
+  buildAgentBrief:
+    - From frontendAppRoot, run npx npm run test -- --no-watch and confirm it matches the ScanResultsService blob-response failure before editing.
+    - Read src/app/core/scans/scan-results.service.spec.ts and replace the invalid plain-object blob-error fixture with a valid application/problem+json Blob fixture while preserving the 409 Problem Details assertion.
+    - Read src/app/core/scans/scan-results.service.ts and remove the no-useless-assignment pattern in asExportProblem without weakening JSON parsing or fallback behavior.
+    - Run npx npm run test -- --no-watch, then npx npm run lint; both must pass.
+  nonGoals:
+    - Do not change the export endpoint, request responseType, bearer authorization, or user-visible Problem Details behavior.
+    - Do not weaken or delete the PDF export failure assertion.
+    - Do not refactor unrelated result-page, routing, or auth code.

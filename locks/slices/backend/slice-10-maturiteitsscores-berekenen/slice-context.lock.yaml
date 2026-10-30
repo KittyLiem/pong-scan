@@ -1,0 +1,266 @@
+backendContext:
+  generationProfile:
+    backend:
+      enabled: true
+    database:
+      enabled: true
+      type: postgresql
+    deliveryTopology: single-repo
+    revision: 1.0.0
+behaviorSubset:
+  initialState: []
+  scenarios:
+  - id: organisatiedoelen_en_prioriteiten.s4
+    text: Opgeslagen doelen en prioriteiten zijn op de resultatenpagina beschikbaar.
+    transitionIds:
+    - organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+  - id: maturiteitsscores_berekenen.s1
+    text: Een afgeronde beoordeling activeert de scoreberekening.
+    transitionIds:
+    - maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+  - id: resultaatinzichten_en_doelcontext.s3
+    text: De gebruiker ziet sterktes, gaps en ontwikkelpunten.
+    transitionIds:
+    - resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+  - id: resultaatinzichten_en_doelcontext.s4
+    text: De doelensectie toont ieder opgeslagen doel met prioriteit en eigen tekst.
+    transitionIds:
+    - resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+  transitions:
+  - from: afgerond
+    id: maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+    kind: recompute
+    operationId: getResults
+    to: resultaten beschikbaar
+  - from: doelprioriteiten opgeslagen
+    id: organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+    kind: recompute
+    operationId: getResults
+    to: doelcontext beschikbaar in resultaten
+  - from: resultaten beschikbaar
+    id: resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+    kind: recompute
+    operationId: getResults
+    to: ontwikkelpunten inzichtelijk
+  - from: doelprioriteiten opgeslagen
+    id: resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+    kind: recompute
+    operationId: getResults
+    to: doelcontext zichtbaar
+  - from: bestaande doelprioriteiten
+    id: afgeronde_beoordeling_verfijnen.bestaande_doelprioriteiten__behouden_gekopieerd_of_opnieuw_te_beoordelen
+    kind: recompute
+    operationId: getResults
+    to: behouden, gekopieerd of opnieuw te beoordelen
+  unspecified:
+  - id: dec-016
+    text: Besluit vereist of organisatiedoelen optioneel of verplicht zijn; aanbevolen
+      is optionele context.
+  - id: asm-012
+    text: Doelselectie en prioritering zijn stappen binnen Maturity beoordeling omdat
+      geen afzonderlijke pagina bestaat.
+  - id: dec-003
+    text: Besluit vereist over samenvoeging van vraag- en domeinscores; aanbevolen
+      zijn vooraf vastgelegde gewichten per vraag en domein.
+  - id: dec-012
+    text: Besluit vereist over classificatie van sterktes, gaps en ontwikkelpunten;
+      aanbevolen zijn domeinspecifieke grenzen en teksten.
+  - id: asm-010
+    text: Aanbevelingen gelden als concrete ontwikkelpunten; een zelfstandige roadmapgenerator
+      is niet toegevoegd.
+  - id: dec-005
+    text: Besluit vereist over wijzigingen aan afgeronde scans; aanbevolen is een
+      nieuwe revisie binnen dezelfde scan met behoud van eerdere resultaten.
+capabilityId: maturiteitsscores_berekenen
+contractSubset:
+  apiBasePath: ''
+  contractScopeRef:
+    capabilityKey: maturiteitsscores_berekenen
+    operationIds:
+    - getResults
+  interfaceSurface:
+    operationCount: 19
+    pathCount: 16
+    versionPrefix: /v1
+  operationIds:
+  - getResults
+  operations:
+  - apiBasePath: ''
+    fullPath: /v1/scans/{scanId}/results
+    method: GET
+    operationId: getResults
+    parameters:
+    - in: path
+      name: scanId
+      required: true
+      schema:
+        format: uuid
+        type: string
+      x-ref: '#/components/parameters/ScanId'
+    path: /v1/scans/{scanId}/results
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              properties:
+                actionOverview:
+                  properties:
+                    items:
+                      items:
+                        $ref: '#/components/schemas/DevelopmentPriorityInput'
+                      type: array
+                  required:
+                  - items
+                  type: object
+                  x-ref: '#/components/schemas/ActionOverview'
+                developmentPoints:
+                  items:
+                    properties:
+                      classification:
+                        enum:
+                        - strength
+                        - gap
+                        - development-point
+                        type: string
+                      domainId:
+                        format: uuid
+                        type: string
+                      id:
+                        format: uuid
+                        type: string
+                      text:
+                        type: string
+                    required:
+                    - id
+                    - domainId
+                    - classification
+                    - text
+                    type: object
+                    x-ref: '#/components/schemas/DevelopmentPoint'
+                  type: array
+                domainScores:
+                  items:
+                    properties:
+                      domainId:
+                        format: uuid
+                        type: string
+                      score:
+                        maximum: 5
+                        minimum: 0
+                        type: number
+                    required:
+                    - domainId
+                    - score
+                    type: object
+                    x-ref: '#/components/schemas/DomainScore'
+                  type: array
+                goals:
+                  items:
+                    properties:
+                      customText:
+                        type: string
+                      name:
+                        type: string
+                      priority:
+                        enum:
+                        - high
+                        - medium
+                        - low
+                        type: string
+                    required:
+                    - name
+                    - priority
+                    type: object
+                    x-ref: '#/components/schemas/OrganizationGoal'
+                  type: array
+                scanId:
+                  format: uuid
+                  type: string
+                totalScore:
+                  maximum: 5
+                  minimum: 0
+                  type: number
+              required:
+              - scanId
+              - totalScore
+              - domainScores
+              - developmentPoints
+              - goals
+              type: object
+              x-ref: '#/components/schemas/ScanResults'
+        description: Reproducible scores, insights, goals, and action overview
+      default:
+        content:
+          application/problem+json:
+            schema:
+              properties:
+                detail:
+                  type: string
+                instance:
+                  format: uri-reference
+                  type: string
+                status:
+                  type: integer
+                title:
+                  type: string
+                type:
+                  format: uri-reference
+                  type: string
+              required:
+              - type
+              - title
+              - status
+              type: object
+              x-ref: '#/components/schemas/Problem'
+        description: Problem details error
+        x-ref: '#/components/responses/Problem'
+    security:
+    - bearerAuth: []
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+  slice:
+    behaviorScopeRef:
+      ownedTransitionIds:
+      - maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+      - organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+      - resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+      - resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+      - afgeronde_beoordeling_verfijnen.bestaande_doelprioriteiten__behouden_gekopieerd_of_opnieuw_te_beoordelen
+    capabilityId: maturiteitsscores_berekenen
+    contractScopeRef:
+      capabilityKey: maturiteitsscores_berekenen
+      operationIds:
+      - getResults
+    dependsOnSlices:
+    - slice-09-beoordelingsinhoud-voltooien
+    sliceId: slice-10-maturiteitsscores-berekenen
+    sliceIndex: 9
+    sliceType: paired-api
+    streamScopeRef:
+      backend:
+        enabled: true
+      frontend:
+        enabled: true
+    uiScopeRef:
+      contributesToPage: []
+      pageBindings:
+      - allowedOperationIds: []
+        ownedOperationIds:
+        - getResults
+        pageKey: Scanresultaten en ontwikkelprioriteiten
+        routeId: route_results
+      pageKeys:
+      - Scanresultaten en ontwikkelprioriteiten
+      routeIds:
+      - route_results
+scope:
+  backend:
+    enabled: true
+  frontend:
+    enabled: false
+sliceId: slice-10-maturiteitsscores-berekenen
+sliceType: paired-api

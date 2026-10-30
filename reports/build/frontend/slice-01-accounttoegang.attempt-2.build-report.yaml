@@ -1,0 +1,50 @@
+artifactRefs:
+- src/app/app.ts
+- src/app/core/auth/auth.service.ts
+- reports/build/frontend/slice-01-accounttoegang.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 5256
+errors: []
+finishedAt: null
+gates:
+- checkId: CHK_LINT
+  command: npx npm run lint
+  evidence: Reproduced two @angular-eslint/prefer-inject errors in src/app/app.ts
+    and src/app/core/auth/auth.service.ts.
+  exitCode: 1
+  outcome: failed-as-reported
+  phase: pre-fix-reproduction
+- checkId: CHK_LINT
+  command: npx npm run lint
+  evidence: All frontend files pass local linting after the injection changes.
+  exitCode: 0
+  outcome: passed
+  phase: post-fix-diagnostic
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision:
+    apiChoice: 1.0.0
+    contractDecisions: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-01-accounttoegang
+startedAt: null
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Replaced disallowed constructor injection in App and AuthService with inject();
+  the checker-mapped lint command now exits successfully.
+warnings:
+- Wall-clock timestamps were not exposed by the available tools; durationMs records
+  the two observed lint command durations.
+- Build and unit tests were not rerun because this narrow repair was scoped exclusively
+  to CHK_LINT, while checker evidence stated those gates had already passed. Formal
+  gate authority remains with Frontend Check.

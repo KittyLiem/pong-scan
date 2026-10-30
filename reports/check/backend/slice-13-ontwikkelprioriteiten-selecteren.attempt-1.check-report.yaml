@@ -1,0 +1,110 @@
+artifactRefs:
+- reports/check/backend/slice-13-ontwikkelprioriteiten-selecteren.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 62000
+errors: []
+finishedAt: '2026-10-13T17:20:02Z'
+gates:
+- evidence:
+    behaviorEvidenceSource: buildOutput.artifacts
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+      reason: representative slice API/behavior test and protected-operation unauthorized
+        assertion
+    missingPaths: []
+    verifiedPaths:
+    - src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    observedEnforcement: unauthorized request receives 401 application/problem+json
+    observedUnauthorizedTests:
+    - DevelopmentPriorityBehaviorTest.saveDevelopmentPrioritiesRequiresBearerAuthentication
+    protectedOperations:
+    - method: PUT
+      operationId: saveDevelopmentPriorities
+      path: /v1/scans/{scanId}/development-priorities
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    observed: representative fixture uses credentials only as request inputs; no persisted
+      credential implementation was in owned handoff scope
+    scope: no auth/session/idempotency implementation file was handed off for this
+      slice
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    databaseEnabled: postgresql
+    observedRuntime: full test suite applied Flyway migration version 10 and completed
+      successfully using the configured test database
+    operation: saveDevelopmentPriorities
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    executedSuite: mvn -B -ntp -q test
+    transitions:
+    - id: ontwikkelprioriteiten_selecteren.ontwikkelprioriteiten_niet_geselecteerd__ontwikkelprioriteiten_geselecteerd
+      kind: mutation
+      mutatedFields:
+      - selected
+      operationId: saveDevelopmentPriorities
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+      testMethod: saveDevelopmentPrioritiesSelectsDevelopmentPoint
+    - id: ontwikkelprioriteiten_selecteren.actieoverzicht_onvolledig__actieoverzicht_samengesteld
+      kind: mutation
+      mutatedFields:
+      - items
+      operationId: saveDevelopmentPriorities
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/priority/DevelopmentPriorityBehaviorTest.java
+      testMethod: saveDevelopmentPrioritiesComposesActionOverviewFromSelectedItems
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext
+- buildOutput
+- conformanceLock
+- backendStackProfile
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-13-ontwikkelprioriteiten-selecteren
+startedAt: '2026-10-13T17:19:00Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: OTLP exporter connection-refused warnings occurred during tests but did
+    not affect exit code.
+  failureCategory: non_blocking_runtime_warning
+  gateId: GATE_TESTS

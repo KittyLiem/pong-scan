@@ -1,0 +1,128 @@
+artifactRefs:
+- reports/check/backend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 44427
+errors: []
+finishedAt: '2026-10-13T15:12:37Z'
+gates:
+- evidence:
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+      reason: representative slice API test and all behavior-evidence test methods
+    - path: src/main/java/com/example/admin/api/AdminContentResource.java
+      reason: slice operation handlers and security enforcement
+    - path: src/main/java/com/example/admin/api/AdminDtos.java
+      reason: request/response DTOs used by owned operations
+    - path: src/main/java/com/example/admin/application/AdminContentService.java
+      reason: durable-operation persistence and idempotency assessment
+    - path: src/main/java/com/example/organization/api/BearerAuthenticated.java
+      reason: authentication binding assessment
+    - path: src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+      reason: authentication enforcement assessment
+    - path: src/main/java/com/example/organization/application/BearerTokenService.java
+      reason: protected-endpoint credential and token-expiry assessment
+    missingPaths: []
+    verifiedPaths:
+    - src/test/java/com/example/admin/AdminContentBehaviorTest.java
+    - locks/behavior-decisions.lock.yaml
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    commandRef: deterministic-endpoint-security
+    enforcementMarkers:
+    - AdminContentResource class-level '@BearerAuthenticated'
+    - BearerAuthenticationFilter name-bound at authentication priority
+    missingEnforcement: []
+    missingTests: []
+    protectedOperations:
+    - listAdminDomains GET /v1/admin/domains
+    - createAdminDomain POST /v1/admin/domains
+    - updateAdminDomain PATCH /v1/admin/domains/{domainId}
+    - updateAdminQuestion PATCH /v1/admin/questions/{questionId}
+    - createAnswerOption POST /v1/admin/questions/{questionId}/options
+    - updateAnswerOption PATCH /v1/admin/options/{optionId}
+    unauthorizedTest: AdminContentBehaviorTest#allProtectedAdminOperationsRejectUnauthenticatedRequests
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    idempotencyValues: SHA-256 hashes of idempotency keys and admin request payloads;
+      no credential fields are in the slice DTOs
+    sessionExpiry: BearerTokenService verifies token exp and SessionEntity.expiresAt
+    tokenVerification: HMAC signature verification with hashed persisted access-token
+      lookup
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    durableOperations:
+    - listAdminDomains
+    - createAdminDomain
+    - updateAdminDomain
+    - updateAdminQuestion
+    - createAnswerOption
+    - updateAnswerOption
+    inMemoryPrimaryStore: false
+    primaryStorage: Panache entities with EntityManager transactions and flushes in
+      AdminContentService
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    evidenceSource: buildOutput.artifacts reports/build/backend/slice-04-adminomgeving-en-scaninhoudbeheer.behavior-evidence.yaml
+    execution: CHK_UNIT_TESTS exited 0
+    mutationFieldsPresent: true
+    startsFrom: api-fixture
+    testFile: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+    transitionsVerified:
+    - adminomgeving_en_scaninhoudbeheer.kennisgebied_actief__kennisgebied_inactief
+    - adminomgeving_en_scaninhoudbeheer.vraag_actief__vraag_inactief
+    - adminomgeving_en_scaninhoudbeheer.antwoordoptie_beschikbaar__antwoordoptie_buiten_gebruik
+    - adminomgeving_en_scaninhoudbeheer.antwoordoptie_buiten_gebruik__antwoordoptie_beschikbaar
+    - adminomgeving_en_scaninhoudbeheer.vraag_zonder_uitleg__vraag_met_uitleg
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+startedAt: '2026-10-13T15:11:53Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: OTLP exporter logged connection-refused warnings for localhost:4317; Maven
+    test command exited 0.
+  failureCategory: environment_warning
+  gateId: CHK_UNIT_TESTS

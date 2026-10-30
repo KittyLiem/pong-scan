@@ -1,0 +1,47 @@
+artifactRefs:
+- src/app/scan-overview/scan-overview.component.spec.ts
+- reports/build/frontend/slice-06-scan-aanmaken.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 29380
+errors: []
+finishedAt: '2026-10-13T15:58:09.380Z'
+gates:
+- checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 'Reproduced TS2339 in scan-overview.component.spec.ts: mockReturnValue
+    was unavailable on the injected create method type.'
+  exitCode: 1
+  scope: pre-repair diagnostic
+- checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 10 test files passed; 29 tests passed, including all 4 ScanOverviewComponent
+    tests.
+  exitCode: 0
+  scope: post-repair diagnostic
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  apiChoiceLockRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-06-scan-aanmaken
+startedAt: '2026-10-13T15:57:40.000Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Corrected the Vitest mock typing that prevented the ScanOverviewComponent
+  problem-details test from compiling. Production code was not changed.
+warnings:
+- The test run reported an existing Sass @import deprecation warning and a Vite native
+  config-loader compatibility warning.
+- Only the mandatory unit-test command was run because the repair contract was narrowly
+  scoped to CHK_UNIT_TESTS.

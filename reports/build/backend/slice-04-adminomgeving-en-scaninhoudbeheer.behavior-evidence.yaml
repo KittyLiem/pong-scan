@@ -1,0 +1,45 @@
+decisions:
+- choice: De beheeroperaties blijven gekoppeld aan de route Maturity beoordeling;
+    er wordt geen afzonderlijke adminpagina of afwijkende API-route geïntroduceerd.
+  unspecifiedId: asm-011
+transitions:
+- kind: mutation
+  mutatedFields:
+  - active
+  operationId: updateAdminDomain
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+  testMethod: updateAdminDomainMakesActiveDomainInactive
+  transitionId: adminomgeving_en_scaninhoudbeheer.kennisgebied_actief__kennisgebied_inactief
+- kind: mutation
+  mutatedFields:
+  - active
+  operationId: updateAdminQuestion
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+  testMethod: updateAdminQuestionMakesActiveQuestionInactive
+  transitionId: adminomgeving_en_scaninhoudbeheer.vraag_actief__vraag_inactief
+- kind: mutation
+  mutatedFields:
+  - available
+  operationId: updateAnswerOption
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+  testMethod: updateAnswerOptionMakesAvailableOptionUnavailable
+  transitionId: adminomgeving_en_scaninhoudbeheer.antwoordoptie_beschikbaar__antwoordoptie_buiten_gebruik
+- kind: mutation
+  mutatedFields:
+  - available
+  operationId: updateAnswerOption
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+  testMethod: updateAnswerOptionMakesUnavailableOptionAvailable
+  transitionId: adminomgeving_en_scaninhoudbeheer.antwoordoptie_buiten_gebruik__antwoordoptie_beschikbaar
+- kind: mutation
+  mutatedFields:
+  - explanation
+  operationId: updateAdminQuestion
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/admin/AdminContentBehaviorTest.java
+  testMethod: updateAdminQuestionAddsExplanation
+  transitionId: adminomgeving_en_scaninhoudbeheer.vraag_zonder_uitleg__vraag_met_uitleg

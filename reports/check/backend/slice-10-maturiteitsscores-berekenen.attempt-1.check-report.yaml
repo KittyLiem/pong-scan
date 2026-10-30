@@ -1,0 +1,116 @@
+artifactRefs:
+- reports/check/backend/slice-10-maturiteitsscores-berekenen.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 61811
+errors: []
+finishedAt: '2026-10-13T16:56:15.249Z'
+gates:
+- evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: reports/build/backend/slice-10-maturiteitsscores-berekenen.attempt-2.build-report.yaml
+    contentReadPaths:
+    - path: src/test/java/com/example/scan/ResultsBehaviorTest.java
+      reason: representative slice API/behavior test for getResults and protected-endpoint
+        assertion
+    missingPaths: []
+    verifiedPaths:
+    - src/test/java/com/example/scan/ResultsBehaviorTest.java
+    - locks/behavior-decisions.lock.yaml
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- evidence:
+    evidenceSource: buildOutput.artifacts reports/build/backend/slice-10-maturiteitsscores-berekenen.behavior-evidence.yaml
+    executedSuite: mvn -B -ntp -q test
+    exitCode: 0
+    kind: recompute
+    mutationFieldsNotRequiredForRecompute: true
+    operationId: getResults
+    startsFrom: api-fixture
+    testFile: src/test/java/com/example/scan/ResultsBehaviorTest.java
+    transitionIds:
+    - maturiteitsscores_berekenen.afgerond__resultaten_beschikbaar
+    - organisatiedoelen_en_prioriteiten.doelprioriteiten_opgeslagen__doelcontext_beschikbaar_in_resultaten
+    - resultaatinzichten_en_doelcontext.resultaten_beschikbaar__ontwikkelpunten_inzichtelijk
+    - resultaatinzichten_en_doelcontext.doelprioriteiten_opgeslagen__doelcontext_zichtbaar
+    - afgeronde_beoordeling_verfijnen.bestaande_doelprioriteiten__behouden_gekopieerd_of_opnieuw_te_beoordelen
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    assertion: GET without bearer token returns 401 application/problem+json with
+      status 401
+    observed401Tests:
+    - src/test/java/com/example/scan/ResultsBehaviorTest.java#resultsRequireBearerAuthenticationWithProblemDetails
+    observedEnforcement: runtime unauthorized request assertion passed
+    protectedOperations:
+    - method: GET
+      operationId: getResults
+      path: /v1/scans/{scanId}/results
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    observed: representative API test obtains a bearer token through the existing
+      auth API and accesses results only with that token
+    rawCredentialPersistenceDetected: false
+    scope: getResults has no credential/session persistence implementation ref in
+      this slice handoff
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    database: postgresql configured; test profile uses H2 persistence override with
+      Flyway
+    observed: ResultsBehaviorTest creates persisted model/admin entities, completes
+      a scan through API operations, and retrieves getResults successfully
+    unitTestExitCode: 0
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    durationMs: 23686
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    durationMs: 61811
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    durationMs: 20441
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile@1.1.0
+- conformanceLock@1.0.0
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-10-maturiteitsscores-berekenen
+startedAt: '2026-10-13T16:55:13.438Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+summary: Backend handoff paths were readable, all five owned getResults recompute
+  transitions had matching API-fixture behavior evidence, protected endpoint coverage
+  asserted 401 behavior, and build/test/lint commands passed.
+warnings:
+- evidence: Test runtime logged OTLP exporter connection-refused warnings for localhost:4317;
+    Maven test command exited 0.
+  failureCategory: non_blocking_runtime_observability
+  gateId: GATE_TESTS

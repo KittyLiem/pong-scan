@@ -1,0 +1,48 @@
+artifactRefs:
+- src/app/scan-results/scan-results.component.ts
+- src/app/scan-results/scan-results.component.html
+- src/app/scan-results/scan-results.component.spec.ts
+- reports/build/frontend/slice-12-resultaatinzichten-en-doelcontext.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 3043
+errors: []
+finishedAt: null
+gates:
+- checkId: LOCAL_LINT_PREFLIGHT
+  command: npx npm run lint
+  evidence: Angular lint completed in 3043ms; all files passed linting.
+  exitCode: 0
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- mockups/scanresultaten-en-ontwikkelprioriteiten.lock.html
+- mockups/app-shell.lock.html
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interface subset embedded for slice-12-resultaatinzichten-en-doelcontext
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-12-resultaatinzichten-en-doelcontext
+startedAt: null
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Enhanced the API-backed results page with a selected-priority action overview,
+  retained visible disabled controls for operations unavailable to this UI-only slice,
+  and updated standalone component coverage.
+warnings:
+- Only the lightweight first-available lint preflight was run on this first-pass build.
+  Full build and unit-test commands were not run; Frontend Check retains formal gate
+  authority.
+- The slice contract exposes no owned operations. Export and development-priority
+  persistence remain visible but disabled rather than inventing client calls outside
+  the contract subset.
+- Classification boundaries remain an explicit unresolved decision; the UI groups
+  only classifications returned by the existing results data and does not infer thresholds.

@@ -1,0 +1,430 @@
+{
+  "schemaVersion" : "1",
+  "run" : {
+    "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p3",
+    "workflowId" : "vs-phase-3-contracts",
+    "status" : "SUCCEEDED",
+    "startedAt" : 1.7919002499303966E9,
+    "finishedAt" : 1.791900441252331E9,
+    "input" : {
+      "runId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145-p3",
+      "publishLineageId" : "e6c512ea-1f27-4b92-a0e3-cea54f37a145"
+    },
+    "recordedAt" : 1.791914217477E9
+  },
+  "steps" : {
+    "runContractValidator" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900423866583E9,
+      "finishedAt" : 1.791900423866583E9,
+      "attempts" : [ {
+        "attemptId" : "runContractValidator-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900423866583E9,
+        "finishedAt" : 1.791900423866583E9,
+        "agent" : true
+      } ]
+    },
+    "validateTransitionBindingOperationReferences" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004230956461E9,
+      "finishedAt" : 1.7919004230956461E9,
+      "attempts" : [ {
+        "attemptId" : "validateTransitionBindingOperationReferences-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004230956461E9,
+        "finishedAt" : 1.7919004230956461E9,
+        "agent" : false
+      } ]
+    },
+    "validateProductUiTraceabilityClosed" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004236107311E9,
+      "finishedAt" : 1.7919004236107311E9,
+      "attempts" : [ {
+        "attemptId" : "validateProductUiTraceabilityClosed-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004236107311E9,
+        "finishedAt" : 1.7919004236107311E9,
+        "agent" : false
+      } ]
+    },
+    "validateProductIntentFeatures" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002510139406E9,
+      "finishedAt" : 1.7919002510139406E9,
+      "attempts" : [ {
+        "attemptId" : "validateProductIntentFeatures-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002510139406E9,
+        "finishedAt" : 1.7919002510139406E9,
+        "agent" : false
+      } ]
+    },
+    "publishContractsFull" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004354394846E9,
+      "finishedAt" : 1.7919004354394846E9,
+      "attempts" : [ {
+        "attemptId" : "publishContractsFull-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004354394846E9,
+        "finishedAt" : 1.7919004354394846E9,
+        "agent" : false
+      } ]
+    },
+    "runInterfaceContractProducer" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900305113122E9,
+      "finishedAt" : 1.791900305113122E9,
+      "attempts" : [ {
+        "attemptId" : "runInterfaceContractProducer-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900305113122E9,
+        "finishedAt" : 1.791900305113122E9,
+        "agent" : true
+      } ]
+    },
+    "validateOpenApiPaginationPolicy" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003829015064E9,
+      "finishedAt" : 1.7919003829015064E9,
+      "attempts" : [ {
+        "attemptId" : "validateOpenApiPaginationPolicy-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003829015064E9,
+        "finishedAt" : 1.7919003829015064E9,
+        "agent" : false
+      } ]
+    },
+    "validateContextOperationsStructure" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003823526132E9,
+      "finishedAt" : 1.7919003823526132E9,
+      "attempts" : [ {
+        "attemptId" : "validateContextOperationsStructure-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003823526132E9,
+        "finishedAt" : 1.7919003823526132E9,
+        "agent" : false
+      } ]
+    },
+    "validateUiRelationsFull" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004231868372E9,
+      "finishedAt" : 1.7919004231868372E9,
+      "attempts" : [ {
+        "attemptId" : "validateUiRelationsFull-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004231868372E9,
+        "finishedAt" : 1.7919004231868372E9,
+        "agent" : false
+      } ]
+    },
+    "validateTraceabilityOperationsPrimaryActionHosted" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004237894871E9,
+      "finishedAt" : 1.7919004237894871E9,
+      "attempts" : [ {
+        "attemptId" : "validateTraceabilityOperationsPrimaryActionHosted-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004237894871E9,
+        "finishedAt" : 1.7919004237894871E9,
+        "agent" : false
+      } ]
+    },
+    "runMockupOutlineExtractor" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003821614873E9,
+      "finishedAt" : 1.7919003821614873E9,
+      "attempts" : [ {
+        "attemptId" : "runMockupOutlineExtractor-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003821614873E9,
+        "finishedAt" : 1.7919003821614873E9,
+        "agent" : false
+      } ]
+    },
+    "persistContractArtifactsFull" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900435043677E9,
+      "finishedAt" : 1.791900435043677E9,
+      "attempts" : [ {
+        "attemptId" : "persistContractArtifactsFull-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900435043677E9,
+        "finishedAt" : 1.791900435043677E9,
+        "agent" : false
+      } ]
+    },
+    "runUiContractProducer" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003830175712E9,
+      "finishedAt" : 1.7919003830175712E9,
+      "attempts" : [ {
+        "attemptId" : "runUiContractProducer-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003830175712E9,
+        "finishedAt" : 1.7919003830175712E9,
+        "agent" : true
+      } ]
+    },
+    "validateProductPageKeyStructure" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003049610052E9,
+      "finishedAt" : 1.7919003049610052E9,
+      "attempts" : [ {
+        "attemptId" : "validateProductPageKeyStructure-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003049610052E9,
+        "finishedAt" : 1.7919003049610052E9,
+        "agent" : false
+      } ]
+    },
+    "persistInterfaceContractArtifactsFull" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900435164217E9,
+      "finishedAt" : 1.791900435164217E9,
+      "attempts" : [ {
+        "attemptId" : "persistInterfaceContractArtifactsFull-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900435164217E9,
+        "finishedAt" : 1.791900435164217E9,
+        "agent" : false
+      } ]
+    },
+    "validateProductTransitionBindingCoverage" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004229904418E9,
+      "finishedAt" : 1.7919004229904418E9,
+      "attempts" : [ {
+        "attemptId" : "validateProductTransitionBindingCoverage-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004229904418E9,
+        "finishedAt" : 1.7919004229904418E9,
+        "agent" : false
+      } ]
+    },
+    "validateRoutePageResolution" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900423420924E9,
+      "finishedAt" : 1.791900423420924E9,
+      "attempts" : [ {
+        "attemptId" : "validateRoutePageResolution-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900423420924E9,
+        "finishedAt" : 1.791900423420924E9,
+        "agent" : false
+      } ]
+    },
+    "persistUiContractArtifacts" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004352449856E9,
+      "finishedAt" : 1.7919004352449856E9,
+      "attempts" : [ {
+        "attemptId" : "persistUiContractArtifacts-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004352449856E9,
+        "finishedAt" : 1.7919004352449856E9,
+        "agent" : false
+      } ]
+    },
+    "validateContractRelationsFull" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004228136213E9,
+      "finishedAt" : 1.7919004228136213E9,
+      "attempts" : [ {
+        "attemptId" : "validateContractRelationsFull-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004228136213E9,
+        "finishedAt" : 1.7919004228136213E9,
+        "agent" : false
+      } ]
+    },
+    "verifyProductBehaviorPreserved" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003046871254E9,
+      "finishedAt" : 1.7919003046871254E9,
+      "attempts" : [ {
+        "attemptId" : "verifyProductBehaviorPreserved-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003046871254E9,
+        "finishedAt" : 1.7919003046871254E9,
+        "agent" : false
+      } ]
+    },
+    "runProductLockProducer" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002512124996E9,
+      "finishedAt" : 1.7919002512124996E9,
+      "attempts" : [ {
+        "attemptId" : "runProductLockProducer-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002512124996E9,
+        "finishedAt" : 1.7919002512124996E9,
+        "agent" : true
+      } ]
+    },
+    "validateOpenApiDocumentIntegrity" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003824347541E9,
+      "finishedAt" : 1.7919003824347541E9,
+      "attempts" : [ {
+        "attemptId" : "validateOpenApiDocumentIntegrity-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003824347541E9,
+        "finishedAt" : 1.7919003824347541E9,
+        "agent" : false
+      } ]
+    },
+    "loadRequiredBundle" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919002504133325E9,
+      "finishedAt" : 1.7919002504133325E9,
+      "attempts" : [ {
+        "attemptId" : "loadRequiredBundle-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919002504133325E9,
+        "finishedAt" : 1.7919002504133325E9,
+        "agent" : false
+      } ]
+    },
+    "validateProductLockStructure" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919003044639945E9,
+      "finishedAt" : 1.7919003044639945E9,
+      "attempts" : [ {
+        "attemptId" : "validateProductLockStructure-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919003044639945E9,
+        "finishedAt" : 1.7919003044639945E9,
+        "agent" : false
+      } ]
+    },
+    "validateProductFeatureTraceabilityCoverage" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004229094024E9,
+      "finishedAt" : 1.7919004229094024E9,
+      "attempts" : [ {
+        "attemptId" : "validateProductFeatureTraceabilityCoverage-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004229094024E9,
+        "finishedAt" : 1.7919004229094024E9,
+        "agent" : false
+      } ]
+    },
+    "validatePageKeyStability" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900423293544E9,
+      "finishedAt" : 1.791900423293544E9,
+      "attempts" : [ {
+        "attemptId" : "validatePageKeyStability-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900423293544E9,
+        "finishedAt" : 1.791900423293544E9,
+        "agent" : false
+      } ]
+    },
+    "validateContractOperationsPageHosted" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004236903944E9,
+      "finishedAt" : 1.7919004236903944E9,
+      "attempts" : [ {
+        "attemptId" : "validateContractOperationsPageHosted-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004236903944E9,
+        "finishedAt" : 1.7919004236903944E9,
+        "agent" : false
+      } ]
+    },
+    "completeRunFull" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.791900441252331E9,
+      "finishedAt" : 1.791900441252331E9,
+      "attempts" : [ {
+        "attemptId" : "completeRunFull-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.791900441252331E9,
+        "finishedAt" : 1.791900441252331E9,
+        "agent" : false
+      } ]
+    },
+    "persistValidationReportFull" : {
+      "status" : "SUCCEEDED",
+      "startedAt" : 1.7919004353476577E9,
+      "finishedAt" : 1.7919004353476577E9,
+      "attempts" : [ {
+        "attemptId" : "persistValidationReportFull-1",
+        "attemptNumber" : 1,
+        "kind" : "INITIAL",
+        "status" : "SUCCEEDED",
+        "startedAt" : 1.7919004353476577E9,
+        "finishedAt" : 1.7919004353476577E9,
+        "agent" : false
+      } ]
+    }
+  },
+  "invalidations" : [ ],
+  "childRuns" : [ ],
+  "terminalOutcome" : {
+    "kind" : "complete",
+    "stepId" : "completeRunFull",
+    "reachedAt" : 1.791900441252331E9
+  }
+}

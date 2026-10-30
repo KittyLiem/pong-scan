@@ -1,0 +1,53 @@
+artifactRefs:
+- src/app/core/scans/scan.service.ts
+- src/app/core/scans/scan.service.spec.ts
+- src/app/core/maturity-model/maturity-model.service.ts
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.html
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-08-beoordeling-vastleggen-en-hervatten.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 8050
+errors: []
+finishedAt: '2026-10-13T16:12:58.050Z'
+gates:
+- command: npx npm run build
+  evidence: Angular production build completed successfully; application bundle generation
+    succeeded.
+  exitCode: 0
+  name: local-build-preflight
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- mockups/maturity-beoordeling.lock.html
+- mockups/app-shell.lock.html
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: interfaceContractSubset supplied for slice-08-beoordeling-vastleggen-en-hervatten
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-08-beoordeling-vastleggen-en-hervatten
+startedAt: '2026-10-13T16:12:50.000Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Implemented the saveAnswer contract and visible assessment answer form with
+  bearer-authenticated PUT requests, optimistic answer versions, problem-details handling,
+  progress feedback, evidence references, and standalone tests.
+warnings:
+- The stack profile typeCheck command maps to the full build command; it was used
+  as the single local preflight. Formal build, lint, and unit-test gates remain owned
+  by Frontend Check.
+- Unit tests were added but not run locally on this first attempt to avoid executing
+  the full stream test gate; Frontend Check should run the mapped test command.
+- The build emitted the existing Sass @import deprecation warning for src/styles.scss.
+- File upload shape remains undecided by dec-011. The UI therefore accepts contract-compatible
+  evidence reference strings and keeps the file-selection control visibly unavailable
+  rather than inventing an upload endpoint.

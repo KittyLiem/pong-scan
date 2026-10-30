@@ -1,0 +1,132 @@
+artifactRefs:
+- reports/integration/slices/slice-15-afgeronde-beoordeling-verfijnen.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+evidence:
+  contractScope:
+    assessment: The UI-only slice owns route_results and no API operation; its refinement
+      interaction is navigation-only.
+    capabilityKey: afgeronde_beoordeling_verfijnen
+    operationIds: []
+  diskVerification:
+    backend:
+      contentReadPaths: []
+      existenceSource: not_applicable_backend_disabled
+      missingPaths: []
+      verifiedPaths: []
+    frontend:
+      contentReadPaths:
+      - path: src/app/app.routes.ts
+        purpose: Verify route_results registration, authenticated guard, and component
+          binding.
+      - path: src/app/scan-results/scan-results.component.ts
+        purpose: Verify the page interaction and navigation state for refinement.
+      - path: src/app/scan-results/scan-results.component.html
+        purpose: Verify the implemented primary refinement action and revision-preservation
+          guidance.
+      - path: src/app/scan-results/scan-results.component.spec.ts
+        purpose: Minimal existence probe for the remaining claimed implementation
+          ref; only the first line was read.
+      existenceSource: fallback_minimal_probes_and_anchor_reads
+      missingPaths: []
+      verifiedPaths:
+      - src/app/app.routes.ts
+      - src/app/scan-results/scan-results.component.ts
+      - src/app/scan-results/scan-results.component.html
+      - src/app/scan-results/scan-results.component.spec.ts
+  upstream:
+    frontendBuildStatus: ok
+    frontendCheckStatus: ok
+    passedSignals:
+    - GATE_APP_SHELL_NAV
+    - GATE_MOCKUP_STRUCTURAL_PARITY
+    - GATE_UI_INITIAL_STATE_PARITY
+    - GATE_VERSION_SOURCE
+    - GATE_BUILD
+    - GATE_TESTS
+    - GATE_LINT
+finishedAt: '2026-10-13T17:40:31Z'
+gates:
+- evidence:
+    anchors:
+    - frontend/src/app/app.routes.ts
+    - frontend/src/app/scan-results/scan-results.component.ts
+    - frontend/src/app/scan-results/scan-results.component.html
+    assessment: The empty owned operation set agrees across the frontend context and
+      interface subset. The registered /scans/:scanId/results route is guarded and
+      hosts the implemented refinement navigation; no new API call is required by
+      this slice.
+    payloadRefs:
+    - frontendSliceContext.contractSubset.operationIds
+    - frontendSliceContext.uiScopeRef.pageBindings[0]
+    - interfaceContractSubset.operationIds
+    - upstreamEvidence.frontendBuildOutput
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    assessment: Backend is disabled for this UI-only slice and the contract subset
+      owns no operations.
+    payloadRefs:
+    - frontendSliceContext.scope.backend.enabled
+    - interfaceContractSubset.slice.streamScopeRef.backend.enabled
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: skipped
+- evidence:
+    assessment: Static integration is coherent for the frontend-only variant. The
+      page preserves existing results and presents a new revision as guidance rather
+      than claiming a settled backend behavior. CHK_CONTRACT_VALID and CHK_SLICE_INTEGRATION
+      are satisfied by the structurally consistent empty operation subset and this
+      report.
+    payloadRefs:
+    - frontendSliceContext.behaviorSubset.unspecified[0]
+    - interfaceContractSubset
+    - upstreamEvidence.frontendBuildOutput.status
+    - upstreamEvidence.frontendCheckOutput.status
+    - conformanceLock.checks
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    assessment: No owned transitions are declared, so transition coverage passes vacuously.
+    payloadRefs:
+    - frontendSliceContext.behaviorSubset.transitions
+    - frontendSliceContext.behaviorSubset.scenarios
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+  conformanceLock: conformanceLock
+  frontendAppRoot: frontend
+  frontendBuildOutput: upstreamEvidence.frontendBuildOutput
+  frontendCheckOutput: upstreamEvidence.frontendCheckOutput
+  frontendSliceContext: frontendSliceContext
+  interfaceContractSubset: interfaceContractSubset
+  rootAudit:
+    enabledStreams:
+      backend: false
+      frontend: true
+    referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+    sliceType: ui-only
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: interface subset supplied without a revision
+  frontendBuildStackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-15-afgeronde-beoordeling-verfijnen
+startedAt: '2026-10-13T17:40:31Z'
+status: ok
+stepId: runSliceIntegrationCheckFrontendOnly
+stream: integration
+warnings:
+- evidence: behaviorSubset.unspecified dec-005 leaves the definitive completed-scan
+    revision policy undecided; the implemented UI correctly labels a new revision
+    as the recommended workflow and warns that final processing depends on the selected
+    workflow.
+  failureCategory: warning
+  gateId: GATE_SLICE_INTEGRATION
+- evidence: No apiChoiceLock or contractDecisionsLock was supplied, so organization-wide
+    auth, error, versioning, and pagination policy checks were not applicable; FE
+    alignment was evaluated against the provided empty interface subset and frontend
+    context.
+  failureCategory: not_applicable
+  gateId: GATE_FE_CONTRACT_ALIGNMENT

@@ -1,0 +1,81 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runFrontendCheck
+stream: frontend
+sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+attemptNumber: 1
+status: fail
+startedAt: not-recorded
+finishedAt: not-recorded
+durationMs: null
+inputRefs: [frontendSliceContext, frontendStackProfile@1.2.0, conformanceLock@1.0.0, buildOutput]
+artifactRefs:
+  - reports/check/frontend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.check-report.yaml
+  - reports/feedback/frontend/slice-04-adminomgeving-en-scaninhoudbeheer.attempt-1.feedback-report.yaml
+provenance:
+  stackProfileRevision: 1.2.0
+  conformanceRevision: 1.0.0
+gates:
+  - gateId: GATE_UI_INITIAL_STATE_PARITY
+    checkId: CHK_UI_INITIAL_STATE
+    status: fail
+    evidence:
+      file: src/app/maturity-assessment/maturity-assessment.component.html
+      locationHint: assessment progress markup
+      observed: "0 van {{ model.domains.length }} kennisgebieden gestart; 0/{{ domain.questions.length }}"
+      expected: API-backed progress quantities or a visible unavailable/loading state
+warnings: []
+errors:
+  - gateId: GATE_UI_INITIAL_STATE_PARITY
+    failureCategory: slice_local
+    evidence: Visible hard-coded progress is not authorized by supplied initial state and is not bound to a response field.
+reprocessHint: frontend-build
+reprocessInputs:
+  sliceId: slice-04-adminomgeving-en-scaninhoudbeheer
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  failedGateIds: [GATE_UI_INITIAL_STATE_PARITY]
+  failedChecks: [CHK_UI_INITIAL_STATE]
+  scope: narrow-fix
+  checkerSummary: All executable gates passed, but GATE_UI_INITIAL_STATE_PARITY failed because the assessment page visibly reports zero progress without an API-backed source.
+  gateFailureContext:
+    - gateId: GATE_UI_INITIAL_STATE_PARITY
+      checkId: CHK_UI_INITIAL_STATE
+      commandRef: deterministic-source-review
+      resolvedCommand: built-in deterministic frontend source review
+      exitCode: 1
+  primaryFailures:
+    - gateId: GATE_UI_INITIAL_STATE_PARITY
+      checkId: CHK_UI_INITIAL_STATE
+      symptom: The progress panel renders zero progress before any response establishes it.
+      rootCauseHypothesis: Placeholder literals remained in the assessment template instead of response bindings.
+      requiredOutcome: Progress must originate in an applicable API response, or unavailable progress must be visibly stated without an invented numeric value.
+      blocking: true
+      observed: static zero values
+      expected: response-backed values or unavailable state
+  targets:
+    - route: /scans/:scanId/assessment
+      component: MaturityAssessmentComponent
+      file: src/app/maturity-assessment/maturity-assessment.component.html
+      locationHint: progress panel and domain progress buttons
+      observed: static zero quantities
+      expected: API response binding or no numeric placeholder
+  editScope:
+    allowedEditPaths:
+      - src/app/maturity-assessment/maturity-assessment.component.html
+      - src/app/maturity-assessment/maturity-assessment.component.ts
+      - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+    suspectPaths:
+      - path: src/app/core/maturity-model/maturity-model.service.ts
+        confidence: medium
+    forbiddenOrOutOfScope:
+      - src/app/core/auth/**
+      - src/generated/**
+  buildAgentBrief:
+    - Inspect the assessment component template and current service response types before editing.
+    - Replace fixed zero quantities with fields from a scoped response, or a visible unavailable/loading state where those fields are absent.
+    - Add a focused assertion that prohibits invented numeric progress.
+    - Run the configured full test command after the targeted repair.
+  nonGoals:
+    - Do not add guessed defaults.
+    - Do not remove concurrency-token behavior or relax tests.

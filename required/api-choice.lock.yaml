@@ -1,0 +1,9 @@
+revision: "1.0.0"
+authoringTimestamp: "2026-03-12T10:00:00Z"
+
+interfaceModel: rest-openapi
+contractArtifactFormat: openapi-3.1
+versioningStrategy: uri-versioned
+compatibilityPolicy: backward-compatible-minor
+errorModelPolicy: problem-details
+authBindingPolicy: bearer-token

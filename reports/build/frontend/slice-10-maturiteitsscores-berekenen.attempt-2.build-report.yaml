@@ -1,0 +1,47 @@
+artifactRefs:
+- src/app/scan-results/scan-results.component.ts
+- reports/build/frontend/slice-10-maturiteitsscores-berekenen.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 6170
+errors: []
+finishedAt: null
+gates:
+- checkId: CHK_LINT
+  command: npx npm run lint
+  durationMs: 3238
+  evidence: Reproduced @typescript-eslint/no-unused-expressions at src/app/scan-results/scan-results.component.ts:32:7.
+  exitCode: 1
+  scope: local-diagnostic-reproduction
+- checkId: CHK_LINT
+  command: npx npm run lint
+  durationMs: 2932
+  evidence: All frontend files passed linting after the narrow repair.
+  exitCode: 0
+  scope: local-diagnostic-post-fix
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile@1.2.0
+- conformanceLock@1.0.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: provided-subset-without-revision
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-10-maturiteitsscores-berekenen
+startedAt: null
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Replaced the lint-invalid side-effect conditional expression in togglePriority
+  with explicit add/delete branches while preserving selectedIds update semantics.
+warnings:
+- Wall-clock timestamps were unavailable from the provided tools, so startedAt and
+  finishedAt are null; durationMs is the sum of observed lint-command durations.
+- Build and unit tests were not rerun because the repair contract required only the
+  mapped lint command and supplied evidence showed build and unit tests already passed.

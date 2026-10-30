@@ -1,0 +1,80 @@
+/* Ontwerptokens (Pong-paars #5B2C83). Kleuren voldoen aan WCAG AA-contrast op de gebruikte achtergronden. */
+:root {
+  --bpc-body-bg: #ffffff;
+  --bpc-body-color: #1f1a24;
+  --bpc-secondary-bg: #faf8fc;
+  --bpc-secondary-color: #5b5563;
+  --bpc-tertiary-bg: #f1edf5;
+  --bpc-tertiary-color: #6b6474;
+  --bpc-emphasis-color: #0f0b14;
+  --bpc-border: #d9d2e1;
+
+  --bpc-primary: #5b2c83;
+  --bpc-primary-bg-subtle: #efe6f7;
+  --bpc-primary-border-subtle: #c9b1de;
+  --bpc-primary-text-emphasis: #44205f;
+  --bpc-primary-content: #ffffff;
+  --bpc-primary-hover: #4c2470;
+  --bpc-primary-active: #3f1d5d;
+
+  --bpc-secondary: #f4eff8;
+  --bpc-secondary-bg-subtle: #f8f5fb;
+  --bpc-secondary-border-subtle: #e2d8ec;
+  --bpc-secondary-text-emphasis: #3f3747;
+  --bpc-secondary-content: #1f1a24;
+  --bpc-secondary-hover: #ebe3f2;
+  --bpc-secondary-active: #e0d5ea;
+
+  --bpc-accent: #5b2c83;
+  --bpc-accent-bg-subtle: #efe6f7;
+  --bpc-accent-border-subtle: #c9b1de;
+  --bpc-accent-text-emphasis: #44205f;
+  --bpc-accent-content: #ffffff;
+  --bpc-accent-hover: #4c2470;
+  --bpc-accent-active: #3f1d5d;
+
+  --bpc-success: #1d7a46;
+  --bpc-success-bg-subtle: #e6f4ec;
+  --bpc-success-border-subtle: #a8d8bb;
+  --bpc-success-text-emphasis: #155c34;
+  --bpc-success-hover: #186a3c;
+  --bpc-success-active: #145a33;
+
+  --bpc-warning: #a35f00;
+  --bpc-warning-bg-subtle: #fdf1dc;
+  --bpc-warning-border-subtle: #f1cd8d;
+  --bpc-warning-text-emphasis: #6f4100;
+  --bpc-warning-hover: #8c5200;
+  --bpc-warning-active: #774500;
+
+  --bpc-error: #b42318;
+  --bpc-error-bg-subtle: #fdecea;
+  --bpc-error-border-subtle: #f3b4ae;
+  --bpc-error-text-emphasis: #8a1a12;
+  --bpc-error-hover: #9a1e15;
+  --bpc-error-active: #821910;
+
+  --bpc-danger: #b42318;
+  --bpc-danger-bg-subtle: #fdecea;
+  --bpc-danger-border-subtle: #f3b4ae;
+  --bpc-danger-text-emphasis: #8a1a12;
+
+  --bpc-info: #1f5fa8;
+  --bpc-info-bg-subtle: #e7f0fa;
+  --bpc-info-border-subtle: #a9c6e8;
+  --bpc-info-text-emphasis: #174a84;
+  --bpc-info-hover: #1a518f;
+  --bpc-info-active: #164577;
+
+  --bpc-focus: #d97706;
+  --bpc-overlay: rgb(15 11 20 / 0.5);
+  --bpc-disabled: #e5e1ea;
+  --bpc-disabled-content: #8a8492;
+  --bpc-neutral: #3f3747;
+  --bpc-neutral-content: #ffffff;
+
+  --bpc-gap: 1rem;
+  --bpc-gap-sm: 0.5rem;
+  --bpc-gap-lg: 1.5rem;
+  --bpc-gap-xl: 2rem;
+}

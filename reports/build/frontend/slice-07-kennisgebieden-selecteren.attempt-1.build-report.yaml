@@ -1,0 +1,45 @@
+artifactRefs:
+- src/app/core/scans/scan.service.ts
+- src/app/core/scans/scan.service.spec.ts
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.html
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-07-kennisgebieden-selecteren.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 6711
+errors: []
+finishedAt: '2026-10-13T16:05:50Z'
+gates:
+- check: local-build-preflight
+  command: npx npm run build
+  evidence: Angular application bundle generated successfully; only the existing Sass
+    @import deprecation warning was reported.
+  exitCode: 0
+  status: passed
+inputRefs:
+  contractOperationIds:
+  - updateScan
+  mockupRefs:
+  - mockups/scanoverzicht.lock.html
+  - mockups/maturity-beoordeling.lock.html
+  - mockups/app-shell.lock.html
+  referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-07-kennisgebieden-selecteren
+startedAt: '2026-10-13T16:05:43Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added the protected PATCH /v1/scans/{scanId} client operation with bearer
+  authorization and problem-details parsing. Added visible knowledge-domain selection,
+  optional organization-goal priority input, completed-scan revision choices, optimistic
+  version submission, success/error states, and isolated service/component tests.
+warnings:
+- Used the available typeCheck mapping, which resolves to the Angular build command,
+  as the lightweight local preflight. Formal lint and unit-test gates were not run
+  because this is a first-pass build; Frontend Check owns those gates.
+- The build reported an existing Sass @import deprecation warning in src/styles.scss.

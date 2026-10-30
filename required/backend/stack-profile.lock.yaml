@@ -1,0 +1,133 @@
+revision: "1.1.0"
+authoringTimestamp: "2026-03-12T10:00:00Z"
+
+scaffoldArchive:
+  id: quarkus-postgresql
+
+id: quarkus-java
+version: 1
+label: Quarkus_Java_HighGrade
+
+language:
+  name: java
+  toolchain:
+    javaVersion: 25
+    buildTool: maven
+
+framework:
+  name: quarkus
+  majorVersion: 3
+  dependencyManagement:
+    strategy: platformBom
+    bom:
+      groupId: io.quarkus.platform
+      artifactId: quarkus-bom
+      version: "3.33.3.3"
+
+http:
+  server:
+    style: rest
+    programmingModel: jaxrs
+    implementation: quarkusRest
+    openApi:
+      servedPath: /q/openapi
+      swaggerUiPath: /q/swagger-ui
+
+serialization:
+  json:
+    library: jackson
+    dateTimeFormat: iso-8601
+
+validation:
+  requestValidation: beanValidation
+
+persistence:
+  supportedModes: [memory, file, sql]
+  sql:
+    defaultDatabase: postgresql
+    orm: hibernateOrmPanache
+    migrations: flyway
+    transactionModel: jta
+    
+  testDatabase:
+    strategy: inMemoryOverride
+    dbKind: h2
+    jdbc:
+      driverExtension: quarkus-jdbc-h2
+      url: jdbc:h2:mem:app;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      username: sa
+      password: sa
+    devServices:
+      enabled: false
+    flyway:
+      enabled: true
+      migrateAtStart: true
+    compatibility:
+      postgresMode: true
+
+security:
+  supportedAuthModes: [none, oidc]
+  authorizationModel: roleBased
+
+observability:
+  correlationId:
+    headerName: X-Correlation-Id
+    responseHeaderRequired: true
+    mdcKey: correlationId
+  logging:
+    structured: true
+    json: true
+  metrics:
+    enabled: true
+    library: micrometer
+    exporter: prometheus
+  tracing:
+    enabled: true
+    library: opentelemetry
+    exporter: otlp
+  health:
+    enabled: true
+
+testing:
+  unit:
+    framework: junit
+    assertions: assertj
+  integration:
+    framework: quarkusJunit
+    httpClient: restAssured
+    database:
+      source: persistence.sql.testDatabase
+  mocking: mockito
+  determinism:
+    clock: injected
+    idGenerator: injected
+    dataReset: perTest
+
+codeConventions:
+  layering: [api, application, domain, infrastructure]
+  dtoStyle: records
+  importsOverFqcn: true
+
+bindings:
+  quarkusExtensions:
+    - quarkus-rest
+    - quarkus-rest-jackson
+    - quarkus-smallrye-openapi
+    - quarkus-hibernate-validator
+    - quarkus-smallrye-health
+    - quarkus-opentelemetry
+    - quarkus-micrometer-registry-prometheus
+    - quarkus-hibernate-orm-panache
+    - quarkus-jdbc-postgresql
+    - quarkus-flyway
+    - quarkus-flyway-postgresql
+  testExtensions:
+    - quarkus-junit
+    - quarkus-jacoco
+    - quarkus-jdbc-h2
+
+commands:
+  build: mvn -B -ntp -q -DskipTests package
+  test: mvn -B -ntp -q test
+  typeCheck: mvn -B -ntp -q -DskipTests compile
+  lint: mvn -B -ntp -q verify -DskipTests

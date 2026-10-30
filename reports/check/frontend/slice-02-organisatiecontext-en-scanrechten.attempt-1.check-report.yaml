@@ -1,0 +1,121 @@
+artifactRefs:
+- reports/check/frontend/slice-02-organisatiecontext-en-scanrechten.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 11501
+errors: []
+finishedAt: '2026-10-13T14:37:38.000Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefDeclared: reports/build/frontend/slice-02-organisatiecontext-en-scanrechten.attempt-2.build-report.yaml
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/app.routes.ts
+      reason: Confirm route_auth_start and scan success route registration.
+    - path: src/app/account-access/account-access.component.ts
+      reason: Confirm createOrganization flow and post-success navigation.
+    - path: src/app/account-access/account-access.component.html
+      reason: Confirm scoped page structural parity.
+    - path: src/app/scan-overview/scan-overview.component.ts
+      reason: Confirm visible success destination.
+    - path: src/app/scan-overview/scan-overview.component.spec.ts
+      reason: Representative slice-level route and rendering coverage.
+    - path: src/app/app.html
+      reason: Confirm app-shell navigation for scoped entries.
+    missingPaths: []
+    verifiedPaths:
+    - src/app/app.routes.ts
+    - src/app/account-access/account-access.component.ts
+    - src/app/scan-overview/scan-overview.component.ts
+    - src/app/scan-overview/scan-overview.component.spec.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavLabels:
+    - Aanmelden
+    - Afmelden
+    expectedRoutePaths:
+    - /start
+    observedNavLabels:
+    - Aanmelden
+    - Afmelden
+    routeMatches:
+    - /start
+    routesConfigPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedVisibleStructure:
+      buttons: 4
+      fields: 18
+      forms: 1
+      headings: 2
+    observedMeaningfulStructure:
+      buttons: 6
+      forms: 2
+      headings: 2
+      visibleFields: 18
+    route: /start
+    templatePath: src/app/account-access/account-access.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: pass
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    authModel: bearer JWT
+    authServicePath: src/app/core/auth/auth.service.ts
+    prohibitedBrowserStorageUsage: absent
+    tokenStorage: in-memory Angular signal
+  gateId: GATE_AUTH_STORAGE
+  status: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    summary: Angular application bundle generation completed.
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    summary: 5 test files and 12 tests passed using vitest.config.ts.
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    summary: All files pass linting.
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: pass
+inputRefs:
+- frontendSliceContext
+- frontendAppRoot
+- frontendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: unversioned
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-02-organisatiecontext-en-scanrechten
+startedAt: '2026-10-13T14:37:26.499Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Sass @import deprecation warning was emitted by build and test; it did not fail
+  a required gate.
+- Vite native config-loader compatibility warning was emitted by test; tests completed
+  successfully.

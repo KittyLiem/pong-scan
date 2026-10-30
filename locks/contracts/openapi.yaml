@@ -1,0 +1,1326 @@
+openapi: 3.1.0
+info:
+  title: Pong Data Maturity Scan API
+  version: 2.0.0
+  description: >-
+    REST API (MVP) voor organisatiegebonden datavolwassenheidsscans. Alle endpoints vereisen een bearer-token
+    (deny-by-default) behalve registratie en sessie aanmaken. Fouten zijn application/problem+json met
+    Nederlandstalige titels en details; validatiefouten bevatten `errors: [{field, message}]`. Iedere response bevat
+    `X-Correlation-Id`. Request-body maximaal 1 MB. Scans gebruiken een immutable snapshot van de beheerde inhoud;
+    beheerwijzigingen raken bestaande scans nooit.
+security:
+  - bearerAuth: []
+paths:
+  /v1/auth/registrations:
+    post:
+      operationId: registerMember
+      summary: Account registreren
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationInput'
+      responses:
+        '201':
+          description: Lid geregistreerd
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/auth/sessions:
+    post:
+      operationId: createSession
+      summary: Aanmelden (sessie aanmaken)
+      description: Onjuiste credentials geven 401. Een desiredRoute die niet met één '/' begint of langer is dan 2048 tekens geeft 400.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionInput'
+      responses:
+        '201':
+          description: Sessie aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/auth/sessions/current:
+    delete:
+      operationId: deleteCurrentSession
+      summary: Afmelden (sessie server-side intrekken)
+      responses:
+        '204':
+          description: Sessie ingetrokken
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/me:
+    get:
+      operationId: getCurrentMember
+      summary: Aangemeld lid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/organizations:
+    get:
+      operationId: listOrganizations
+      summary: Eigen organisaties
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationCollection'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      operationId: createOrganization
+      summary: Organisatie vastleggen
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationInput'
+      responses:
+        '201':
+          description: Organisatie aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/models/active:
+    get:
+      operationId: getActiveModel
+      summary: Actieve inhoud (kennisgebieden) voor een nieuwe scan
+      description: 404 als er geen actief kennisgebied met een actieve vraag en beschikbare optie is.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveModel'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/organizations/{organizationId}/scans:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+    get:
+      operationId: listScans
+      summary: Scans van een organisatie (nieuwste wijziging eerst)
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanCollection'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      operationId: createScan
+      summary: Scan aanmaken (snapshot van de actieve inhoud)
+      description: 422 bij ontbrekende actieve inhoud of een onbekend/inactief initialSelectedDomainIds. Als een verplicht domein bruikbare actieve inhoud mist, volgt 422 problem+json met titel Beoordelingsmodel onvolledig.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanCreateInput'
+      responses:
+        '201':
+          description: Concept-scan aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+    get:
+      operationId: getScan
+      summary: Scan ophalen
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        default:
+          $ref: '#/components/responses/Problem'
+    patch:
+      operationId: updateScan
+      summary: Scan wijzigen (naam, periode, selectie, doelen)
+      description: 409 bij een afgeronde scan of verouderde versie; 422 als selectedDomainIds een domein bevat dat niet bij de snapshot van deze scan hoort.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}/content:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+    get:
+      operationId: getScanContent
+      summary: Snapshot-inhoud met antwoorden
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanContent'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}/answers/{questionId}:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+      - $ref: '#/components/parameters/QuestionId'
+    put:
+      operationId: saveAnswer
+      summary: Antwoord opslaan
+      description: version = 0 voor een nieuw antwoord, daarna de teruggegeven versie. 409 bij een afgeronde scan of versieconflict; 422 als de vraag niet in een geselecteerd domein valt of de optie niet bij de vraag hoort. Verhoogt de scanversie niet.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswerInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedAnswer'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}/completion:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+    post:
+      operationId: completeScan
+      summary: Scan afronden
+      description: 422 als niet iedere vraag van de geselecteerde domeinen een optie én toelichting heeft. 409 als al afgerond of bij versieconflict.
+      parameters:
+        - $ref: '#/components/parameters/OptionalIdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompletionInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}/revisions:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+    post:
+      operationId: createScanRevision
+      summary: Revisie of kopie van een afgeronde scan maken
+      description: Bron moet completed zijn (anders 409). copy neemt antwoorden over, new-revision niet. Het origineel blijft ongewijzigd.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevisionInput'
+      responses:
+        '201':
+          description: Nieuwe scan (revisie)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}/results:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+    get:
+      parameters:
+        - name: prioritySetRevision
+          in: query
+          required: false
+          description: Versie van de prioriteiten; standaard de nieuwste. Een ontbrekende versie voor deze scan geeft 404 problem+json.
+          schema:
+            type: integer
+            minimum: 1
+      operationId: getResults
+      summary: Resultaten van een afgeronde scan
+      description: 409 als de scan niet is afgerond. Een onbekende prioriteitensetversie voor deze scan geeft 404.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResults'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}/development-priorities:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+    put:
+      operationId: saveDevelopmentPriorities
+      summary: Nieuwe set ontwikkelprioriteiten opslaan
+      description: Voegt een nieuwe set toe (setRevision + 1); eerdere sets blijven bewaard. 422 voor een onbekend ontwikkelpunt of een sterkte.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrioritiesInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionOverview'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/scans/{scanId}/export:
+    parameters:
+      - $ref: '#/components/parameters/ScanId'
+    get:
+      parameters:
+        - name: prioritySetRevision
+          in: query
+          required: false
+          description: Versie van de prioriteiten; standaard de nieuwste. Een ontbrekende versie voor deze scan geeft 404 problem+json.
+          schema:
+            type: integer
+            minimum: 1
+      operationId: exportScanPdf
+      summary: Nederlandstalige PDF-export
+      description: Bevat dezelfde gegevens als ScanResults, inclusief de sectie 'Organisatiedoelen en prioriteiten'.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/admin/domains:
+    get:
+      operationId: listAdminDomains
+      summary: Beheerde kennisgebieden (gepagineerd, met vragen en opties)
+      description: Alleen beheerders (anders 403).
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainCollection'
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      operationId: createAdminDomain
+      summary: Kennisgebied aanmaken
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainWrite'
+      responses:
+        '201':
+          description: Kennisgebied aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/admin/domains/{domainId}:
+    parameters:
+      - $ref: '#/components/parameters/DomainId'
+    patch:
+      operationId: updateAdminDomain
+      summary: Kennisgebied wijzigen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainWrite'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/admin/domains/{domainId}/questions:
+    parameters:
+      - $ref: '#/components/parameters/DomainId'
+    post:
+      operationId: createAdminQuestion
+      summary: Vraag aanmaken
+      description: Een nieuwe vraag heeft nog geen opties en kan dus niet direct actief zijn (422).
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionCreate'
+      responses:
+        '201':
+          description: Vraag aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/admin/questions/{questionId}:
+    parameters:
+      - $ref: '#/components/parameters/QuestionId'
+    patch:
+      operationId: updateAdminQuestion
+      summary: Vraag wijzigen
+      description: 422 bij activeren zonder beschikbare optie.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/admin/questions/{questionId}/options:
+    parameters:
+      - $ref: '#/components/parameters/QuestionId'
+    post:
+      operationId: createAnswerOption
+      summary: Antwoordoptie aanmaken
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswerOptionWrite'
+      responses:
+        '201':
+          description: Optie aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswerOption'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/admin/options/{optionId}:
+    parameters:
+      - $ref: '#/components/parameters/OptionId'
+    patch:
+      operationId: updateAnswerOption
+      summary: Antwoordoptie wijzigen
+      description: 422 bij het buiten gebruik stellen van de laatste beschikbare optie van een actieve vraag.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswerOptionWrite'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswerOption'
+        default:
+          $ref: '#/components/responses/Problem'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: HS256 met iss, aud, sub, sid, iat en exp; sessie wordt server-side gecontroleerd.
+  parameters:
+    IdempotencyKey:
+      in: header
+      name: X-Idempotency-Key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 255
+    OptionalIdempotencyKey:
+      in: header
+      name: X-Idempotency-Key
+      required: false
+      schema:
+        type: string
+        maxLength: 255
+    Cursor:
+      in: query
+      name: cursor
+      required: false
+      schema:
+        type: string
+    PageSize:
+      in: query
+      name: pageSize
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    OrganizationId:
+      in: path
+      name: organizationId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ScanId:
+      in: path
+      name: scanId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    DomainId:
+      in: path
+      name: domainId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    QuestionId:
+      in: path
+      name: questionId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OptionId:
+      in: path
+      name: optionId
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    Problem:
+      description: Problem details (Nederlandstalig)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+    FieldError:
+      type: object
+      required: [field, message]
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+    RegistrationInput:
+      type: object
+      required: [accountIdentifier, credential]
+      properties:
+        accountIdentifier:
+          type: string
+          format: email
+          maxLength: 320
+        credential:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 128
+    Member:
+      type: object
+      required: [id, accountIdentifier, role]
+      properties:
+        id:
+          type: string
+          format: uuid
+        accountIdentifier:
+          type: string
+        role:
+          type: string
+          enum: [member, admin]
+    SessionInput:
+      type: object
+      required: [accountIdentifier, credential]
+      properties:
+        accountIdentifier:
+          type: string
+          maxLength: 320
+        credential:
+          type: string
+          format: password
+          maxLength: 128
+        desiredRoute:
+          type: string
+          maxLength: 2048
+          pattern: '^/(?![/\\]).*$'
+    Session:
+      type: object
+      required: [accessToken, tokenType, expiresAt, member]
+      properties:
+        accessToken:
+          type: string
+        tokenType:
+          type: string
+          const: Bearer
+        expiresAt:
+          type: string
+          format: date-time
+        desiredRoute:
+          type: [string, 'null']
+        member:
+          $ref: '#/components/schemas/Member'
+    OrganizationInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        chamberOfCommerceNumber:
+          type: string
+          pattern: '^(\d{8})?$'
+        industry:
+          type: string
+          maxLength: 255
+        additionalInformation:
+          type: string
+          maxLength: 4000
+    Organization:
+      type: object
+      required: [id, name, status, version]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        chamberOfCommerceNumber:
+          type: [string, 'null']
+        industry:
+          type: [string, 'null']
+        additionalInformation:
+          type: [string, 'null']
+        status:
+          type: string
+          enum: [active, inactive]
+        version:
+          type: integer
+          minimum: 0
+    OrganizationCollection:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+    ActiveModel:
+      type: object
+      required: [domains]
+      properties:
+        domains:
+          type: array
+          items:
+            type: object
+            required: [id, name, order, required, questionCount]
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: Beheerd domein-id (te gebruiken in initialSelectedDomainIds).
+              name:
+                type: string
+              description:
+                type: [string, 'null']
+              order:
+                type: integer
+              required:
+                type: boolean
+                readOnly: true
+              questionCount:
+                type: integer
+    ScanCreateInput:
+      type: object
+      required: [name, assessmentPeriod]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        assessmentPeriod:
+          type: string
+          pattern: '^(\d{4}|Q[1-4] \d{4}|H[12] \d{4})$'
+        initialSelectedDomainIds:
+          type: array
+          maxItems: 100
+          description: Beheerde domein-id's uit /v1/models/active; worden vertaald naar snapshot-domein-id's.
+          items:
+            type: string
+            format: uuid
+    OrganizationGoal:
+      type: object
+      required: [name, priority]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        priority:
+          type: string
+          enum: [high, medium, low]
+        customText:
+          type: [string, 'null']
+          maxLength: 2000
+    ScanUpdateInput:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        assessmentPeriod:
+          type: string
+          pattern: '^(\d{4}|Q[1-4] \d{4}|H[12] \d{4})$'
+        selectedDomainIds:
+          type: array
+          minItems: 1
+          description: Snapshot-domein-id's van deze scan.
+          items:
+            type: string
+            format: uuid
+        goals:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/OrganizationGoal'
+    CompletionInput:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+          minimum: 0
+        generalComments:
+          type: [string, 'null']
+          maxLength: 4000
+    RevisionInput:
+      type: object
+      required: [mode]
+      properties:
+        mode:
+          type: string
+          enum: [copy, new-revision]
+    Scan:
+      type: object
+      required: [id, organizationId, name, assessmentPeriod, status, progress, revision, selectedDomainIds, version, createdAt, updatedAt, goals]
+      properties:
+        id:
+          type: string
+          format: uuid
+        organizationId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        assessmentPeriod:
+          type: string
+        status:
+          type: string
+          enum: [concept, in-progress, content-complete, completed]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        revision:
+          type: integer
+          minimum: 1
+        revisionOf:
+          type: [string, 'null']
+          format: uuid
+        selectedDomainIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        version:
+          type: integer
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: [string, 'null']
+          format: date-time
+        generalComments:
+          type: [string, 'null']
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationGoal'
+    ScanCollection:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scan'
+        nextCursor:
+          type: [string, 'null']
+    ScanContent:
+      type: object
+      required: [scanId, status, editable, domains]
+      properties:
+        scanId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [concept, in-progress, content-complete, completed]
+        editable:
+          type: boolean
+        domains:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContentDomain'
+    ContentDomain:
+      type: object
+      required: [id, name, order, selected, questionCount, answeredCount, questions]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: [string, 'null']
+        order:
+          type: integer
+        selected:
+          type: boolean
+        questionCount:
+          type: integer
+        answeredCount:
+          type: integer
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContentQuestion'
+    ContentQuestion:
+      type: object
+      required: [id, title, text, order, options]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        text:
+          type: string
+        explanation:
+          type: [string, 'null']
+        order:
+          type: integer
+        options:
+          type: array
+          items:
+            type: object
+            required: [id, label, score, order]
+            properties:
+              id:
+                type: string
+                format: uuid
+              label:
+                type: string
+              description:
+                type: [string, 'null']
+              score:
+                type: integer
+                minimum: 0
+                maximum: 5
+              order:
+                type: integer
+        answer:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [optionId, evidenceReferences, version]
+              properties:
+                optionId:
+                  type: string
+                  format: uuid
+                explanation:
+                  type: [string, 'null']
+                evidenceReferences:
+                  type: array
+                  items:
+                    type: string
+                version:
+                  type: integer
+                  minimum: 1
+    AnswerInput:
+      type: object
+      required: [optionId, version]
+      properties:
+        optionId:
+          type: string
+          format: uuid
+        explanation:
+          type: [string, 'null']
+          maxLength: 4000
+        evidenceReferences:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            minLength: 1
+            maxLength: 2048
+        version:
+          type: integer
+          minimum: 0
+    SavedAnswer:
+      type: object
+      required: [questionId, optionId, evidenceReferences, version, progress, scanStatus, scanVersion]
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        optionId:
+          type: string
+          format: uuid
+        explanation:
+          type: [string, 'null']
+        evidenceReferences:
+          type: array
+          items:
+            type: string
+        version:
+          type: integer
+          minimum: 1
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        scanStatus:
+          type: string
+          enum: [concept, in-progress, content-complete]
+        scanVersion:
+          type: integer
+          minimum: 0
+          description: Huidige optimistic-lock-versie van de scan (voor PATCH en afronden).
+    MaturityLevel:
+      type: object
+      required: [level, label]
+      properties:
+        level:
+          type: integer
+          minimum: 0
+          maximum: 5
+        label:
+          type: string
+          enum: [Niet ingericht, Ad hoc, Herhaalbaar, Gedefinieerd, Beheerst, Optimaliserend]
+    DomainScore:
+      type: object
+      required: [domainId, domainName, score, maturityLevel]
+      properties:
+        domainId:
+          type: string
+          format: uuid
+        domainName:
+          type: string
+        score:
+          type: number
+          minimum: 0
+          maximum: 5
+        maturityLevel:
+          $ref: '#/components/schemas/MaturityLevel'
+    DevelopmentPoint:
+      type: object
+      required: [id, domainId, domainName, classification, text, recommendation]
+      properties:
+        id:
+          type: string
+          format: uuid
+        domainId:
+          type: string
+          format: uuid
+        domainName:
+          type: string
+        classification:
+          type: string
+          enum: [strength, development-point, gap]
+        text:
+          type: string
+        recommendation:
+          type: string
+    PriorityItem:
+      type: object
+      required: [developmentPointId, impact, urgency, selected]
+      properties:
+        developmentPointId:
+          type: string
+          format: uuid
+        impact:
+          type: string
+          enum: [high, medium, low]
+        urgency:
+          type: string
+          enum: [high, medium, low]
+        selected:
+          type: boolean
+    PrioritiesInput:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/PriorityItem'
+    ActionOverview:
+      type: object
+      required: [setRevision, items]
+      properties:
+        setRevision:
+          type: integer
+          minimum: 0
+          description: 0 als er nog geen set is opgeslagen.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriorityItem'
+    ScanResults:
+      type: object
+      required: [scanId, scanName, assessmentPeriod, completedAt, totalScore, maturityLevel, domainScores, developmentPoints, goals, priorities, availablePrioritySetRevisions]
+      properties:
+        scanId:
+          type: string
+          format: uuid
+        scanName:
+          type: string
+        assessmentPeriod:
+          type: string
+        completedAt:
+          type: string
+          format: date-time
+        totalScore:
+          type: number
+          minimum: 0
+          maximum: 5
+          description: Gemiddelde van alle beantwoorde vragen in de geselecteerde domeinen (2 decimalen).
+        maturityLevel:
+          $ref: '#/components/schemas/MaturityLevel'
+        domainScores:
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainScore'
+        developmentPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/DevelopmentPoint'
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationGoal'
+        priorities:
+          $ref: '#/components/schemas/ActionOverview'
+        availablePrioritySetRevisions:
+          type: array
+          description: Alle opgeslagen versies, oplopend; leeg zolang er geen set is opgeslagen.
+          items:
+            type: integer
+            minimum: 1
+    DomainWrite:
+      description: Een verplicht kennisgebied kan niet worden gedeactiveerd (422). required is uitsluitend leesbaar.
+      type: object
+      required: [name, order, active, version]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: [string, 'null']
+          maxLength: 2000
+        order:
+          type: integer
+          minimum: 0
+          maximum: 10000
+        active:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0
+    Domain:
+      type: object
+      required: [id, name, order, active, required, version, questions]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: [string, 'null']
+        order:
+          type: integer
+        required:
+          type: boolean
+          readOnly: true
+        active:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+    DomainCollection:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Domain'
+        nextCursor:
+          type: [string, 'null']
+    QuestionCreate:
+      type: object
+      required: [title, text, order, active, version]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        explanation:
+          type: [string, 'null']
+          maxLength: 4000
+        order:
+          type: integer
+          minimum: 0
+          maximum: 10000
+        active:
+          type: boolean
+        version:
+          type: integer
+          const: 0
+    QuestionUpdate:
+      description: De laatste bruikbare actieve vraag van een verplicht kennisgebied kan niet worden gedeactiveerd of verplaatst (422).
+      type: object
+      required: [domainId, title, text, order, active, version]
+      properties:
+        domainId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        explanation:
+          type: [string, 'null']
+          maxLength: 4000
+        order:
+          type: integer
+          minimum: 0
+          maximum: 10000
+        active:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0
+    Question:
+      type: object
+      required: [id, domainId, title, text, order, active, version, options]
+      properties:
+        id:
+          type: string
+          format: uuid
+        domainId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        text:
+          type: string
+        explanation:
+          type: [string, 'null']
+        order:
+          type: integer
+        active:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnswerOption'
+    AnswerOptionWrite:
+      description: De laatste beschikbare optie van een actieve vraag uitschakelen geeft 422; verplichte domeinen moeten altijd bruikbare actieve inhoud houden.
+      type: object
+      required: [score, label, order, available, version]
+      properties:
+        score:
+          type: integer
+          minimum: 0
+          maximum: 5
+        label:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: [string, 'null']
+          maxLength: 2000
+        order:
+          type: integer
+          minimum: 0
+          maximum: 10000
+        available:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0
+    AnswerOption:
+      type: object
+      required: [id, questionId, score, label, order, available, version]
+      properties:
+        id:
+          type: string
+          format: uuid
+        questionId:
+          type: string
+          format: uuid
+        score:
+          type: integer
+          minimum: 0
+          maximum: 5
+        label:
+          type: string
+        description:
+          type: [string, 'null']
+        order:
+          type: integer
+        available:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0

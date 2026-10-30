@@ -1,0 +1,16 @@
+revision: "1.0.0"
+authoringTimestamp: "2026-03-12T10:00:00Z"
+
+runtimeBoundary:
+  maxRequestSize: 1MB
+  allowedOrigins: ["same-origin", "configured-origins"]
+  timeoutSeconds: 30
+
+prohibitedBehavior:
+  - inlineCredentials
+  - evalInProduction
+  - dynamicRequire
+
+environmentPolicy:
+  nodeVersion: ">=24"
+  noUncommittedChangesForRelease: true

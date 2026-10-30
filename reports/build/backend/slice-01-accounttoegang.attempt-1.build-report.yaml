@@ -1,0 +1,53 @@
+artifactRefs:
+- pom.xml
+- src/main/java/com/example/account/domain/MemberEntity.java
+- src/main/java/com/example/account/domain/SessionEntity.java
+- src/main/java/com/example/account/application/AccountException.java
+- src/main/java/com/example/account/application/AccountService.java
+- src/main/java/com/example/account/api/AccountDtos.java
+- src/main/java/com/example/account/api/AccountResource.java
+- src/main/java/com/example/account/api/ProblemMappers.java
+- src/main/java/com/example/account/api/CorrelationIdFilter.java
+- src/main/resources/application.properties
+- src/main/resources/db/migration/V2__account_access.sql
+- src/test/java/com/example/account/AccountResourceTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-01-accounttoegang.behavior-evidence.yaml
+- reports/build/backend/slice-01-accounttoegang.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 43007
+errors: []
+finishedAt: '2026-03-12T10:00:43.007Z'
+gates:
+- check: local-type-check
+  command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight completed successfully in 43007 ms; this is
+    diagnostic and not a formal CHK_BUILD decision.
+  exitCode: 0
+  status: passed
+inputRefs:
+- backendSliceContext:inline
+- interfaceContractSubset:inline
+- apiChoiceLock:1.0.0
+- contractDecisionsLock:1.0.0
+- conformanceLock:1.0.0
+- backendStackProfile:1.1.0
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: inline-subset-no-revision
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-01-accounttoegang
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+summary: Implemented the public POST /v1/auth/registrations and POST /v1/auth/sessions
+  operations with persistent members and expiring sessions, operation markers, required
+  idempotency headers, BCrypt credentials, deterministic JWT replay, problem-details
+  failures, and behavior-transition tests.
+warnings:
+- The full unit-test command was not run because this first-pass build defaults to
+  the compile-focused typeCheck preflight; Backend Check owns CHK_UNIT_TESTS execution.

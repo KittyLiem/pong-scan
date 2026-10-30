@@ -1,0 +1,132 @@
+artifactRefs:
+- reports/check/backend/slice-02-organisatiecontext-en-scanrechten.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 74478
+errors: []
+finishedAt: '2026-10-13T14:34:16Z'
+gates:
+- evidence:
+    contentReadPaths:
+    - path: src/main/java/com/example/organization/api/OrganizationResource.java
+      reason: operationId createOrganization resource and auth enforcement
+    - path: src/main/java/com/example/organization/api/OrganizationDtos.java
+      reason: request and response DTOs for createOrganization
+    - path: src/test/java/com/example/organization/OrganizationResourceTest.java
+      reason: representative API and behavior-evidence test
+    - path: src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+      reason: protected-operation enforcement verification
+    - path: src/main/java/com/example/organization/application/BearerTokenService.java
+      reason: token expiry and credential-hygiene verification
+    - path: src/main/java/com/example/organization/application/OrganizationService.java
+      reason: durable idempotency and persistence wiring verification
+    - path: src/main/java/com/example/organization/domain/OrganizationEntity.java
+      reason: mapped persistence verification
+    - path: src/main/resources/db/migration/V3__organizations.sql
+      reason: mapped table migration verification
+    missingPaths: []
+    verifiedPaths:
+    - src/main/java/com/example/organization/api/BearerAuthenticated.java
+    - src/main/java/com/example/organization/api/BearerAuthenticationFilter.java
+    - src/main/java/com/example/organization/api/OrganizationDtos.java
+    - src/main/java/com/example/organization/api/OrganizationResource.java
+    - src/main/java/com/example/organization/application/BearerTokenService.java
+    - src/main/java/com/example/organization/application/OrganizationService.java
+    - src/main/java/com/example/organization/domain/OrganizationEntity.java
+    - src/main/resources/db/migration/V3__organizations.sql
+    - src/test/java/com/example/organization/OrganizationResourceTest.java
+    - locks/behavior-decisions.lock.yaml
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    missingEnforcement: []
+    missingTests: []
+    observed401Tests:
+    - OrganizationResourceTest#createOrganizationRequiresBearerAuthentication
+    observedEnforcement:
+    - OrganizationResource#createOrganization has '@BearerAuthenticated'
+    - BearerAuthenticationFilter is name-bound and verifies Authorization through
+      BearerTokenService
+    protectedOperations:
+    - method: POST
+      operationId: createOrganization
+      path: /v1/organizations
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    expiryChecks:
+    - JWT exp claim checked
+    - SessionEntity.expiresAt checked
+    idempotencyStorage: idempotency key and request fingerprint are SHA-256 hashes;
+      no raw credential request field is persisted
+    tokenVerification: HMAC-SHA256 signature validation with persisted access-token
+      hash lookup
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    mappedTable: organizations
+    migration: src/main/resources/db/migration/V3__organizations.sql
+    operationId: createOrganization
+    primaryStore: OrganizationEntity Panache/JPA entity persisted with persistAndFlush
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    kind: mutation
+    mutatedFields:
+    - status
+    operationId: createOrganization
+    startsFrom: api-fixture
+    testExecution: CHK_UNIT_TESTS passed
+    testFile: src/test/java/com/example/organization/OrganizationResourceTest.java
+    testMethod: createOrganizationActivatesOrganizationContext
+    transitionId: organisatiecontext_en_scanrechten.organisatiecontext_ontbreekt__organisatiecontext_actief
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    durationMs: 19890
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    durationMs: 35499
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    durationMs: 19089
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendAppRoot
+- conformanceLock
+- backendStackProfile
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-02-organisatiecontext-en-scanrechten
+startedAt: '2026-10-13T14:33:41Z'
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: OTLP exporter logged connection-refused warnings during the successful
+    test run; this did not affect test outcome.
+  failureCategory: runtime_observability_warning
+  gateId: GATE_TESTS

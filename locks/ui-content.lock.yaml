@@ -1,0 +1,419 @@
+apiBasePath: /v1
+authoringTimestamp: '2026-03-12T10:00:00Z'
+crossPageRules:
+- id: authenticated_member_data
+  rule: Organisatie-, scan-, beheer- en resultaatinhoud is alleen zichtbaar binnen
+    een geldige ledensessie.
+- id: api_driven_example_content
+  rule: Mockupnamen, scores en aanbevelingen zijn structureel; runtimewaarden komen
+    uitsluitend uit de API.
+- id: active_scan_navigation
+  rule: Beoordelings- en resultaatroutes vereisen een actief scanId en behouden de
+    terugroute naar het scanoverzicht.
+- id: logout_visibility
+  rule: Afmelden blijft globaal zichtbaar voor leden en beëindigt lokale sessiecontext.
+pages:
+- apiRefs:
+  - method: POST
+    operationId: createOrganization
+    path: /v1/organizations
+  - method: POST
+    operationId: createScan
+    path: /v1/organizations/{organizationId}/scans
+  - method: POST
+    operationId: createSession
+    path: /v1/auth/sessions
+  - method: GET
+    operationId: getActiveModel
+    path: /v1/models/active
+  - method: POST
+    operationId: registerMember
+    path: /v1/auth/registrations
+  contentKeys:
+  - account_access
+  - organization_context
+  - scan_start_intro
+  - start_scan
+  forms:
+  - contentKey: account_access
+    fields:
+    - accountIdentifier
+    - credential
+    id: account_access_form
+  - contentKey: organization_context
+    fields:
+    - name
+    - chamberOfCommerceNumber
+    - additionalInformation
+    - industry
+    id: organization_context_form
+  - contentKey: start_scan
+    fields:
+    - name
+    - assessmentPeriod
+    - initialSelectedDomainIds
+    id: first_scan_form
+  goals:
+  - Inloggen of een account aanmaken
+  - Organisatienaam en basiscontext vastleggen
+  - Een eerste maturity scan starten
+  - Gebruiker naar het scanoverzicht leiden
+  pageKey: Aanmelden en organisatie starten
+  pageTitle: Aanmelden en organisatie starten
+  primaryActions:
+  - apiRef:
+      method: POST
+      operationId: createOrganization
+      path: /v1/organizations
+    id: create_organization
+    label: Organisatie vastleggen
+  - apiRef:
+      method: GET
+      operationId: getActiveModel
+      path: /v1/models/active
+    id: load_active_model
+    label: Beschikbaarheid van het beoordelingsmodel controleren
+  - apiRef:
+      method: POST
+      operationId: registerMember
+      path: /v1/auth/registrations
+    id: register_account
+    label: Account aanmaken
+  - apiRef:
+      method: POST
+      operationId: createSession
+      path: /v1/auth/sessions
+    id: sign_in
+    label: Aanmelden
+  - apiRef:
+      method: POST
+      operationId: createScan
+      path: /v1/organizations/{organizationId}/scans
+    id: start_first_scan
+    label: Eerste scan starten
+  routeId: route_auth_start
+  states:
+  - contentKey: scan_start_intro
+    description: Toon dat een scan pas kan starten wanneer modelinhoud beschikbaar
+      is.
+    id: model_unavailable
+- apiRefs:
+  - method: POST
+    operationId: completeScan
+    path: /v1/scans/{scanId}/completion
+  - method: POST
+    operationId: createAdminDomain
+    path: /v1/admin/domains
+  - method: POST
+    operationId: createAnswerOption
+    path: /v1/admin/questions/{questionId}/options
+  - method: GET
+    operationId: getActiveModel
+    path: /v1/models/active
+  - method: GET
+    operationId: getScan
+    path: /v1/scans/{scanId}
+  - method: GET
+    operationId: listAdminDomains
+    path: /v1/admin/domains
+  - method: PUT
+    operationId: saveAnswer
+    path: /v1/scans/{scanId}/answers/{questionId}
+  - method: PATCH
+    operationId: updateAdminDomain
+    path: /v1/admin/domains/{domainId}
+  - method: PATCH
+    operationId: updateAdminQuestion
+    path: /v1/admin/questions/{questionId}
+  - method: PATCH
+    operationId: updateAnswerOption
+    path: /v1/admin/options/{optionId}
+  - method: PATCH
+    operationId: updateScan
+    path: /v1/scans/{scanId}
+  contentKeys:
+  - maturity_assessment
+  - domain_selection
+  - domain_progress
+  - current_question
+  - answer_evidence
+  - organization_goals
+  - assessment_completion
+  - admin_content_management
+  forms:
+  - contentKey: current_question
+    fields:
+    - optionId
+    - explanation
+    - evidenceReferences
+    id: answer_form
+  - contentKey: organization_goals
+    fields:
+    - goals
+    id: organization_goals_form
+  - contentKey: domain_selection
+    fields:
+    - selectedDomainIds
+    id: domain_selection_form
+  - access: administrator
+    contentKey: admin_content_management
+    fields:
+    - domain
+    - question
+    - answerOption
+    id: admin_content_form
+  goals:
+  - Vragen beantwoorden voor strategie, kwaliteit, governance, technologie, processen,
+    vaardigheden en datagedreven besluitvorming
+  - Per vraag een score, toelichting en eventueel bewijs vastleggen
+  - Voortgang per domein zien
+  - Tussentijds opslaan en later verdergaan
+  - De beoordeling afronden voor resultaatberekening
+  lists:
+  - contentKey: domain_progress
+    id: domain_progress_list
+    itemType: selected_domain_progress
+  - contentKey: maturity_assessment
+    id: assessment_question_list
+    itemType: model_question
+  pageKey: Maturity beoordeling
+  pageTitle: Maturity beoordeling
+  primaryActions:
+  - apiRef:
+      method: POST
+      operationId: completeScan
+      path: /v1/scans/{scanId}/completion
+    id: complete_assessment
+    label: Beoordeling afronden
+  - apiRef:
+      method: POST
+      operationId: createAnswerOption
+      path: /v1/admin/questions/{questionId}/options
+    id: create_answer_option
+    label: Antwoordoptie toevoegen
+  - apiRef:
+      method: POST
+      operationId: createAdminDomain
+      path: /v1/admin/domains
+    id: create_domain
+    label: Kennisgebied toevoegen
+  - apiRef:
+      method: GET
+      operationId: getActiveModel
+      path: /v1/models/active
+    id: load_active_model
+    label: Beoordelingsmodel laden
+  - apiRef:
+      method: GET
+      operationId: getScan
+      path: /v1/scans/{scanId}
+    id: load_assessment
+    label: Beoordeling hervatten
+  - apiRef:
+      method: GET
+      operationId: listAdminDomains
+      path: /v1/admin/domains
+    id: load_managed_domains
+    label: Beheerde kennisgebieden laden
+  - apiRef:
+      method: PUT
+      operationId: saveAnswer
+      path: /v1/scans/{scanId}/answers/{questionId}
+    id: save_answer
+    label: Antwoord opslaan
+  - apiRef:
+      method: PATCH
+      operationId: updateScan
+      path: /v1/scans/{scanId}
+    id: save_assessment_context
+    label: Selecties en doelen opslaan
+  - apiRef:
+      method: PATCH
+      operationId: updateAnswerOption
+      path: /v1/admin/options/{optionId}
+    id: update_answer_option
+    label: Antwoordoptie bijwerken
+  - apiRef:
+      method: PATCH
+      operationId: updateAdminDomain
+      path: /v1/admin/domains/{domainId}
+    id: update_domain
+    label: Kennisgebied bijwerken
+  - apiRef:
+      method: PATCH
+      operationId: updateAdminQuestion
+      path: /v1/admin/questions/{questionId}
+    id: update_question
+    label: Vraag bijwerken
+  routeId: route_assessment
+  states:
+  - contentKey: assessment_completion
+    description: Toon welke verplichte invoer nog aandacht vereist.
+    id: completion_blocked
+  - contentKey: answer_evidence
+    description: Bevestig opslag zonder een niet-geautoriseerde beginwaarde te tonen.
+    id: answer_saved
+- apiRefs:
+  - method: POST
+    operationId: createScan
+    path: /v1/organizations/{organizationId}/scans
+  - method: GET
+    operationId: getScan
+    path: /v1/scans/{scanId}
+  - method: GET
+    operationId: listScans
+    path: /v1/organizations/{organizationId}/scans
+  - method: PATCH
+    operationId: updateScan
+    path: /v1/scans/{scanId}
+  contentKeys:
+  - scan_overview
+  - scan_list
+  - scan_cards
+  - scan_status_filter
+  - create_scan
+  - resume_scan
+  - manage_completed_scan
+  forms:
+  - contentKey: create_scan
+    fields:
+    - name
+    - assessmentPeriod
+    - initialSelectedDomainIds
+    id: create_scan_form
+  - contentKey: scan_status_filter
+    fields:
+    - status
+    id: scan_filter_form
+  goals:
+  - Alle scans met status, voortgang en laatste wijziging bekijken
+  - Een nieuwe scan aanmaken met naam en beoordelingsperiode
+  - Een conceptscan hervatten
+  - Een afgeronde scan openen en beheren
+  lists:
+  - contentKey: scan_list
+    id: scan_list
+    itemFields:
+    - name
+    - status
+    - progress
+    - updatedAt
+    itemType: scan_card
+  pageKey: Scanoverzicht
+  pageTitle: Scanoverzicht
+  primaryActions:
+  - apiRef:
+      method: POST
+      operationId: createScan
+      path: /v1/organizations/{organizationId}/scans
+    id: create_scan
+    label: Nieuwe scan aanmaken
+  - apiRef:
+      method: GET
+      operationId: listScans
+      path: /v1/organizations/{organizationId}/scans
+    id: list_scans
+    label: Scans laden en filteren
+  - apiRef:
+      method: GET
+      operationId: getScan
+      path: /v1/scans/{scanId}
+    id: open_scan
+    label: Scan openen
+  - apiRef:
+      method: PATCH
+      operationId: updateScan
+      path: /v1/scans/{scanId}
+    id: manage_completed_scan
+    label: Afgeronde scan beheren
+  routeId: route_scan_overview
+  states:
+  - contentKey: scan_overview
+    description: Toon de aanmaakactie wanneer nog geen toegankelijke scans zijn gevonden.
+    id: empty_scan_portfolio
+  - contentKey: scan_cards
+    description: De benoemde mockupkaarten zijn structurele voorbeelden; toon uitsluitend
+      scans uit de API.
+    id: mock_scan_cards_structural_only
+- apiRefs:
+  - method: GET
+    operationId: exportScanPdf
+    path: /v1/scans/{scanId}/export
+  - method: GET
+    operationId: getResults
+    path: /v1/scans/{scanId}/results
+  - method: PUT
+    operationId: saveDevelopmentPriorities
+    path: /v1/scans/{scanId}/development-priorities
+  contentKeys:
+  - scan_results
+  - score_summary
+  - domain_scores
+  - result_insights
+  - strengths
+  - development_gaps
+  - development_priorities
+  - action_overview
+  - result_export
+  - refine_assessment
+  forms:
+  - contentKey: development_priorities
+    fields:
+    - developmentPointId
+    - impact
+    - urgency
+    - selected
+    id: development_priorities_form
+  goals:
+  - Totale maturiteitsscore en domeinscores bekijken
+  - Sterktes, gaps en concrete ontwikkelpunten begrijpen
+  - Prioriteiten selecteren op impact en urgentie
+  - Resultaten en actieoverzicht delen of exporteren
+  - Terugkeren naar de beoordeling om antwoorden te verfijnen
+  lists:
+  - contentKey: domain_scores
+    id: domain_score_list
+    itemType: domain_score
+  - contentKey: result_insights
+    id: insight_list
+    itemType: development_point
+  - contentKey: action_overview
+    id: action_overview_list
+    itemType: selected_development_priority
+  pageKey: Scanresultaten en ontwikkelprioriteiten
+  pageTitle: Scanresultaten en ontwikkelprioriteiten
+  primaryActions:
+  - apiRef:
+      method: GET
+      operationId: exportScanPdf
+      path: /v1/scans/{scanId}/export
+    id: export_results
+    label: Resultaten exporteren
+  - apiRef:
+      method: GET
+      operationId: getResults
+      path: /v1/scans/{scanId}/results
+    id: load_results
+    label: Resultaten laden
+  - apiRef:
+      method: PUT
+      operationId: saveDevelopmentPriorities
+      path: /v1/scans/{scanId}/development-priorities
+    id: save_development_priorities
+    label: Ontwikkelprioriteiten opslaan
+  routeId: route_results
+  states:
+  - contentKey: scan_results
+    description: Toon API-resultaten zonder vaste voorbeeldscore.
+    id: results_available
+  - contentKey: strengths
+    description: Groepeer teruggegeven inzichten als sterktes, gaps en ontwikkelpunten.
+    id: strengths_and_gaps
+  - contentKey: development_gaps
+    description: De benoemde mockupaanbevelingen zijn structurele voorbeelden; toon
+      uitsluitend ontwikkelpunten uit de API.
+    id: mock_recommendations_structural_only
+  - contentKey: refine_assessment
+    description: Navigeer naar de beoordeling; wijziging gebruikt daar de scanoperaties.
+    id: refinement_navigation
+revision: 1.0.0

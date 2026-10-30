@@ -1,0 +1,218 @@
+<div class="mx-auto w-full max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+  <section class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+    <div class="max-w-2xl">
+      <p class="mb-2 text-sm font-semibold text-secondary-color">Pong Consulting</p>
+      <h1 class="text-2xl font-bold tracking-tight text-body-color sm:text-3xl">Scanoverzicht</h1>
+      <p class="mt-2 text-sm leading-6 text-secondary-color sm:text-base">Bekijk de voortgang van alle maturity scans, hervat een concept of open een afgeronde beoordeling.</p>
+    </div>
+    <button type="button" class="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-accent px-5 text-sm font-semibold text-accent-content shadow-sm hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2">
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      Nieuwe scan
+    </button>
+  </section>
+
+  <section class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="rounded-lg border border-border bg-secondary-bg p-5">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-sm font-medium text-secondary-color">Alle scans</p>
+          <p class="mt-2 text-3xl font-bold text-body-color">6</p>
+        </div>
+        <span class="flex h-10 w-10 items-center justify-center rounded-md bg-primary-bg-subtle text-primary-text-emphasis">
+          <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
+        </span>
+      </div>
+      <p class="mt-3 text-xs text-secondary-color">Over vier beoordelingsperioden</p>
+    </div>
+
+    <div class="rounded-lg border border-border bg-secondary-bg p-5">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-sm font-medium text-secondary-color">Afgerond</p>
+          <p class="mt-2 text-3xl font-bold text-body-color">4</p>
+        </div>
+        <span class="flex h-10 w-10 items-center justify-center rounded-md bg-success-bg-subtle text-success-text-emphasis">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        </span>
+      </div>
+      <p class="mt-3 text-xs text-secondary-color">Resultaten beschikbaar voor analyse</p>
+    </div>
+  </section>
+
+  <section class="mt-8 overflow-hidden rounded-lg border border-border bg-secondary-bg">
+    <div class="border-b border-border p-4 sm:p-5">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h2 class="text-lg font-semibold text-body-color">Maturity scans</h2>
+          <p class="mt-1 text-sm text-secondary-color">Gesorteerd op laatst gewijzigd</p>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <label class="relative block sm:w-72">
+            <span class="sr-only">Scans zoeken</span>
+            <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-secondary-color" aria-hidden="true"></i>
+            <input type="search" placeholder="Zoek op naam of periode" class="h-10 w-full rounded-md border border-border bg-body-bg pl-9 pr-3 text-sm text-body-color placeholder:text-secondary-color focus:border-focus focus:outline-none focus:ring-2 focus:ring-focus" />
+          </label>
+          <label class="relative block sm:w-44">
+            <span class="sr-only">Filter op status</span>
+            <select class="h-10 w-full appearance-none rounded-md border border-border bg-body-bg px-3 pr-9 text-sm font-medium text-body-color focus:border-focus focus:outline-none focus:ring-2 focus:ring-focus">
+              <option>Alle statussen</option>
+              <option>Concept</option>
+              <option>Afgerond</option>
+            </select>
+            <i class="fa-solid fa-chevron-down pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-secondary-color" aria-hidden="true"></i>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden overflow-x-auto md:block">
+      <table class="w-full border-collapse text-left">
+        <thead class="bg-tertiary-bg">
+          <tr class="text-xs font-semibold uppercase tracking-wide text-secondary-color">
+            <th class="px-5 py-3">Naam</th>
+            <th class="px-5 py-3">Beoordelingsperiode</th>
+            <th class="px-5 py-3">Status</th>
+            <th class="px-5 py-3">Voortgang</th>
+            <th class="px-5 py-3">Laatst gewijzigd</th>
+            <th class="px-5 py-3 text-right"><span class="sr-only">Acties</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          <tr class="hover:bg-tertiary-bg">
+            <td class="px-5 py-4">
+              <p class="font-semibold text-body-color">Organisatiebrede nulmeting 2025</p>
+              <p class="mt-1 text-xs text-secondary-color">Eigenaar: Marije Smit</p>
+            </td>
+            <td class="px-5 py-4 text-sm text-body-color">Januari – juni 2025</td>
+            <td class="px-5 py-4"><span class="inline-flex items-center justify-center rounded-full bg-warning-bg-subtle px-2 py-0.5 text-body-xs font-medium text-warning-text-emphasis">Concept</span></td>
+            <td class="px-5 py-4">
+              <div class="flex min-w-32 items-center gap-3">
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-3/4 rounded-full bg-info-text-emphasis"></div></div>
+                <span class="w-9 text-right text-xs font-semibold text-body-color">72%</span>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm text-secondary-color">Vandaag, 10:42</td>
+            <td class="px-5 py-4 text-right">
+              <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border bg-secondary-bg px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg focus:outline-none focus:ring-2 focus:ring-focus">Hervatten <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+            </td>
+          </tr>
+          <tr class="hover:bg-tertiary-bg">
+            <td class="px-5 py-4">
+              <p class="font-semibold text-body-color">Data maturity scan 2024</p>
+              <p class="mt-1 text-xs text-secondary-color">Eigenaar: Marije Smit</p>
+            </td>
+            <td class="px-5 py-4 text-sm text-body-color">Januari – december 2024</td>
+            <td class="px-5 py-4"><span class="inline-flex items-center justify-center rounded-full bg-success-bg-subtle px-2 py-0.5 text-body-xs font-medium text-success-text-emphasis">Afgerond</span></td>
+            <td class="px-5 py-4">
+              <div class="flex min-w-32 items-center gap-3">
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-full rounded-full bg-success-text-emphasis"></div></div>
+                <span class="w-9 text-right text-xs font-semibold text-body-color">100%</span>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm text-secondary-color">18 dec. 2024</td>
+            <td class="px-5 py-4 text-right">
+              <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border bg-secondary-bg px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg focus:outline-none focus:ring-2 focus:ring-focus">Openen <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+            </td>
+          </tr>
+          <tr class="hover:bg-tertiary-bg">
+            <td class="px-5 py-4">
+              <p class="font-semibold text-body-color">Governance verdiepingsscan</p>
+              <p class="mt-1 text-xs text-secondary-color">Eigenaar: Thomas de Boer</p>
+            </td>
+            <td class="px-5 py-4 text-sm text-body-color">September – december 2024</td>
+            <td class="px-5 py-4"><span class="inline-flex items-center justify-center rounded-full bg-warning-bg-subtle px-2 py-0.5 text-body-xs font-medium text-warning-text-emphasis">Concept</span></td>
+            <td class="px-5 py-4">
+              <div class="flex min-w-32 items-center gap-3">
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-1/3 rounded-full bg-info-text-emphasis"></div></div>
+                <span class="w-9 text-right text-xs font-semibold text-body-color">34%</span>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm text-secondary-color">12 dec. 2024</td>
+            <td class="px-5 py-4 text-right">
+              <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border bg-secondary-bg px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg focus:outline-none focus:ring-2 focus:ring-focus">Hervatten <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+            </td>
+          </tr>
+          <tr class="hover:bg-tertiary-bg">
+            <td class="px-5 py-4">
+              <p class="font-semibold text-body-color">Nulmeting datakwaliteit</p>
+              <p class="mt-1 text-xs text-secondary-color">Eigenaar: Marije Smit</p>
+            </td>
+            <td class="px-5 py-4 text-sm text-body-color">Januari – juni 2024</td>
+            <td class="px-5 py-4"><span class="inline-flex items-center justify-center rounded-full bg-success-bg-subtle px-2 py-0.5 text-body-xs font-medium text-success-text-emphasis">Afgerond</span></td>
+            <td class="px-5 py-4">
+              <div class="flex min-w-32 items-center gap-3">
+                <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-full rounded-full bg-success-text-emphasis"></div></div>
+                <span class="w-9 text-right text-xs font-semibold text-body-color">100%</span>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm text-secondary-color">28 jun. 2024</td>
+            <td class="px-5 py-4 text-right">
+              <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border bg-secondary-bg px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg focus:outline-none focus:ring-2 focus:ring-focus">Openen <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divide-y divide-border md:hidden">
+      <article class="p-4">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="font-semibold text-body-color">Organisatiebrede nulmeting 2025</h3>
+            <p class="mt-1 text-xs text-secondary-color">Januari – juni 2025</p>
+          </div>
+          <span class="inline-flex items-center justify-center rounded-full bg-warning-bg-subtle px-2 py-0.5 text-body-xs font-medium text-warning-text-emphasis">Concept</span>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-3/4 rounded-full bg-info-text-emphasis"></div></div>
+          <span class="text-xs font-semibold text-body-color">72%</span>
+        </div>
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <p class="text-xs text-secondary-color">Vandaag, 10:42</p>
+          <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg">Hervatten <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+        </div>
+      </article>
+
+      <article class="p-4">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="font-semibold text-body-color">Data maturity scan 2024</h3>
+            <p class="mt-1 text-xs text-secondary-color">Januari – december 2024</p>
+          </div>
+          <span class="inline-flex items-center justify-center rounded-full bg-success-bg-subtle px-2 py-0.5 text-body-xs font-medium text-success-text-emphasis">Afgerond</span>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-full rounded-full bg-success-text-emphasis"></div></div>
+          <span class="text-xs font-semibold text-body-color">100%</span>
+        </div>
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <p class="text-xs text-secondary-color">18 dec. 2024</p>
+          <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg">Openen <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+        </div>
+      </article>
+
+      <article class="p-4">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="font-semibold text-body-color">Governance verdiepingsscan</h3>
+            <p class="mt-1 text-xs text-secondary-color">September – december 2024</p>
+          </div>
+          <span class="inline-flex items-center justify-center rounded-full bg-warning-bg-subtle px-2 py-0.5 text-body-xs font-medium text-warning-text-emphasis">Concept</span>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <div class="h-2 flex-1 overflow-hidden rounded-full bg-tertiary-bg"><div class="h-full w-1/3 rounded-full bg-info-text-emphasis"></div></div>
+          <span class="text-xs font-semibold text-body-color">34%</span>
+        </div>
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <p class="text-xs text-secondary-color">12 dec. 2024</p>
+          <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg">Hervatten <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i></button>
+        </div>
+      </article>
+    </div>
+
+    <div class="flex flex-col gap-3 border-t border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+      <p class="text-sm text-secondary-color">4 van 6 scans weergegeven</p>
+      <button type="button" class="inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold text-body-color hover:bg-tertiary-bg focus:outline-none focus:ring-2 focus:ring-focus">Alle scans bekijken <i class="fa-solid fa-chevron-right text-xs" aria-hidden="true"></i></button>
+    </div>
+  </section>
+</div>

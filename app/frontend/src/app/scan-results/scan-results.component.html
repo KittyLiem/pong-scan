@@ -1,0 +1,229 @@
+<div class="mx-auto w-full max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <nav aria-label="Kruimelpad" class="text-sm">
+    <a routerLink="/scans" class="font-medium text-primary underline-offset-4 hover:underline">Scanoverzicht</a>
+    <span aria-hidden="true"> / </span><span>Resultaten</span>
+  </nav>
+
+  @if (loading() && !results()) {
+    <p class="mt-8" role="status">Resultaten laden…</p>
+  } @else if (loadProblem() && !results()) {
+    @if (loadProblem()!.status === 409) {
+      <div class="card mt-8 p-6" role="status">
+        <h1 class="text-xl font-semibold">Nog geen definitieve resultaten</h1>
+        <p class="mt-2 text-sm text-secondary-color">Resultaten zijn beschikbaar zodra de beoordeling is afgerond.</p>
+        <a class="btn btn-primary mt-4" [routerLink]="['/scans', scanId(), 'assessment']">Naar de beoordeling</a>
+      </div>
+    } @else {
+      <div class="alert-error mt-8" role="alert"><strong>{{ loadProblem()!.title }}</strong>@if (loadProblem()!.detail) { <p>{{ loadProblem()!.detail }}</p> }</div>
+      <button type="button" class="btn btn-secondary mt-3" (click)="load()">Opnieuw proberen</button>
+    }
+  } @else if (results(); as r) {
+    <header class="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Scanresultaten en ontwikkelprioriteiten</h1>
+        @if (r.availablePrioritySetRevisions.length > 1) {
+          <label for="priority-revision" class="form-label mt-4">Versie van de prioriteiten</label>
+          <select id="priority-revision" class="form-control" (change)="selectPriorityRevision($any($event.target).value)">
+            @for (revision of r.availablePrioritySetRevisions; track revision) {
+              <option [value]="revision" [selected]="revision === selectedPrioritySetRevision()">Versie {{ revision }}</option>
+            }
+          </select>
+        }
+        <p class="mt-1 text-sm text-secondary-color">{{ r.scanName }} · periode {{ r.assessmentPeriod }} · afgerond op {{ formatDate(r.completedAt) }}</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a class="btn btn-secondary" [routerLink]="['/scans', scanId(), 'assessment']">Onderliggende beoordeling</a>
+        <button type="button" class="btn btn-primary" [disabled]="exporting()" (click)="exportPdf()">{{ exporting() ? 'PDF wordt voorbereid…' : 'PDF exporteren' }}</button>
+      </div>
+    </header>
+    <div aria-live="polite">
+      @if (exportNotice(); as text) { <p class="alert-success mt-4" role="status">{{ text }}</p> }
+      @if (exportProblem(); as p) { <div class="alert-error mt-4" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div> }
+    </div>
+
+    <!-- Huidige volwassenheid -->
+    <section class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]" aria-labelledby="maturity-heading">
+      <div class="card p-6">
+        <h2 id="maturity-heading" class="text-sm font-semibold uppercase tracking-wide text-secondary-color">Huidige volwassenheid</h2>
+        <p class="mt-3 text-4xl font-bold" data-testid="total-score">{{ formatScore(r.totalScore) }} <span class="text-lg font-medium text-secondary-color">/ 5</span></p>
+        <p class="mt-2 inline-flex rounded-full bg-primary-bg-subtle px-3 py-1 text-sm font-semibold text-primary-text-emphasis">Niveau {{ r.maturityLevel.level }} · {{ r.maturityLevel.label }}</p>
+
+        <h3 class="mt-6 text-base font-semibold" id="domain-table-caption">Scores per kennisgebied</h3>
+        <div class="mt-2 overflow-x-auto">
+          <table class="w-full text-left text-sm" aria-labelledby="domain-table-caption" id="domain-score-table">
+            <thead>
+              <tr class="border-b border-border text-xs uppercase tracking-wide text-secondary-color">
+                <th scope="col" class="py-2 pr-3">Kennisgebied</th>
+                <th scope="col" class="py-2 pr-3 text-right">Score</th>
+                <th scope="col" class="py-2">Volwassenheidsniveau</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (score of r.domainScores; track score.domainId) {
+                <tr class="border-b border-border last:border-0">
+                  <th scope="row" class="py-2 pr-3 font-medium">{{ score.domainName }}</th>
+                  <td class="py-2 pr-3 text-right tabular-nums">{{ formatScore(score.score) }}</td>
+                  <td class="py-2">{{ score.maturityLevel.level }} · {{ score.maturityLevel.label }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <figure class="card flex flex-col items-center p-4">
+        @if (radar().axes.length < 3) {
+          <!-- Een radar heeft minimaal drie assen nodig; bij één of twee kennisgebieden tonen we staven. -->
+          <div class="w-full max-w-xl space-y-4 py-4" role="img" [attr.aria-label]="radarLabel()" aria-describedby="domain-score-table" data-testid="score-bars">
+            @for (axis of radar().axes; track axis.label) {
+              <div>
+                <div class="mb-1 flex justify-between text-sm"><span>{{ axis.label }}</span><span>{{ formatScore(axis.score) }} / 5</span></div>
+                <div class="h-3 w-full rounded-full bg-secondary" aria-hidden="true">
+                  <div class="h-3 rounded-full bg-primary" [style.width.%]="axis.score * 20"></div>
+                </div>
+              </div>
+            }
+          </div>
+          <figcaption class="mt-2 text-xs text-secondary-color">Scores per kennisgebied (0–5). Bij minder dan drie kennisgebieden wordt geen radar getoond. De tabel bevat dezelfde gegevens.</figcaption>
+        } @else {
+        <svg [attr.viewBox]="radar().viewBox" class="h-auto w-full max-w-xl" role="img" [attr.aria-label]="radarLabel()" aria-describedby="domain-score-table" data-testid="radar">
+          <g fill="none" stroke="var(--bpc-border)" stroke-width="1">
+            @for (ring of radar().rings; track $index) { <polygon [attr.points]="ring" /> }
+            @for (axis of radar().axes; track axis.label) { <line [attr.x1]="radar().size / 2" [attr.y1]="radar().size / 2" [attr.x2]="axis.x2" [attr.y2]="axis.y2" /> }
+          </g>
+          @if (radar().axes.length > 0) {
+            <polygon [attr.points]="radar().polygon" fill="var(--bpc-primary)" fill-opacity="0.25" stroke="var(--bpc-primary)" stroke-width="2" />
+          }
+          @for (axis of radar().axes; track axis.label) {
+            <circle [attr.cx]="axis.pointX" [attr.cy]="axis.pointY" r="4" fill="var(--bpc-primary)" />
+            <text [attr.x]="axis.labelX" [attr.y]="axis.labelY" [attr.text-anchor]="axis.anchor" font-size="12" fill="var(--bpc-body-color)">{{ axis.label }} ({{ formatScore(axis.score) }})</text>
+          }
+        </svg>
+        <figcaption class="mt-2 text-xs text-secondary-color">Radar van de scores per kennisgebied (0–5). De tabel bevat dezelfde gegevens.</figcaption>
+        }
+      </figure>
+    </section>
+
+    <!-- Ontwikkelduiding -->
+    <section class="card mt-6 p-6" aria-labelledby="points-heading">
+      <h2 id="points-heading" class="text-lg font-semibold">Sterktes, knelpunten en ontwikkelpunten</h2>
+      @for (group of groupedPoints(); track group.classification) {
+        <h3 class="mt-5 font-semibold">{{ group.label }}</h3>
+        <ul class="mt-2 grid gap-3 md:grid-cols-2">
+          @for (point of group.points; track point.id) {
+            <li class="rounded-lg border border-border bg-body-bg p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">{{ point.domainName }}</p>
+              <p class="mt-1 font-medium">{{ point.text }}</p>
+              @if (point.recommendation) { <p class="mt-2 text-sm"><span class="font-semibold">Aanbeveling:</span> {{ point.recommendation }}</p> }
+            </li>
+          }
+        </ul>
+      } @empty {
+        <p class="mt-3 text-sm text-secondary-color">Geen ontwikkelpunten afgeleid.</p>
+      }
+    </section>
+
+    <!-- Organisatiedoelen -->
+    <section class="card mt-6 p-6" aria-labelledby="goals-heading">
+      <h2 id="goals-heading" class="text-lg font-semibold">Organisatiedoelen en prioriteiten</h2>
+      <p class="mt-1 text-sm text-secondary-color">Doelen geven context en beïnvloeden de volwassenheidsscore niet.</p>
+      @if (r.goals.length > 0) {
+        <ul class="mt-3 space-y-2">
+          @for (goal of r.goals; track $index) {
+            <li class="rounded-md border border-border bg-body-bg p-3">
+              <span class="font-medium">{{ goal.name }}</span> · prioriteit {{ priorityLabels[goal.priority] }}
+              @if (goal.customText) { <p class="mt-1 text-sm">{{ goal.customText }}</p> }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="mt-3 text-sm">Geen organisatiedoelen opgeslagen.</p>
+      }
+    </section>
+
+    <!-- Ontwikkelprioriteiten -->
+    <section class="card mt-6 p-6" aria-labelledby="priorities-heading">
+      <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="priorities-heading" class="text-lg font-semibold">Ontwikkelprioriteiten</h2>
+        @if (overview(); as o) {
+          <p class="text-sm text-secondary-color">{{ o.setRevision > 0 ? 'Opgeslagen versie ' + o.setRevision : 'Nog niet opgeslagen' }}</p>
+        }
+      </div>
+      <p class="mt-1 text-sm text-secondary-color">Beoordeel ontwikkelpunten op impact en urgentie en kies welke in het actieoverzicht komen.</p>
+
+      @if (prioritizable().length === 0) {
+        <p class="mt-3 text-sm">Er zijn geen ontwikkelpunten om te prioriteren.</p>
+      } @else {
+        <ul class="mt-4 space-y-3">
+          @for (point of prioritizable(); track point.id) {
+            <li class="grid gap-3 rounded-lg border border-border bg-body-bg p-4 md:grid-cols-[minmax(0,1fr)_9rem_9rem_auto] md:items-end" data-testid="priority-row">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-secondary-color">{{ point.domainName }}</p>
+                <p class="font-medium" [id]="'dp-' + point.id">{{ point.text }}</p>
+              </div>
+              <div>
+                <label class="form-label" [for]="'impact-' + point.id">Impact</label>
+                <select class="form-control" [id]="'impact-' + point.id" [value]="priorityFor(point).impact"
+                  (change)="updatePriority(point, { impact: asRating($any($event.target).value) })">
+                  @for (rating of ratings; track rating) { <option [value]="rating" [selected]="priorityFor(point).impact === rating">{{ priorityLabels[rating] }}</option> }
+                </select>
+              </div>
+              <div>
+                <label class="form-label" [for]="'urgency-' + point.id">Urgentie</label>
+                <select class="form-control" [id]="'urgency-' + point.id" [value]="priorityFor(point).urgency"
+                  (change)="updatePriority(point, { urgency: asRating($any($event.target).value) })">
+                  @for (rating of ratings; track rating) { <option [value]="rating" [selected]="priorityFor(point).urgency === rating">{{ priorityLabels[rating] }}</option> }
+                </select>
+              </div>
+              <div class="flex items-center gap-2 pb-2">
+                <input type="checkbox" class="h-5 w-5" [id]="'selected-' + point.id" [checked]="priorityFor(point).selected"
+                  (change)="updatePriority(point, { selected: $any($event.target).checked })" />
+                <label [for]="'selected-' + point.id" class="text-sm font-medium">Opnemen in actieoverzicht</label>
+              </div>
+            </li>
+          }
+        </ul>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <button type="button" class="btn btn-primary" [disabled]="savingPriorities()" (click)="savePriorities()">{{ savingPriorities() ? 'Opslaan…' : 'Prioriteiten opslaan' }}</button>
+          <p class="text-sm text-secondary-color">{{ selectedPriorityCount() }} geselecteerd</p>
+        </div>
+        <div aria-live="polite">
+          @if (prioritiesNotice(); as text) { <p class="alert-success mt-3" role="status">{{ text }}</p> }
+          @if (prioritiesProblem(); as p) { <div class="alert-error mt-3" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div> }
+        </div>
+
+        <h3 class="mt-6 font-semibold">Actieoverzicht</h3>
+        @if (actionItems().length > 0) {
+          <ol class="mt-2 list-decimal space-y-1 pl-5 text-sm">
+            @for (item of actionItems(); track item.developmentPointId) {
+              <li>{{ item.point.text }} <span class="text-secondary-color">({{ item.point.domainName }} · impact {{ priorityLabels[item.impact] }}, urgentie {{ priorityLabels[item.urgency] }})</span></li>
+            }
+          </ol>
+        } @else {
+          <p class="mt-2 text-sm text-secondary-color">Nog geen ontwikkelprioriteiten geselecteerd en opgeslagen.</p>
+        }
+      }
+    </section>
+
+    <!-- Nieuwe revisie -->
+    <section class="card mt-6 p-6" aria-labelledby="revision-heading">
+      <h2 id="revision-heading" class="text-lg font-semibold">Beoordeling verfijnen</h2>
+      <p class="mt-1 text-sm text-secondary-color">Een afgeronde scan blijft ongewijzigd. Maak een nieuwe revisie om antwoorden aan te passen en opnieuw af te ronden.</p>
+      <fieldset class="mt-3">
+        <legend class="form-label">Soort revisie</legend>
+        <div class="flex flex-col gap-2 sm:flex-row sm:gap-6">
+          <div class="flex items-center gap-2">
+            <input type="radio" id="revision-copy" name="revision-mode" value="copy" [checked]="revisionMode() === 'copy'" (change)="revisionMode.set('copy')" />
+            <label for="revision-copy" class="text-sm">Kopie met bestaande antwoorden</label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="radio" id="revision-new" name="revision-mode" value="new-revision" [checked]="revisionMode() === 'new-revision'" (change)="revisionMode.set('new-revision')" />
+            <label for="revision-new" class="text-sm">Nieuwe, lege revisie</label>
+          </div>
+        </div>
+      </fieldset>
+      <button type="button" class="btn btn-secondary mt-4" [disabled]="creatingRevision()" (click)="createRevision()">{{ creatingRevision() ? 'Revisie maken…' : 'Nieuwe revisie' }}</button>
+      @if (revisionProblem(); as p) { <div class="alert-error mt-3" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div> }
+    </section>
+  }
+</div>

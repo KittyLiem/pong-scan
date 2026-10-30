@@ -1,0 +1,51 @@
+revision: "1.0.0"
+authoringTimestamp: "2026-03-12T10:00:00Z"
+
+checks:
+  - checkId: CHK_BUILD
+    severity: error
+    scope: [frontend, backend]
+    commandRef: stack-profile.build
+    evidencePolicy: concise-output
+
+  - checkId: CHK_UNIT_TESTS
+    severity: error
+    scope: [frontend, backend]
+    commandRef: stack-profile.test
+    evidencePolicy: concise-output
+
+  - checkId: CHK_LINT
+    severity: error
+    scope: [frontend, backend]
+    commandRef: stack-profile.lint
+    evidencePolicy: concise-output
+
+  - checkId: CHK_ENDPOINT_SECURITY
+    severity: error
+    scope: backend
+    commandRef: deterministic-endpoint-security
+    evidencePolicy: endpoint-security-report
+
+  - checkId: CHK_FRONTEND_AUTH_STORAGE
+    severity: error
+    scope: frontend
+    commandRef: deterministic-frontend-auth-storage
+    evidencePolicy: auth-storage-report
+
+  - checkId: CHK_CONTRACT_VALID
+    severity: error
+    scope: integration
+    commandRef: contract-validate
+    evidencePolicy: validation-report
+
+  - checkId: CHK_SLICE_INTEGRATION
+    severity: error
+    scope: integration
+    commandRef: slice-integration-check
+    evidencePolicy: integration-report
+
+retryBudgets:
+  contractValidation: 2
+  sliceBuildCheck: 3
+  sliceIntegration: 3
+  finalIntegration: 2

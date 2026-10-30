@@ -1,0 +1,55 @@
+artifactRefs:
+- src/main/java/com/example/results/api/ResultsDtos.java
+- src/main/java/com/example/results/api/ResultsResource.java
+- src/main/java/com/example/results/application/ResultsService.java
+- src/test/java/com/example/scan/ResultsBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-10-maturiteitsscores-berekenen.behavior-evidence.yaml
+- reports/build/backend/slice-10-maturiteitsscores-berekenen.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 145000
+errors: []
+finishedAt: '2026-10-13T16:45:15Z'
+gates:
+- command: mvn -B -ntp -q -DskipTests compile
+  evidence: Compile-focused preflight completed without output.
+  exitCode: 0
+  id: LOCAL_TYPE_CHECK
+  status: passed
+- command: mvn -B -ntp -q -Dtest=ResultsBehaviorTest test
+  evidence: Initial targeted run found five fixture errors caused by an Integer-to-Long
+    cast while reading scan version.
+  exitCode: 1
+  id: LOCAL_TARGETED_TEST_INITIAL
+  status: failed
+- command: mvn -B -ntp -q -Dtest=ResultsBehaviorTest test
+  evidence: 'Corrected targeted suite completed: 6 tests, no failures or errors.'
+  exitCode: 0
+  id: LOCAL_TARGETED_TEST_RERUN
+  status: passed
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+- interfaceContractSubset
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-10-maturiteitsscores-berekenen
+startedAt: '2026-10-13T16:42:50Z'
+status: ok
+stepId: runBackendBuild
+stream: backend
+summary: Added exact GET /v1/scans/{scanId}/results operation with bearer enforcement.
+  Results are recomputed from persisted scan answers and score-bearing options, use
+  equal question weighting, expose rounded total/domain scores, deterministic classifications
+  and development points, stored goals, and action priorities. Non-completed or inconsistent
+  scans return problem details.
+warnings:
+- The full mapped unit-test suite was not run; local verification was limited to compile
+  preflight and the slice-owned ResultsBehaviorTest suite. OpenTelemetry exporter
+  connection warnings were non-test infrastructure noise.

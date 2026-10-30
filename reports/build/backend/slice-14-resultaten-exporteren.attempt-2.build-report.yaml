@@ -1,0 +1,58 @@
+artifactRefs:
+- src/test/java/com/example/results/ResultsExportBehaviorTest.java
+- locks/behavior-decisions.lock.yaml
+- reports/build/backend/slice-14-resultaten-exporteren.behavior-evidence.yaml
+- reports/build/backend/slice-14-resultaten-exporteren.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 222000
+errors: []
+finishedAt: '2026-10-13T17:32:55Z'
+gates:
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: 73 tests ran; the two ResultsExportBehaviorTest fixtures failed because
+    PUT /v1/scans/{scanId} returned 405.
+  exitCode: 1
+  scope: full mapped backend unit-test suite before editing
+  status: diagnostic-failure
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: The supported PATCH setup succeeded; both tests then exposed an initial
+    answer-version mismatch returning 409.
+  exitCode: 1
+  scope: full mapped backend unit-test suite after route repair
+  status: diagnostic-failure
+- checkId: CHK_UNIT_TESTS
+  command: mvn -B -ntp -q test
+  evidence: The complete mapped test command succeeded, including both PDF export
+    transition tests and their PDF/content assertions.
+  exitCode: 0
+  scope: full mapped backend unit-test suite after final fixture repair
+  status: diagnostic-pass
+inputRefs:
+- backendSliceContext
+- backendStackProfile
+- apiChoiceLock
+- contractDecisionsLock
+- conformanceLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-14-resultaten-exporteren
+startedAt: '2026-10-13T17:29:13Z'
+status: ok
+stepId: repairBackendBuild
+stream: backend
+summary: Changed the export behavior fixture from unsupported PUT to the existing
+  updateScan PATCH route and supplied answer version 0 for a newly created answer.
+  The protected GET /v1/scans/{scanId}/export implementation and PDF assertions remain
+  unchanged.
+warnings:
+- Local Quarkus test logs reported unavailable OTLP export at localhost:4317; this
+  did not fail the test command.
+- Flyway warned that H2 2.4.240 is newer than its latest verified H2 version; migrations
+  and tests still completed.

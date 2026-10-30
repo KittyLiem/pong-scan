@@ -1,0 +1,147 @@
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+stepId: runBackendCheck
+stream: backend
+sliceId: slice-06-scan-aanmaken
+attemptNumber: 1
+status: fail
+startedAt: not-recorded
+finishedAt: not-recorded
+durationMs: 94647
+inputRefs:
+  - backendSliceContext
+  - buildOutput
+artifactRefs:
+  - reports/check/backend/slice-06-scan-aanmaken.attempt-1.check-report.yaml
+  - reports/feedback/backend/slice-06-scan-aanmaken.attempt-1.feedback-report.yaml
+provenance:
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.1.0
+  conformanceRevision: 1.0.0
+failureDomain: slice_local
+failedGateIds:
+  - GATE_TESTS
+  - GATE_BEHAVIOR_EVIDENCE
+failedChecks:
+  - CHK_UNIT_TESTS
+gates:
+  - gateId: GATE_TESTS
+    status: failed
+    checkId: CHK_UNIT_TESTS
+    evidence:
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+      observed: createScan returns 400 Invalid domain selection for seeded active domain 30000000-0000-0000-0000-000000000002
+      expected: createScan returns 201 and persists a concept scan
+  - gateId: GATE_BEHAVIOR_EVIDENCE
+    status: failed
+    evidence:
+      affectedTransitions:
+        - scan_aanmaken.scan_bestaat_niet__concept
+        - afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+      observed: referenced tests fail before transition assertions
+warnings: []
+errors:
+  - gateId: GATE_TESTS
+    evidence: Three tests assert 201 but receive 400 at ScanCreationBehaviorTest.createScan:93.
+    failureCategory: behavior_regression
+  - gateId: GATE_BEHAVIOR_EVIDENCE
+    evidence: Required transition evidence is not passing.
+    failureCategory: behavior_regression
+reprocessHint: backend-build
+reprocessInputs:
+  nextBuildAttemptNumber: 2
+  invocationMode: repair-existing-files
+  failureDomain: slice_local
+  failedGateIds: [GATE_TESTS, GATE_BEHAVIOR_EVIDENCE]
+  failedChecks: [CHK_UNIT_TESTS]
+  scope: narrow-fix
+  checkerSummary: GATE_TESTS failed first and GATE_BEHAVIOR_EVIDENCE consequently failed because createScan rejects the seeded active-model domain with HTTP 400, preventing the required concept-scan creation and completed-scan copy behavior.
+  gateFailureContext:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+    - gateId: GATE_BEHAVIOR_EVIDENCE
+      checkId: CHK_UNIT_TESTS
+      commandRef: stack-profile.test
+      resolvedCommand: mvn -B -ntp -q test
+      exitCode: 1
+  mandatoryLocalRepro:
+    checkIds: [CHK_UNIT_TESTS]
+    primaryCommand: mvn -B -ntp -q test
+    notes: Compile-only or package-only verification is not a substitute for the failing unit-test gate.
+  testFailures:
+    - file: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      suite: ScanCreationBehaviorTest
+      test: createScanChangesMissingScanToPersistedConcept
+      locationHint: ScanCreationBehaviorTest.java:24 -> createScan:93
+      assertionSummary: Valid active-domain scan creation must persist exactly one concept scan.
+      observed: HTTP 400 Invalid domain selection
+      expected: HTTP 201
+    - file: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      suite: ScanCreationBehaviorTest
+      test: createScanAfterCompletedAssessmentCreatesNewConceptAndPreservesCompletedScan
+      locationHint: ScanCreationBehaviorTest.java:39 -> createScan:93
+      assertionSummary: Creating after completion must create a new concept scan and preserve the completed scan.
+      observed: HTTP 400 Invalid domain selection
+      expected: HTTP 201
+    - file: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      suite: ScanCreationBehaviorTest
+      test: sameIdempotencyKeyReplaysOneScan
+      locationHint: ScanCreationBehaviorTest.java:76 -> createScan:93
+      assertionSummary: Reusing the same idempotency key must replay one persisted scan.
+      observed: HTTP 400 Invalid domain selection
+      expected: HTTP 201
+  primaryFailures:
+    - gateId: GATE_TESTS
+      checkId: CHK_UNIT_TESTS
+      symptom: createScan rejects the seeded domain ID as outside the active model.
+      rootCauseHypothesis: ScanService active-model/domain resolution does not expose the V4 seeded domain relationship at runtime despite migration V4 seeding domain 30000000-0000-0000-0000-000000000002 under active model 30000000-0000-0000-0000-000000000001.
+      requiredOutcome: A valid seeded active-domain request receives 201, persists a concept scan, and idempotency replay succeeds.
+      blocking: true
+      expected: HTTP 201
+      observed: HTTP 400 Invalid domain selection
+    - gateId: GATE_BEHAVIOR_EVIDENCE
+      checkId: CHK_UNIT_TESTS
+      symptom: Both owned transition tests fail before state assertions.
+      rootCauseHypothesis: The same domain-validation failure blocks behavior execution.
+      requiredOutcome: Both declared behavior methods pass after the domain-resolution fix.
+      blocking: true
+  targets:
+    - suite: ScanCreationBehaviorTest
+      test: createScanChangesMissingScanToPersistedConcept
+      operation: 'POST /v1/organizations/{organizationId}/scans (createScan)'
+      observed: HTTP 400 Invalid domain selection
+      expected: HTTP 201 concept scan
+      file: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      locationHint: ScanCreationBehaviorTest.java:24 -> createScan:93
+    - suite: ScanCreationBehaviorTest
+      test: createScanAfterCompletedAssessmentCreatesNewConceptAndPreservesCompletedScan
+      operation: 'POST /v1/organizations/{organizationId}/scans (createScan)'
+      observed: HTTP 400 Invalid domain selection
+      expected: HTTP 201 new concept scan while completed scan remains completed
+      file: src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      locationHint: ScanCreationBehaviorTest.java:39 -> createScan:93
+  editScope:
+    allowedEditPaths:
+      - src/main/java/com/example/scan/application/ScanService.java
+      - src/main/java/com/example/model/domain/MaturityModelEntity.java
+      - src/main/java/com/example/model/domain/ModelDomainEntity.java
+      - src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+    suspectPaths:
+      - path: src/main/resources/db/migration/V4__maturity_models.sql
+        confidence: high
+        reason: authoritative active-model and seeded-domain relationship to verify; currently seeds the expected IDs.
+    forbiddenOrOutOfScope:
+      - reports/**
+      - unrelated frontend files
+      - unrelated auth implementation
+  buildAgentBrief:
+    - Run mvn -B -ntp -q test from backendAppRoot and confirm the three ScanCreationBehaviorTest failures match this feedback before editing code.
+    - Read src/main/java/com/example/scan/application/ScanService.java, src/main/java/com/example/model/domain/MaturityModelEntity.java, src/main/java/com/example/model/domain/ModelDomainEntity.java, src/main/resources/db/migration/V4__maturity_models.sql, and src/test/java/com/example/scan/ScanCreationBehaviorTest.java.
+    - Repair the active-model/domain lookup so the V4 seeded active domain is recognized by createScan; preserve rejection of IDs outside the active model.
+    - Re-run the unit-test command and confirm both owned transition methods and the idempotency replay test return 201 where expected.
+  nonGoals:
+    - Do not weaken 201 or state-transition assertions to accept HTTP 400.
+    - Do not bypass active-model domain validation or broadly refactor unrelated resources.

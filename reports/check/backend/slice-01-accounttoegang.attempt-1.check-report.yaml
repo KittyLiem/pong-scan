@@ -1,0 +1,134 @@
+artifactRefs:
+- reports/check/backend/slice-01-accounttoegang.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 34498
+errors: []
+finishedAt: not-captured
+gates:
+- evidence:
+    contentReadPaths:
+    - path: src/main/java/com/example/account/api/AccountResource.java
+      reason: operation entry points for registerMember and createSession
+    - path: src/main/java/com/example/account/api/AccountDtos.java
+      reason: request and response DTOs used by owned operations
+    - path: src/test/java/com/example/account/AccountResourceTest.java
+      reason: representative API and declared behavior-transition coverage
+    - path: src/main/java/com/example/account/application/AccountService.java
+      reason: auth, credential, idempotency, and persistence review
+    - path: src/main/java/com/example/account/domain/MemberEntity.java
+      reason: durable member persistence review
+    - path: src/main/java/com/example/account/domain/SessionEntity.java
+      reason: session expiry and durable persistence review
+    missingPaths: []
+    verifiedPaths:
+    - pom.xml
+    - src/main/java/com/example/account/domain/MemberEntity.java
+    - src/main/java/com/example/account/domain/SessionEntity.java
+    - src/main/java/com/example/account/application/AccountException.java
+    - src/main/java/com/example/account/application/AccountService.java
+    - src/main/java/com/example/account/api/AccountDtos.java
+    - src/main/java/com/example/account/api/AccountResource.java
+    - src/main/java/com/example/account/api/ProblemMappers.java
+    - src/main/java/com/example/account/api/CorrelationIdFilter.java
+    - src/main/resources/application.properties
+    - src/main/resources/db/migration/V2__account_access.sql
+    - src/test/java/com/example/account/AccountResourceTest.java
+    - locks/behavior-decisions.lock.yaml
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_ENDPOINT_SECURITY
+  evidence:
+    missingEnforcement: []
+    missingTests: []
+    observed401Tests: []
+    observedEnforcementMarkers: []
+    protectedOperations: []
+    publicOperations:
+    - registerMember POST /v1/auth/registrations
+    - createSession POST /v1/auth/sessions
+  gateId: GATE_ENDPOINT_SECURITY
+  status: passed
+- evidence:
+    fingerprintHandling: SHA-256 hashes are persisted for idempotency keys, request
+      fingerprints, and access tokens; raw credentials are not persisted
+    passwordHashing: BcryptUtil.bcryptHash and BcryptUtil.matches in AccountService
+    tokenExpiry: SessionEntity.expiresAt is persisted and checked before replay
+  gateId: GATE_CREDENTIAL_HYGIENE
+  status: passed
+- evidence:
+    durableOperations:
+    - registerMember
+    - createSession
+    migration: src/main/resources/db/migration/V2__account_access.sql
+    persistence: Panache entities MemberEntity and SessionEntity backed by account_members
+      and account_sessions; transactional AccountService persists both
+  gateId: GATE_PERSISTENCE_WIRING
+  status: passed
+- evidence:
+    testExecution: CHK_UNIT_TESTS exited 0
+    transitions:
+    - kind: mutation
+      mutatedFields:
+      - status
+      operationId: createSession
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/account/AccountResourceTest.java
+      testMethod: loginChangesStatusFromNotSignedInToSignedIn
+      transitionId: accounttoegang.niet_aangemeld__aangemeld
+    - kind: mutation
+      mutatedFields:
+      - status
+      operationId: createSession
+      startsFrom: api-fixture
+      testFile: src/test/java/com/example/account/AccountResourceTest.java
+      testMethod: loginAfterExpiredSessionChangesStatusToAccessRestored
+      transitionId: accounttoegang.toegang_geblokkeerd__accounttoegang_hersteld
+  gateId: GATE_BEHAVIOR_EVIDENCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    durationMs: 23801
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q -DskipTests package
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    durationMs: 34498
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q test
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    durationMs: 19259
+    exitCode: 0
+    resolvedCommand: mvn -B -ntp -q verify -DskipTests
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+inputRefs:
+- backendSliceContext:inline
+- buildOutput:inline
+- conformanceLock:1.0.0
+- backendStackProfile:1.1.0
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: inline-subset-no-revision
+  stackProfileRevision: 1.1.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-01-accounttoegang
+startedAt: not-captured
+status: ok
+stepId: runBackendCheck
+stream: backend
+warnings:
+- evidence: Test execution emitted a non-blocking OTLP localhost:4317 connection-refused
+    warning; Maven exited 0.
+  failureCategory: environment_warning
+  gateId: CHK_UNIT_TESTS

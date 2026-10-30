@@ -1,0 +1,36 @@
+attempt: 1
+commands:
+- command: mvn -B -ntp test
+  result: BUILD SUCCESS; 74 tests run, 0 failures, 0 errors, 0 skipped
+  workingDirectory: backend
+failedGateIdsAddressed:
+- GATE_SECURITY_PARITY
+modifiedFiles:
+- backend/src/test/java/com/example/admin/AdminContentContractTest.java
+- backend/src/test/java/com/example/scan/ScanUpdateBehaviorTest.java
+- backend/src/test/java/com/example/scan/ResultsBehaviorTest.java
+referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+repairs:
+- evidence: backend/src/test/java/com/example/admin/AdminContentContractTest.java#createAnswerOptionRequiresBearerAuthenticationWithProblemDetails
+    verifies unauthenticated requests return 401 application/problem+json.
+  method: POST
+  operationId: createAnswerOption
+  path: /v1/admin/questions/{questionId}/options
+- evidence: backend/src/test/java/com/example/scan/ScanUpdateBehaviorTest.java#updateScanRequiresBearerAuthenticationWithProblemDetails
+    verifies unauthenticated requests return 401 application/problem+json with Unauthorized
+    title.
+  method: PATCH
+  operationId: updateScan
+  path: /v1/scans/{scanId}
+- evidence: backend/src/test/java/com/example/scan/ResultsBehaviorTest.java#getResultsRequiresBearerAuthenticationWithProblemDetails
+    verifies unauthenticated requests return 401 application/problem+json with Unauthorized
+    title.
+  method: GET
+  operationId: getResults
+  path: /v1/scans/{scanId}/results
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p6
+skipped:
+- command: frontend tests
+  reason: The failed evidence was limited to missing backend 401 test attribution;
+    frontend global bearer credential binding already passed.
+status: ok

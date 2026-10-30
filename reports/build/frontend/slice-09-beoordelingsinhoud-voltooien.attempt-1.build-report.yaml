@@ -1,0 +1,38 @@
+artifactRefs:
+- src/app/core/scans/scan.service.ts
+- src/app/core/scans/scan.service.spec.ts
+- src/app/maturity-assessment/maturity-assessment.component.ts
+- src/app/maturity-assessment/maturity-assessment.component.html
+- src/app/maturity-assessment/maturity-assessment.component.spec.ts
+- reports/build/frontend/slice-09-beoordelingsinhoud-voltooien.attempt-1.build-report.yaml
+attemptNumber: 1
+durationMs: 7970
+errors: []
+finishedAt: '2026-10-13T16:29:48.095Z'
+gates:
+- command: npx npm run build
+  evidence: Angular production build completed successfully; output bundles were generated.
+  exitCode: 0
+  id: local-type-check
+  status: passed
+inputRefs:
+- referenceId:00e3fb56-8084-4b07-a9d4-49c6836403ad
+- operationId:completeScan
+- mockups/maturity-beoordeling.lock.html
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-09-beoordelingsinhoud-voltooien
+startedAt: '2026-10-13T16:29:40.125Z'
+status: ok
+stepId: runFrontendBuild
+stream: frontend
+summary: Added the completeScan client operation and assessment completion UI with
+  version, bearer-token, idempotency, problem-details, success, and blocked-completion
+  handling. Added isolated HTTP and component tests.
+warnings:
+- Formal lint and unit-test commands were not run during this first-pass build; Frontend
+  Check remains authoritative for those gates.
+- The build emitted the existing Sass @import deprecation warning from src/styles.scss.

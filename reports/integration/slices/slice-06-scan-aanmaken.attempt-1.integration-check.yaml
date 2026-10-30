@@ -1,0 +1,168 @@
+artifactRefs:
+- reports/integration/slices/slice-06-scan-aanmaken.attempt-1.integration-check.yaml
+attemptNumber: 1
+durationMs: 1000
+errors: []
+evidence:
+  diskVerification:
+    backend:
+      contentReadPaths:
+      - path: backend/src/main/java/com/example/scan/api/ScanPortfolioResource.java
+        purpose: Verify createScan endpoint, versioned route, bearer enforcement,
+          and idempotency input.
+      - path: backend/src/main/java/com/example/scan/api/ScanDtos.java
+        purpose: Verify createScan request and response DTO alignment.
+      - path: backend/src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+        purpose: Verify protected error response, idempotency, persistence, and owned
+          transition coverage.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/backend/src/test/java/com/example/scan/ScanCreationBehaviorTest.java
+      - app/backend/locks/behavior-decisions.lock.yaml
+    frontend:
+      contentReadPaths:
+      - path: frontend/src/app/app.routes.ts
+        purpose: Verify /start and /scans route bindings and member guard.
+      - path: frontend/src/app/account-access/account-access.component.ts
+        purpose: Verify the first-scan primary action invokes createScan.
+      - path: frontend/src/app/scan-overview/scan-overview.component.ts
+        purpose: Verify the scan-overview create action and problem-details handling.
+      - path: frontend/src/app/core/scans/scan.service.ts
+        purpose: Verify createScan method, URI, bearer authorization, idempotency
+          header, DTOs, and errors.
+      existenceSource: precomputed_disk_verification
+      missingPaths: []
+      verifiedPaths:
+      - app/frontend/src/app/scan-overview/scan-overview.component.spec.ts
+  dualStreamAuthority:
+    backendEnabled: true
+    frontendEnabled: true
+    source: combinedSliceScope
+  endpointParity:
+    method: POST
+    operationId: createScan
+    path: /v1/organizations/{organizationId}/scans
+    source: endpointParityPreGate
+    valid: true
+  upstreamChecks:
+    backendStatus: ok
+    evaluatedCheckIds:
+    - CHK_BUILD
+    - CHK_UNIT_TESTS
+    - CHK_LINT
+    - CHK_ENDPOINT_SECURITY
+    - CHK_FRONTEND_AUTH_STORAGE
+    - CHK_CONTRACT_VALID
+    - CHK_SLICE_INTEGRATION
+    frontendStatus: ok
+finishedAt: '2026-10-13T16:01:12.000Z'
+gates:
+- evidence:
+    observations:
+    - ScanService.create sends POST /v1/organizations/{organizationId}/scans with
+      the contract request fields.
+    - The client attaches Authorization bearer credentials and X-Idempotency-Key.
+    - The client maps problem-details fields type, title, status, detail, and instance.
+    - AccountAccessComponent and ScanOverviewComponent both expose implemented createScan
+      UI actions.
+    - Versioning is URI-based under /v1; unrelated list pagination uses cursor and
+      bounded pageSize according to policy.
+    - Frontend build, tests, lint, auth-storage, route, and handoff gates passed upstream.
+    payloadRefs:
+    - frontendSliceContext.contractSubset.operations[createScan]
+    - frontendSliceContext.uiScopeRef.pageBindings
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.frontendCheckOutput
+  gateId: GATE_FE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observations:
+    - ScanPortfolioResource exposes POST /v1/organizations/{organizationId}/scans
+      with operationId createScan.
+    - The endpoint requires bearer authentication and the X-Idempotency-Key header
+      and returns HTTP 201.
+    - ScanDtos matches required request fields and the declared scan response fields.
+    - Backend security evidence verifies 401 application/problem+json with required
+      problem-details fields.
+    - Backend persistence, build, tests, lint, endpoint security, behavior evidence,
+      and handoff gates passed upstream.
+    payloadRefs:
+    - backendSliceContext.contractSubset.operations[createScan]
+    - backendSliceContext.behaviorSubset
+    - behaviorEvidencePreGate
+    - apiChoiceLock
+    - contractDecisionsLock
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_BE_CONTRACT_ALIGNMENT
+  status: passed
+- evidence:
+    observations:
+    - Deterministic endpoint parity is valid for createScan POST /v1/organizations/{organizationId}/scans.
+    - FE and BE agree on URI versioning, bearer authorization, X-Idempotency-Key,
+      request DTO, HTTP 201 response DTO, and problem-details errors.
+    - Both enabled streams have precomputed on-disk handoff verification and full
+      integration anchors were read.
+    - Stream-local counterpart-disabled scope flags were correctly treated as ownership
+      metadata, while combinedSliceScope established dual-stream enablement.
+    payloadRefs:
+    - combinedSliceScope
+    - endpointParityPreGate
+    - interfaceContractSubset.operations[createScan]
+    - upstreamEvidence.frontendCheckOutput
+    - upstreamEvidence.backendCheckOutput
+  gateId: GATE_SLICE_INTEGRATION
+  status: passed
+- evidence:
+    payloadRefs:
+    - backendSliceContext.behaviorSubset.transitions
+    - behaviorEvidencePreGate
+    - upstreamEvidence.backendCheckOutput.artifacts[0].content.gates[GATE_BEHAVIOR_EVIDENCE]
+    - frontendSliceContext.uiScopeRef.pageBindings
+    transitions:
+    - backendEvidence: ScanCreationBehaviorTest#createScanChangesMissingScanToPersistedConcept
+        starts from api-fixture and verifies persisted concept status and progress.
+      operationId: createScan
+      transitionId: scan_aanmaken.scan_bestaat_niet__concept
+      uiEvidence: AccountAccessComponent and ScanOverviewComponent invoke ScanService.create
+        from primary actions.
+    - backendEvidence: ScanCreationBehaviorTest#createScanAfterCompletedAssessmentCreatesNewConceptAndPreservesCompletedScan
+        starts from api-fixture and verifies a new concept while preserving the completed
+        scan.
+      operationId: createScan
+      transitionId: afgeronde_beoordeling_verfijnen.afgerond__nieuwe_conceptscan_bij_kopieerbeleid
+      uiEvidence: ScanOverviewComponent invokes ScanService.create from the hosted
+        create-scan primary action.
+  gateId: GATE_TRANSITION_COVERAGE
+  status: passed
+inputRefs:
+- frontendSliceContext
+- backendSliceContext
+- combinedSliceScope
+- interfaceContractSubset
+- conformanceLock@1.0.0
+- apiChoiceLock@1.0.0
+- contractDecisionsLock@1.0.0
+- precomputedDiskVerification
+- endpointParityPreGate
+- upstreamEvidence.frontendBuildOutput
+- upstreamEvidence.backendBuildOutput
+- upstreamEvidence.frontendCheckOutput
+- upstreamEvidence.backendCheckOutput
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-06-scan-aanmaken
+startedAt: '2026-10-13T16:01:11.000Z'
+status: ok
+stepId: runSliceIntegrationCheckBoth
+stream: integration
+warnings:
+- Frontend upstream build/test evidence reported non-blocking Sass and Vite compatibility
+  warnings.
+- Backend upstream tests reported non-blocking OpenTelemetry exporter connection-refused
+  warnings.

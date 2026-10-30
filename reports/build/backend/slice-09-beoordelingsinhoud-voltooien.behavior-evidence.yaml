@@ -1,0 +1,42 @@
+decisions:
+- choice: Afronding vereist voor iedere verplichte vraag zowel een score als een niet-lege
+    toelichting.
+  unspecifiedId: dec-002
+- choice: Een wijziging na afronding maakt via createScan een nieuwe conceptscan tegen
+    het actuele modelsnapshot; de afgeronde scan en resultaten blijven ongewijzigd
+    bewaard.
+  unspecifiedId: dec-005
+transitions:
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: completeScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+  testMethod: completeScanMovesInProgressAssessmentToContentComplete
+  transitionId: beoordelingsinhoud_voltooien.in_uitvoering__inhoud_compleet
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: completeScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+  testMethod: completeScanMovesContentCompleteAssessmentToCompleted
+  transitionId: beoordelingsinhoud_voltooien.inhoud_compleet__afgerond
+- kind: mutation
+  mutatedFields:
+  - status
+  operationId: completeScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+  testMethod: completeScanMovesReopenedAssessmentToCompletedAgain
+  transitionId: afgeronde_beoordeling_verfijnen.opnieuw_in_beoordeling__opnieuw_afgerond
+- kind: mutation
+  mutatedFields:
+  - status
+  - version
+  operationId: completeScan
+  startsFrom: api-fixture
+  testFile: src/test/java/com/example/scan/ScanCompletionBehaviorTest.java
+  testMethod: completeScanVersionsExistingResultsWithoutReplacingTheOriginalAnswers
+  transitionId: afgeronde_beoordeling_verfijnen.bestaande_resultaten__vervangen_geversioneerd_of_gekopieerd

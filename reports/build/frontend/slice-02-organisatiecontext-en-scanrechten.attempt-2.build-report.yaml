@@ -1,0 +1,57 @@
+artifactRefs:
+- src/app/app.routes.ts
+- src/app/account-access/account-access.component.ts
+- src/app/scan-overview/scan-overview.component.ts
+- src/app/scan-overview/scan-overview.component.spec.ts
+- reports/build/frontend/slice-02-organisatiecontext-en-scanrechten.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 2350
+errors: []
+finishedAt: '2026-10-13T14:36:43.350Z'
+gates:
+- checkId: CHK_LINT
+  command: npx npm run lint
+  evidence: Reproduced the unused _session parameter violation in account-access.component.ts.
+  exitCode: 1
+  phase: pre-fix-reproduction
+- checkId: CHK_LINT
+  command: npx npm run lint
+  evidence: All frontend files pass linting.
+  exitCode: 0
+  phase: post-fix-diagnostic
+- checkId: CHK_UI_SHELL_NAV
+  command: deterministic source review plus focused route unit test
+  evidence: The /scans route now resolves to ScanOverviewComponent before the wildcard
+    redirect.
+  exitCode: 0
+  phase: post-fix-diagnostic
+- checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  evidence: 5 test files passed; 12 tests passed, including scan-overview route coverage.
+  exitCode: 0
+  phase: post-fix-diagnostic
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: api-choice:1.0.0; contract-decisions:1.0.0; interface-subset:unversioned
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-02-organisatiecontext-en-scanrechten
+startedAt: '2026-10-13T14:36:41.000Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Registered the /scans success destination, added focused route and rendering
+  coverage, and removed the unused session callback parameter without weakening lint
+  rules.
+warnings:
+- The test runner emitted existing Sass @import deprecation and Vite native-loader
+  compatibility warnings; runner configuration was not changed.
+- Local verification is diagnostic only; Frontend Check retains formal gate authority.

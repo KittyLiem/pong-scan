@@ -1,0 +1,117 @@
+artifactRefs:
+- reports/check/frontend/slice-15-afgeronde-beoordeling-verfijnen.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 31000
+errors: []
+finishedAt: '2026-10-13T17:40:31Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildReportRefPresent: true
+    buildStatus: ok
+    contentReadPaths:
+    - path: src/app/scan-results/scan-results.component.ts
+      reason: slice component implements refinement interaction and version sourcing
+    - path: src/app/scan-results/scan-results.component.html
+      reason: slice route template and mockup structural parity
+    - path: src/app/scan-results/scan-results.component.spec.ts
+      reason: representative slice coverage for refinement flow
+    missingPaths: []
+    verifiedPaths:
+    - src/app/scan-results/scan-results.component.ts
+    - src/app/scan-results/scan-results.component.html
+    - src/app/scan-results/scan-results.component.spec.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: pass
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavLabel: Resultaten
+    expectedRoute: /scans/:scanId/results
+    navLabelPresent: true
+    routeConfigPath: src/app/app.routes.ts
+    routeRegistered: true
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: pass
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedVisibleStructure:
+      buttons: 5
+      cards: 6
+      headings: 11
+      sections: 3
+    observed: visible results, insights, priorities, action overview, and refinement
+      structures exceed the meaningful-outline threshold
+    route: /scans/:scanId/results
+    templatePath: src/app/scan-results/scan-results.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: pass
+- checkId: CHK_UI_INITIAL_STATE_PARITY
+  evidence:
+    componentPath: src/app/scan-results/scan-results.component.ts
+    observed: displayed result scores, domain scores, insights, goals, and priorities
+      bind to API-backed results; no fixed result-state values were introduced
+    templatePath: src/app/scan-results/scan-results.component.html
+  gateId: GATE_UI_INITIAL_STATE_PARITY
+  status: pass
+- checkId: CHK_VERSION_SOURCE
+  evidence:
+    componentPath: src/app/scan-results/scan-results.component.ts
+    observed: saveDevelopmentPriorities sends version from selected scan state; representative
+      test asserts version 7 received from ScanService state
+  gateId: GATE_VERSION_SOURCE
+  status: pass
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: pass
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    summary: 12 test files and 49 tests passed, including scan-results refinement
+      coverage
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: pass
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: pass
+inputRefs:
+  buildArtifactRefs:
+  - src/app/scan-results/scan-results.component.ts
+  - src/app/scan-results/scan-results.component.html
+  - src/app/scan-results/scan-results.component.spec.ts
+  frontendAppRoot: .
+provenance:
+  conformanceRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-15-afgeronde-beoordeling-verfijnen
+startedAt: '2026-10-13T17:40:00Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- evidence: Angular Sass reported an existing @import deprecation in src/styles.scss.
+  failureCategory: warning
+  gateId: GATE_BUILD
+- evidence: Vitest emitted a future native config-loader compatibility warning for
+    vitest.config.ts.
+  failureCategory: warning
+  gateId: GATE_TESTS
+- evidence: Auth-storage source review was not applicable because supplied locks do
+    not identify bearer/JWT authentication.
+  failureCategory: not_applicable
+  gateId: GATE_AUTH_STORAGE

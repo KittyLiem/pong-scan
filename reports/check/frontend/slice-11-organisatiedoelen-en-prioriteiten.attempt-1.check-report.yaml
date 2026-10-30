@@ -1,0 +1,100 @@
+artifactRefs:
+- reports/check/frontend/slice-11-organisatiedoelen-en-prioriteiten.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 24000
+errors: []
+finishedAt: '2026-10-13T17:00:24.000Z'
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportPersistenceVerified: true
+    buildReportRef: reports/build/frontend/slice-11-organisatiedoelen-en-prioriteiten.attempt-1.build-report.yaml
+    contentReadPaths:
+      src/app/app.html: verified non-bare app shell and Beoordeling navigation
+      src/app/app.routes.ts: verified /scans/:scanId/assessment route
+      src/app/maturity-assessment/maturity-assessment.component.html: verified visible
+        organization-goal/prioritization structure
+      src/app/maturity-assessment/maturity-assessment.component.spec.ts: verified
+        slice-level optional and multiple-goal coverage
+      src/app/maturity-assessment/maturity-assessment.component.ts: verified optional
+        normalized goal payload and API-response-derived optimistic versions
+    missingPaths: []
+    verifiedPaths:
+    - src/app/maturity-assessment/maturity-assessment.component.ts
+    - src/app/maturity-assessment/maturity-assessment.component.html
+    - src/app/maturity-assessment/maturity-assessment.component.spec.ts
+  id: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavigationLabel: Beoordeling
+    expectedRoute: /scans/:scanId/assessment
+    routesPath: src/app/app.routes.ts
+    shellPath: src/app/app.html
+  id: GATE_APP_SHELL_NAV
+  status: passed
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedOutline: headings=3 forms=1 fields=7 buttons=13 sections=2
+    observed: visible assessment heading, progress navigation, goal form fields, question
+      answer form, and completion section
+    route: /scans/:scanId/assessment
+    templatePath: src/app/maturity-assessment/maturity-assessment.component.html
+  id: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: passed
+- evidence:
+    initialStateAuthority: no scoped initial-state literals declared
+  id: GATE_UI_INITIAL_STATE_PARITY
+  status: passed
+- evidence:
+    componentPath: src/app/maturity-assessment/maturity-assessment.component.ts
+    observed: scan update and completion use scan.version; answer save requires API-loaded
+      answer version and advances from response version
+  id: GATE_VERSION_SOURCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    excerpt: Application bundle generation complete.
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  id: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    excerpt: 12 test files and 44 tests passed, including 7 maturity-assessment tests.
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    workingDirectory: .
+  id: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    excerpt: All files pass linting.
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  id: GATE_LINT
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile@1.2.0
+- conformanceLock@1.0.0
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-11-organisatiedoelen-en-prioriteiten
+startedAt: '2026-10-13T17:00:00.000Z'
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Angular Sass emitted the pre-existing @import deprecation warning from src/styles.scss.
+- Vitest emitted a future native config-loader compatibility warning; tests passed
+  using the committed vitest.config.ts.

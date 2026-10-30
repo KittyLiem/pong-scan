@@ -1,0 +1,49 @@
+artifactRefs:
+- locks/build-plan.pre-binder.yaml
+- reports/planning/plan-report.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+finishedAt: '2026-03-12T10:00:00Z'
+gates:
+- evidence:
+  - fifteen stable slices were ordered once with planner-owned fields only
+  gateId: GATE_PLAN_DETERMINISTIC
+  passed: true
+- evidence:
+  - all dependencies reference earlier slices and the graph is acyclic
+  gateId: GATE_DEPENDENCY_VALIDITY
+  passed: true
+- evidence:
+  - all fifteen features, nineteen operations, and forty-two transitions have valid
+    owners
+  gateId: GATE_SCOPE_COVERAGE
+  passed: true
+- evidence:
+  - all required locks, the OpenAPI document, runtime metadata, and generation profile
+    were used
+  gateId: GATE_AUTHORITY_INPUTS
+  passed: true
+inputRefs:
+- locks/product.lock.yaml
+- locks/interface-contract.lock.yaml
+- locks/contracts/openapi.yaml
+- locks/ui-content.lock.yaml
+- required/generation-profile.yaml
+provenance:
+  contractPath: locks/contracts/openapi.yaml
+  generationProfileAuthoringTimestamp: '2026-03-12T10:00:00Z'
+  generationProfileRevision: 1.0.0
+  interfaceContractAuthoringTimestamp: '2026-03-12T10:00:00Z'
+  interfaceContractRevision: 1.0.0
+  productProjectId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+  referenceId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+  uiContentAuthoringTimestamp: '2026-03-12T10:00:00Z'
+  uiContentRevision: 1.0.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p4
+sliceId: null
+startedAt: '2026-03-12T10:00:00Z'
+status: ok
+stepId: slice-planner
+stream: null
+warnings: []

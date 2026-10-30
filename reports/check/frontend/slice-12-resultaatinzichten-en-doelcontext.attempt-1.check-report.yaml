@@ -1,0 +1,109 @@
+artifactRefs:
+- reports/check/frontend/slice-12-resultaatinzichten-en-doelcontext.attempt-1.check-report.yaml
+attemptNumber: 1
+durationMs: 19357
+errors: []
+finishedAt: null
+gates:
+- checkId: CHK_BUILD
+  evidence:
+    buildReportRefDeclared: reports/build/frontend/slice-12-resultaatinzichten-en-doelcontext.attempt-1.build-report.yaml
+    buildStatus: ok
+    contentReadPaths:
+      src/app/app.html: application shell and scoped navigation
+      src/app/app.routes.ts: route_results registration
+      src/app/scan-results/scan-results.component.html: slice page structural parity
+        and initial-state review
+      src/app/scan-results/scan-results.component.spec.ts: representative slice-level
+        coverage
+      src/app/scan-results/scan-results.component.ts: slice component implementation
+        and API-backed state
+    missingPaths: []
+    verifiedPaths:
+    - src/app/scan-results/scan-results.component.ts
+    - src/app/scan-results/scan-results.component.html
+    - src/app/scan-results/scan-results.component.spec.ts
+  gateId: GATE_BUILD_HANDOFF
+  status: passed
+- checkId: CHK_UI_SHELL_NAV
+  evidence:
+    expectedNavigationLabel: Resultaten
+    expectedRoutePath: /scans/:scanId/results
+    navigationRegistered: true
+    routeConfigPath: src/app/app.routes.ts
+    routeRegistered: true
+    shellPath: src/app/app.html
+  gateId: GATE_APP_SHELL_NAV
+  status: passed
+- checkId: CHK_UI_STRUCTURAL_PARITY
+  evidence:
+    expectedMinimums:
+      buttons: 5
+      fields: 4
+      headings: 11
+      sections: 3
+    observedMeaningfulStructure: visible score, insight, goal, priorities, action
+      overview, and refinement sections with headings, controls, and retry states
+    route: /scans/:scanId/results
+    templatePath: src/app/scan-results/scan-results.component.html
+  gateId: GATE_MOCKUP_STRUCTURAL_PARITY
+  status: passed
+- evidence:
+    result: scores, insights, goals, action overview, and priorities bind to result
+      service data; no prohibited fixed result literals found
+    templatePath: src/app/scan-results/scan-results.component.html
+  gateId: GATE_UI_INITIAL_STATE_PARITY
+  status: passed
+- evidence:
+    result: no optimistic-concurrency command payload is implemented by this route-only
+      slice
+  gateId: GATE_VERSION_SOURCE
+  status: passed
+- checkId: CHK_BUILD
+  evidence:
+    commandRef: stack-profile.build
+    exitCode: 0
+    resolvedCommand: npx npm run build
+    workingDirectory: .
+  gateId: GATE_BUILD
+  status: passed
+- checkId: CHK_UNIT_TESTS
+  evidence:
+    commandRef: stack-profile.test
+    exitCode: 0
+    resolvedCommand: npx npm run test -- --no-watch
+    summary: 12 test files and 44 tests passed
+    workingDirectory: .
+  gateId: GATE_TESTS
+  status: passed
+- checkId: CHK_LINT
+  evidence:
+    commandRef: stack-profile.lint
+    exitCode: 0
+    resolvedCommand: npx npm run lint
+    workingDirectory: .
+  gateId: GATE_LINT
+  status: passed
+- checkId: CHK_FRONTEND_AUTH_STORAGE
+  evidence:
+    reason: No bearer/JWT auth policy was supplied in the authoritative inputs.
+  gateId: GATE_AUTH_STORAGE
+  status: not_applicable
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- buildOutput
+provenance:
+  conformanceRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-12-resultaatinzichten-en-doelcontext
+startedAt: null
+status: ok
+stepId: runFrontendCheck
+stream: frontend
+warnings:
+- Build and test emitted the existing Sass @import deprecation warning for src/styles.scss.
+- Test emitted a future Vite native config-loader compatibility warning for vitest.config.ts.

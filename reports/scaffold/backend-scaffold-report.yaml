@@ -1,0 +1,7 @@
+archiveId: quarkus-postgresql
+destinationDir: app/backend
+entryCount: 6
+runId: 00e3fb56-8084-4b07-a9d4-49c6836403ad
+status: ok
+stepId: extractBackendScaffold
+stream: backend

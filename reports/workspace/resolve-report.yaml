@@ -1,0 +1,29 @@
+artifactRefs:
+- reports/workspace/resolve-report.yaml
+attemptNumber: 1
+durationMs: 0
+errors: []
+finishedAt: null
+gates:
+- evidence: 'workspaceLock provides non-empty relative workspace paths: repoRoot=''.''
+    and artifactRoot=''.''.'
+  gateId: GATE_PATHS_RESOLVED
+  passed: true
+- evidence: generationProfile declares single-repo topology with frontend, backend,
+    and database enabled; both resolved paths support the shared repository workspace.
+  gateId: GATE_TOPOLOGY_CONSISTENT
+  passed: true
+inputRefs:
+- workspace.lock.yaml
+- generation-profile.yaml
+resolvedPaths:
+  artifactRoot: .
+  repoRoot: .
+runId: run-unknown
+sliceId: null
+startedAt: null
+status: ok
+stepId: readiness-validator
+stream: null
+topology: single-repo
+warnings: []

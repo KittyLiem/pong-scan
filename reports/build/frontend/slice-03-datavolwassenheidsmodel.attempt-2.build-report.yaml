@@ -1,0 +1,47 @@
+artifactRefs:
+- src/app/account-access/account-access.component.html
+- src/app/account-access/account-access.component.spec.ts
+- reports/build/frontend/slice-03-datavolwassenheidsmodel.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 55847
+errors: []
+finishedAt: '2026-10-13T14:46:56.270Z'
+gates:
+- command: npx npm run test -- --no-watch
+  evidence: Final diagnostic run passed 8 test files and 19 tests. Earlier iterative
+    runs exposed and then resolved one TypeScript test error and two focused assertion
+    issues; exit-code sequence was 1, 1, 1, 0.
+  exitCode: 0
+  id: LOCAL_UNIT_TESTS
+  status: passed
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  apiChoiceRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsRevision: 1.0.0
+  contractRevision: 1.0.0
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-03-datavolwassenheidsmodel
+startedAt: '2026-10-13T14:46:00.423Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Added three visible labeled knowledge-domain preview controls to raise the
+  unavailable-model /start state from six to nine fields and labels. The controls
+  are explicitly disabled until getActiveModel supplies the real API-backed domains.
+  Focused regression coverage verifies structural count, label association, disabled
+  state, and preserved scan blocking.
+warnings:
+- The deterministic mockup structural-parity check is built into Frontend Check and
+  was not available as a stack command; focused DOM assertions verify at least nine
+  visible labels and controls locally.
+- The passing test command emitted existing Sass @import deprecation and Vite native-config
+  compatibility warnings.

@@ -1,0 +1,53 @@
+artifactRefs:
+- src/app/core/scans/scan-results.service.spec.ts
+- src/app/core/scans/scan-results.service.ts
+- reports/build/frontend/slice-14-resultaten-exporteren.attempt-2.build-report.yaml
+attemptNumber: 2
+durationMs: 51000
+errors: []
+finishedAt: '2026-10-13T17:34:06Z'
+gates:
+- authority: local-diagnostic
+  checkId: CHK_UNIT_TESTS
+  command: npx npm run test -- --no-watch
+  executions:
+  - evidence: 'Reproduced the reported Blob conversion failure: 1 failed and 47 passed
+      tests.'
+    exitCode: 1
+    phase: pre-fix-reproduction
+  - evidence: 12 test files and all 48 tests passed, including the PDF export Problem
+      Details case.
+    exitCode: 0
+    phase: post-fix-verification
+- authority: local-diagnostic
+  checkId: CHK_LINT
+  command: npx npm run lint
+  evidence: All frontend files passed linting.
+  exitCode: 0
+inputRefs:
+- frontendSliceContext
+- frontendStackProfile
+- conformanceLock
+- apiChoiceLock
+- contractDecisionsLock
+- interfaceContractSubset
+- reprocessInputs
+provenance:
+  apiChoiceLockRevision: 1.0.0
+  conformanceRevision: 1.0.0
+  contractDecisionsLockRevision: 1.0.0
+  contractRevision: not-specified
+  stackProfileRevision: 1.2.0
+runId: e6c512ea-1f27-4b92-a0e3-cea54f37a145-p5
+sliceId: slice-14-resultaten-exporteren
+startedAt: '2026-10-13T17:33:15Z'
+status: ok
+stepId: repairFrontendBuild
+stream: frontend
+summary: Repaired the PDF Problem Details test fixture and parser lint violation without
+  changing endpoint, authentication, response type, or user-visible error behavior.
+warnings:
+- The test command emitted existing Sass @import deprecation and Vite native-config-loader
+  compatibility warnings; these were outside the narrow repair scope.
+- No separate build command was run because the authoritative repair contract required
+  unit tests followed by lint. Formal gate authority remains with Frontend Check.

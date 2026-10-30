@@ -1,0 +1,56 @@
+revision: "1.0.0"
+authoringTimestamp: "2026-03-12T10:00:00Z"
+
+identityStrategy:
+  entityIdFormat: uuid
+  idempotencyKeyHeader: X-Idempotency-Key
+  idempotencyOpenApi:
+    placement: operation.parameters
+    parameterComponent: "#/components/parameters/IdempotencyKey"
+    parameterShape:
+      in: header
+      name: X-Idempotency-Key
+    forbidden:
+      - operation.headers
+      - components.headers.IdempotencyKey
+    applyToMethods: [post]
+
+authModel:
+  type: bearer-token
+  tokenLocation: Authorization header
+  refreshPolicy: optional
+
+errorModel:
+  format: problem-details
+  requiredFields: [type, title, status]
+
+pagination:
+  strategy: cursor-based
+  defaultPageSize: 20
+  maxPageSize: 100
+  # OpenAPI mapping for collection list operations (phase-3 deterministic gate).
+  # Applies to GET operations whose 200 JSON response schema is a collection object
+  # (has `collectionResponse.itemsProperty` typed as an array). Single-resource GETs
+  # are out of scope. Stack-generic — not app-specific.
+  paginationOpenApi:
+    applyToMethods: [get]
+    collectionResponse:
+      itemsProperty: items
+    cursorParameter:
+      parameterComponent: "#/components/parameters/Cursor"
+      parameterShape:
+        in: query
+        name: cursor
+    pageSizeParameter:
+      parameterComponent: "#/components/parameters/PageSize"
+      parameterShape:
+        in: query
+        name: pageSize
+      defaultMustMatchLock: true
+      maximumMustMatchLock: true
+    nextCursorProperty: nextCursor
+    forbiddenQueryParamNames: [offset, page, pageNumber, limit]
+
+persistence:
+  transactionalWrites: true
+  optimisticLocking: version-field
