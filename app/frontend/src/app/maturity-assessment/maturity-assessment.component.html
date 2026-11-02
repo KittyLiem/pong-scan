@@ -256,7 +256,7 @@
 
                       <div class="mt-4">
                         <label [for]="'expl-' + question.id" class="form-label">Toelichting</label>
-                        <textarea [id]="'expl-' + question.id" rows="3" class="form-control" formControlName="explanation"
+                        <textarea [id]="'expl-' + question.id" rows="3" class="form-control" formControlName="explanation" aria-required="true"
                           [attr.aria-invalid]="showError(formFor(question.id).controls.explanation, wasSubmitted(question.id))"
                           [attr.aria-describedby]="'expl-hint-' + question.id + ' expl-error-' + question.id"></textarea>
                         <p [id]="'expl-hint-' + question.id" class="form-hint">Verplicht om de beoordeling af te ronden. Beschrijf waarop de score is gebaseerd.</p>

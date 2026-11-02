@@ -24,6 +24,7 @@ type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 export const DOMAIN_SELECTION_REQUIRED = 'Selecteer minimaal één kennisgebied om verder te gaan.';
 export const SCORE_REQUIRED = 'Selecteer een score voor deze vraag';
+export const EXPLANATION_REQUIRED = 'Geef een toelichting op de gekozen score.';
 export const CONFLICT_MESSAGE = 'Gegevens zijn intussen gewijzigd — herlaad de beoordeling om verder te gaan.';
 export const OTHER_GOAL = 'Anders';
 export const GOAL_SUGGESTIONS = [
@@ -57,6 +58,11 @@ function customTextRequiredForOther(control: AbstractControl): ValidationErrors 
   const selected = group.get('selected')?.value === true;
   const isOther = group.get('name')?.value === OTHER_GOAL;
   return selected && isOther && !String(control.value ?? '').trim() ? { server: 'Vul een eigen doeltekst in.' } : null;
+}
+
+/** Toelichting is verplicht bij opslaan; alleen spaties telt niet. */
+function explanationRequired(control: AbstractControl): ValidationErrors | null {
+  return String(control.value ?? '').trim() ? null : { server: EXPLANATION_REQUIRED };
 }
 
 function evidenceLines(value: string): string[] {
@@ -225,7 +231,7 @@ export class MaturityAssessmentComponent {
   private buildQuestionForm(question: ContentQuestion): QuestionForm {
     return this.fb.group({
       optionId: [question.answer?.optionId ?? '', Validators.required],
-      explanation: [question.answer?.explanation ?? '', Validators.maxLength(4000)],
+      explanation: [question.answer?.explanation ?? '', [explanationRequired, Validators.maxLength(4000)]],
       evidence: [(question.answer?.evidenceReferences ?? []).join('\n'), evidenceValidator],
     });
   }
@@ -252,7 +258,7 @@ export class MaturityAssessmentComponent {
   formFor(questionId: string): QuestionForm {
     let form = this.questionForms.get(questionId);
     if (!form) {
-      form = this.fb.group({ optionId: ['', Validators.required], explanation: [''], evidence: [''] });
+      form = this.fb.group({ optionId: ['', Validators.required], explanation: ['', explanationRequired], evidence: [''] });
       this.questionForms.set(questionId, form);
     }
     return form;
