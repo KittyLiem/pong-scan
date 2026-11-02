@@ -13,7 +13,8 @@ import java.util.Locale;
 
 /**
  * Minimale, afhankelijkheidsvrije PDF-writer: A4, Helvetica/Helvetica-Bold met WinAnsiEncoding (zodat é, ë, ï
- * enz. correct worden weergegeven), automatische regelafbreking en paginering met paginanummers.
+ * enz. correct worden weergegeven), automatische regelafbreking en paginering met paginanummers. Daarnaast een
+ * radargrafiek (vectorafbeelding) van scores op een schaal van 0–5, gelijk aan die in de webapplicatie.
  */
 public final class PdfWriter {
   private static final Charset WIN_ANSI = Charset.forName("windows-1252");
@@ -21,6 +22,16 @@ public final class PdfWriter {
   private static final float PAGE_HEIGHT = 842;
   private static final float MARGIN = 50;
   private static final float BOTTOM = 60;
+  private static final float CONTENT_WIDTH = PAGE_WIDTH - 2 * MARGIN;
+  private static final double MAX_SCORE = 5;
+  private static final float RADAR_RADIUS = 95;
+  private static final float RADAR_LABEL_GAP = 10;
+  private static final int RADAR_LABEL_MAX_LINES = 3;
+  private static final float RADAR_LABEL_WIDTH = CONTENT_WIDTH / 2 - RADAR_RADIUS - RADAR_LABEL_GAP - 8;
+  private static final float BAR_ROW_HEIGHT = 30;
+  /** Kleuren uit het thema: --bpc-border en --bpc-primary. */
+  private static final String BORDER_RGB = "0.851 0.824 0.882";
+  private static final String PRIMARY_RGB = "0.357 0.173 0.514";
 
   public enum Style {
     TITLE(18, true, 26), HEADING(13, true, 22), BODY(10, false, 14), SMALL(9, false, 12);
@@ -36,9 +47,26 @@ public final class PdfWriter {
     }
   }
 
-  private record Line(Style style, String text, float indent) {}
+  /** Eén score in de radargrafiek; het label wordt getoond zoals aangeleverd. */
+  public record RadarPoint(String label, double score) {}
 
-  private final List<Line> lines = new ArrayList<>();
+  private sealed interface Element permits Line, Radar {}
+
+  private record Line(Style style, String text, float indent) implements Element {}
+
+  /** Radar bij drie of meer scores; anders horizontale staven, net als in de webapplicatie. */
+  private record Radar(List<RadarPoint> points) implements Element {
+    boolean bars() {
+      return points.size() < 3;
+    }
+
+    float height() {
+      return bars() ? points.size() * BAR_ROW_HEIGHT + 8
+          : 2 * (RADAR_RADIUS + RADAR_LABEL_GAP + RADAR_LABEL_MAX_LINES * Style.SMALL.leading + 4);
+    }
+  }
+
+  private final List<Element> lines = new ArrayList<>();
 
   public PdfWriter title(String text) {
     return add(Style.TITLE, text, 0);
@@ -59,6 +87,12 @@ public final class PdfWriter {
 
   public PdfWriter small(String text) {
     return add(Style.SMALL, text, 0);
+  }
+
+  /** Radargrafiek van scores (0–5); bij minder dan drie scores worden staven getoond. */
+  public PdfWriter radar(List<RadarPoint> points) {
+    if (!points.isEmpty()) lines.add(new Radar(List.copyOf(points)));
+    return this;
   }
 
   public PdfWriter blank() {
@@ -125,7 +159,19 @@ public final class PdfWriter {
     List<StringBuilder> pages = new ArrayList<>();
     StringBuilder page = null;
     float y = 0;
-    for (Line line : lines) {
+    for (Element element : lines) {
+      if (element instanceof Radar radar) {
+        if (page == null || y - radar.height() < BOTTOM) {
+          page = new StringBuilder();
+          pages.add(page);
+          y = PAGE_HEIGHT - MARGIN;
+        }
+        if (radar.bars()) drawBars(page, radar.points(), y);
+        else drawRadar(page, radar.points(), y - radar.height() / 2);
+        y -= radar.height();
+        continue;
+      }
+      Line line = (Line) element;
       if (page == null || y - line.style.leading < BOTTOM) {
         page = new StringBuilder();
         pages.add(page);
@@ -158,7 +204,7 @@ public final class PdfWriter {
     objects.add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
     for (int index = 0; index < pageCount; index++) {
       int contentNumber = 6 + index * 2;
-      objects.add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents "
+      objects.add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /ExtGState << /GS1 << /Type /ExtGState /ca 0.25 >> >> >> /Contents "
           + contentNumber + " 0 R >>");
       String stream = pages.get(index).toString();
       objects.add("<< /Length " + stream.getBytes(StandardCharsets.US_ASCII).length + " >>\nstream\n" + stream
@@ -177,6 +223,111 @@ public final class PdfWriter {
     pdf.append("trailer\n<< /Size ").append(objects.size() + 1).append(" /Root 1 0 R >>\nstartxref\n")
         .append(xref).append("\n%%EOF\n");
     return pdf.toString().getBytes(StandardCharsets.US_ASCII);
+  }
+
+  private static void drawRadar(StringBuilder page, List<RadarPoint> points, float centerY) {
+    float centerX = MARGIN + CONTENT_WIDTH / 2;
+    int count = points.size();
+    page.append("q ").append(BORDER_RGB).append(" RG 0.75 w\n");
+    for (int level = 1; level <= MAX_SCORE; level++) {
+      float[][] ring = new float[count][];
+      for (int index = 0; index < count; index++) ring[index] = radarPoint(centerX, centerY, index, count, level);
+      path(page, ring).append("h S\n");
+    }
+    for (int index = 0; index < count; index++) {
+      float[] end = radarPoint(centerX, centerY, index, count, MAX_SCORE);
+      page.append(fmt(centerX)).append(' ').append(fmt(centerY)).append(" m ")
+          .append(fmt(end[0])).append(' ').append(fmt(end[1])).append(" l S\n");
+    }
+    float[][] shape = new float[count][];
+    for (int index = 0; index < count; index++) {
+      shape[index] = radarPoint(centerX, centerY, index, count, points.get(index).score());
+    }
+    page.append("q /GS1 gs ").append(PRIMARY_RGB).append(" rg ");
+    path(page, shape).append("h f Q\n");
+    page.append(PRIMARY_RGB).append(" RG 1.5 w ");
+    path(page, shape).append("h S\n");
+    page.append(PRIMARY_RGB).append(" rg\n");
+    for (float[] point : shape) circle(page, point[0], point[1], 2.5f);
+    page.append("Q\n");
+
+    Style style = Style.SMALL;
+    for (int index = 0; index < count; index++) {
+      double angle = angle(index, count);
+      double cos = Math.cos(angle);
+      double sin = Math.sin(angle); // schermrichting: negatief is boven
+      float labelX = (float) (centerX + (RADAR_RADIUS + RADAR_LABEL_GAP) * cos);
+      float labelY = (float) (centerY - (RADAR_RADIUS + RADAR_LABEL_GAP) * sin);
+      List<String> wrapped = labelLines(points.get(index).label(), style);
+      float block = (wrapped.size() - 1) * style.leading;
+      float baseline = sin < -0.2 ? labelY + block + 2 : sin > 0.2 ? labelY - style.size : labelY + block / 2 - 3;
+      for (String text : wrapped) {
+        float width = width(text, style);
+        float x = Math.abs(cos) < 0.2 ? labelX - width / 2 : cos > 0 ? labelX : labelX - width;
+        page.append("BT /F1 ").append(fmt(style.size)).append(" Tf ").append(fmt(x)).append(' ').append(fmt(baseline))
+            .append(" Td (").append(encode(text)).append(") Tj ET\n");
+        baseline -= style.leading;
+      }
+    }
+  }
+
+  private static void drawBars(StringBuilder page, List<RadarPoint> points, float top) {
+    Style style = Style.SMALL;
+    float y = top;
+    for (RadarPoint point : points) {
+      page.append("BT /F1 ").append(fmt(style.size)).append(" Tf ").append(fmt(MARGIN)).append(' ')
+          .append(fmt(y - 10)).append(" Td (").append(encode(point.label())).append(") Tj ET\n");
+      float barY = y - 24;
+      float filled = (float) (CONTENT_WIDTH * Math.max(0, Math.min(MAX_SCORE, point.score())) / MAX_SCORE);
+      page.append("q ").append(BORDER_RGB).append(" rg ").append(fmt(MARGIN)).append(' ').append(fmt(barY)).append(' ')
+          .append(fmt(CONTENT_WIDTH)).append(" 8 re f ").append(PRIMARY_RGB).append(" rg ").append(fmt(MARGIN))
+          .append(' ').append(fmt(barY)).append(' ').append(fmt(filled)).append(" 8 re f Q\n");
+      y -= BAR_ROW_HEIGHT;
+    }
+  }
+
+  /** Label afgebroken op woordgrenzen; meer dan {@link #RADAR_LABEL_MAX_LINES} regels wordt ingekort met een beletselteken. */
+  static List<String> labelLines(String label, Style style) {
+    List<String> wrapped = wrap(label, style, RADAR_LABEL_WIDTH);
+    if (wrapped.size() <= RADAR_LABEL_MAX_LINES) return wrapped;
+    List<String> kept = new ArrayList<>(wrapped.subList(0, RADAR_LABEL_MAX_LINES));
+    String last = kept.get(RADAR_LABEL_MAX_LINES - 1);
+    while (!last.isEmpty() && width(last + "…", style) > RADAR_LABEL_WIDTH) last = last.substring(0, last.length() - 1);
+    kept.set(RADAR_LABEL_MAX_LINES - 1, last.stripTrailing() + "…");
+    return kept;
+  }
+
+  /** Hoek per as, met de eerste as recht omhoog (zoals in de webapplicatie). */
+  private static double angle(int index, int count) {
+    return -Math.PI / 2 + 2 * Math.PI * index / count;
+  }
+
+  /** Punt op een as in PDF-coördinaten (y omhoog). */
+  private static float[] radarPoint(float centerX, float centerY, int index, int count, double value) {
+    double r = RADAR_RADIUS * Math.max(0, Math.min(MAX_SCORE, value)) / MAX_SCORE;
+    double angle = angle(index, count);
+    return new float[] {(float) (centerX + r * Math.cos(angle)), (float) (centerY - r * Math.sin(angle))};
+  }
+
+  private static StringBuilder path(StringBuilder page, float[][] points) {
+    for (int index = 0; index < points.length; index++) {
+      page.append(fmt(points[index][0])).append(' ').append(fmt(points[index][1])).append(index == 0 ? " m " : " l ");
+    }
+    return page;
+  }
+
+  /** Cirkel benaderd met vier Bézier-curves. */
+  private static void circle(StringBuilder page, float x, float y, float r) {
+    float k = 0.5523f * r;
+    page.append(fmt(x + r)).append(' ').append(fmt(y)).append(" m ")
+        .append(fmt(x + r)).append(' ').append(fmt(y + k)).append(' ').append(fmt(x + k)).append(' ').append(fmt(y + r))
+        .append(' ').append(fmt(x)).append(' ').append(fmt(y + r)).append(" c ")
+        .append(fmt(x - k)).append(' ').append(fmt(y + r)).append(' ').append(fmt(x - r)).append(' ').append(fmt(y + k))
+        .append(' ').append(fmt(x - r)).append(' ').append(fmt(y)).append(" c ")
+        .append(fmt(x - r)).append(' ').append(fmt(y - k)).append(' ').append(fmt(x - k)).append(' ').append(fmt(y - r))
+        .append(' ').append(fmt(x)).append(' ').append(fmt(y - r)).append(" c ")
+        .append(fmt(x + k)).append(' ').append(fmt(y - r)).append(' ').append(fmt(x + r)).append(' ').append(fmt(y - k))
+        .append(' ').append(fmt(x + r)).append(' ').append(fmt(y)).append(" c f\n");
   }
 
   /** Codeert tekst als WinAnsi en schrijft niet-ASCII-bytes als octale escapes (PDF blijft 7-bit). */
