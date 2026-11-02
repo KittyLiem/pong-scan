@@ -108,6 +108,40 @@ describe('MaturityAssessmentComponent', () => {
     expect(nav.textContent).toContain('0/2');
   });
 
+  it('moves to the next selected domain and only enables "Naar afronden" once every question is complete', () => {
+    const done = (id: string) => question(id, { answer: { optionId: `${id}-o3`, explanation: 'Onderbouwd', evidenceReferences: [], version: 1 } });
+    const { fixture, root } = setup(content([
+      domain('d1', { selected: true, questions: [done('q1')] }),
+      domain('d2', { order: 2, selected: true, questions: [question('q2')] }),
+      domain('d3', { order: 3, selected: true, questions: [done('q3')] }),
+    ]));
+    expect(root.querySelector('#active-domain-heading')!.textContent).toContain('Domein d1');
+    expect(root.querySelector<HTMLButtonElement>('[data-testid="to-complete"]')!.disabled).toBe(true);
+    expect(text(fixture)).toContain('Nog 1 van 3 vragen zonder score en toelichting.');
+
+    button(root, 'Volgende kennisgebied: Domein d2').click();
+    render(fixture);
+    expect(root.querySelector('#active-domain-heading')!.textContent).toContain('Domein d2');
+    expect(root.querySelector('[data-question]')!.getAttribute('data-question')).toBe('q2');
+
+    button(root, 'Volgende kennisgebied: Domein d3').click();
+    render(fixture);
+    expect(root.querySelector('#active-domain-heading')!.textContent).toContain('Domein d3');
+    expect(root.querySelector('[data-testid="next-domain"]')).toBeNull();
+    expect(root.querySelector<HTMLButtonElement>('[data-testid="to-complete"]')!.disabled).toBe(true);
+  });
+
+  it('enables "Naar afronden" when all selected questions are complete', () => {
+    const answered = question('q1', { answer: { optionId: 'q1-o3', explanation: 'Onderbouwd', evidenceReferences: [], version: 1 } });
+    const { fixture, root } = setup(content([domain('d1', { selected: true, questions: [answered] })]));
+    const toComplete = root.querySelector<HTMLButtonElement>('[data-testid="to-complete"]')!;
+    expect(toComplete.disabled).toBe(false);
+    expect(root.querySelector('#to-complete-hint')).toBeNull();
+    toComplete.click();
+    render(fixture);
+    expect(root.querySelector('#complete-heading')).toBeTruthy();
+  });
+
   it('validates the score and saves answers with the answer version, handling 409', () => {
     const existing = question('q1', { answer: { optionId: 'q1-o0', explanation: 'Oud', evidenceReferences: [], version: 3 } });
     const fresh = question('q2', { order: 2 });

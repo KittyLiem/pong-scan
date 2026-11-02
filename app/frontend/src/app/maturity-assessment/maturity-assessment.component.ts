@@ -145,6 +145,12 @@ export class MaturityAssessmentComponent {
     const domains = this.selectedDomains();
     return domains.find(domain => domain.id === this.activeDomainId()) ?? domains[0] ?? null;
   });
+  /** Het volgende geselecteerde kennisgebied na het actieve, of null bij het laatste. */
+  readonly nextDomain = computed(() => {
+    const domains = this.selectedDomains();
+    const index = domains.findIndex(domain => domain.id === this.activeDomain()?.id);
+    return index >= 0 ? domains[index + 1] ?? null : null;
+  });
   readonly allSelected = computed(() => {
     const domains = this.allDomains();
     return domains.length > 0 && domains.every(domain => this.selection().includes(domain.id));
@@ -170,7 +176,9 @@ export class MaturityAssessmentComponent {
         })),
     ),
   );
-  readonly canComplete = computed(() => this.editable() && this.totalQuestions() > 0 && this.completeQuestions() === this.totalQuestions());
+  /** Alle vragen van de geselecteerde kennisgebieden hebben een score én toelichting. */
+  readonly allQuestionsComplete = computed(() => this.totalQuestions() > 0 && this.completeQuestions() === this.totalQuestions());
+  readonly canComplete = computed(() => this.editable() && this.allQuestionsComplete());
 
   constructor() {
     inject(ActivatedRoute)
