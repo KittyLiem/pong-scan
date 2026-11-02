@@ -120,16 +120,28 @@ describe('MaturityAssessmentComponent', () => {
     expect(text(fixture)).toContain('Selecteer een score voor deze vraag');
     http.expectNone(() => true);
 
-    // nieuw antwoord: versie 0
+    // q2 met score maar zonder toelichting (alleen spaties): validatiemelding, geen request
     root.querySelector<HTMLInputElement>('#opt-q2-q2-o3')!.click();
+    const explanationQ2 = root.querySelector<HTMLTextAreaElement>('#expl-q2')!;
+    explanationQ2.value = '   ';
+    explanationQ2.dispatchEvent(new Event('input'));
+    saveQ2.click();
+    render(fixture);
+    expect(root.querySelector('#expl-error-q2')!.textContent!.trim()).toBe('Geef een toelichting op de gekozen score.');
+    expect(explanationQ2.getAttribute('aria-invalid')).toBe('true');
+    http.expectNone(() => true);
+
+    // nieuw antwoord: versie 0
+    explanationQ2.value = ' Gebaseerd op beleid ';
+    explanationQ2.dispatchEvent(new Event('input'));
     const evidence = root.querySelector<HTMLTextAreaElement>('#evid-q2')!;
     evidence.value = 'beleid.pdf\n\n https://intranet/x ';
     evidence.dispatchEvent(new Event('input'));
     saveQ2.click();
     const put2 = http.expectOne('/v1/scans/s1/answers/q2');
     expect(put2.request.method).toBe('PUT');
-    expect(put2.request.body).toEqual({ optionId: 'q2-o3', explanation: '', evidenceReferences: ['beleid.pdf', 'https://intranet/x'], version: 0 });
-    put2.flush({ questionId: 'q2', optionId: 'q2-o3', explanation: '', evidenceReferences: ['beleid.pdf', 'https://intranet/x'], version: 1, progress: 100, scanStatus: 'in-progress', scanVersion: 2 });
+    expect(put2.request.body).toEqual({ optionId: 'q2-o3', explanation: 'Gebaseerd op beleid', evidenceReferences: ['beleid.pdf', 'https://intranet/x'], version: 0 });
+    put2.flush({ questionId: 'q2', optionId: 'q2-o3', explanation: 'Gebaseerd op beleid', evidenceReferences: ['beleid.pdf', 'https://intranet/x'], version: 1, progress: 100, scanStatus: 'in-progress', scanVersion: 2 });
     render(fixture);
     expect(text(fixture)).toContain('Opgeslagen');
     expect(text(fixture)).toContain('2 van 2 vragen beantwoord');
@@ -191,8 +203,11 @@ describe('MaturityAssessmentComponent', () => {
     const fresh = question('q1');
     const { fixture, http, root } = setup(content([domain('d1', { selected: true, questions: [fresh] })]), { version: 3 });
     root.querySelector<HTMLInputElement>('#opt-q1-q1-o3')!.click();
+    const explanation = root.querySelector<HTMLTextAreaElement>('#expl-q1')!;
+    explanation.value = 'Onderbouwing';
+    explanation.dispatchEvent(new Event('input'));
     button(root, 'Antwoord opslaan').click();
-    http.expectOne('/v1/scans/s1/answers/q1').flush({ questionId: 'q1', optionId: 'q1-o3', explanation: '', evidenceReferences: [], version: 1, progress: 100, scanStatus: 'in-progress', scanVersion: 4 });
+    http.expectOne('/v1/scans/s1/answers/q1').flush({ questionId: 'q1', optionId: 'q1-o3', explanation: 'Onderbouwing', evidenceReferences: [], version: 1, progress: 100, scanStatus: 'content-complete', scanVersion: 4 });
     expect(fixture.componentInstance.scan()!.version).toBe(4);
 
     fixture.componentInstance.goTo('domains');
@@ -243,6 +258,7 @@ describe('MaturityAssessmentComponent', () => {
     const { fixture, http } = setup(content([domain('d1', { selected: true, questions: [q] })]));
     const component = fixture.componentInstance;
     component.formFor(q.id).controls.optionId.setValue('q1-o3');
+    component.formFor(q.id).controls.explanation.setValue('Onderbouwing');
     component.saveQuestion(q);
     http.expectOne('/v1/scans/s1/answers/q1').flush({ title: 'Ongeldig', errors: [
       { field: 'optionId', message: 'Optie ongeldig' },
