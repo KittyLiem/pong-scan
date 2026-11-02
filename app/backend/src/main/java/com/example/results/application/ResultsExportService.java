@@ -49,6 +49,10 @@ public class ResultsExportService {
     pdf.small("De totaalscore is het gemiddelde van alle beantwoorde vragen in de geselecteerde kennisgebieden.");
 
     pdf.heading("Scores per kennisgebied");
+    pdf.radar(results.domainScores().stream()
+        .map(score -> new PdfWriter.RadarPoint(score.domainName() + " (" + number(score.score()) + ")", score.score()))
+        .toList());
+    pdf.blank();
     for (ResultsDtos.DomainScore score : results.domainScores()) {
       pdf.text(score.domainName() + ": " + number(score.score()) + " - niveau " + score.maturityLevel().level()
           + " (" + score.maturityLevel().label() + ")");
