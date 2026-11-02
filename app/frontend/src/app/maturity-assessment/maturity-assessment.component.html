@@ -292,8 +292,19 @@
                   }
                 </ol>
 
-                <div class="mt-6 flex justify-end">
-                  <button type="button" class="btn btn-secondary" (click)="goTo('complete')">Naar afronden →</button>
+                <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
+                  @if (nextDomain(); as next) {
+                    <button type="button" class="btn btn-primary" data-testid="next-domain" (click)="selectDomain(next.id)">
+                      Volgende kennisgebied: {{ next.name }} →
+                    </button>
+                  }
+                  <button type="button" class="btn btn-secondary" data-testid="to-complete" [disabled]="!allQuestionsComplete()"
+                    aria-describedby="to-complete-hint" (click)="goTo('complete')">Naar afronden →</button>
+                  @if (!allQuestionsComplete()) {
+                    <p id="to-complete-hint" class="w-full text-right text-sm text-secondary-color">
+                      Nog {{ totalQuestions() - completeQuestions() }} van {{ totalQuestions() }} vragen zonder score en toelichting.
+                    </p>
+                  }
                 </div>
               } @else {
                 <div class="card p-5" role="status">Geen geselecteerde kennisgebieden. Ga terug naar stap 1.</div>
