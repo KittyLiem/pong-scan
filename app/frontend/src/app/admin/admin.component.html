@@ -47,6 +47,10 @@
                             <span class="ml-1 text-xs" [class]="question.active ? 'text-success-text-emphasis' : 'text-secondary-color'">({{ question.active ? 'actief' : 'inactief' }})</span>
                           </p>
                           <p class="text-sm text-secondary-color">{{ question.text }}</p>
+                          <div class="mt-1 text-sm">
+                            <span class="font-medium">Uitgebreide toelichting (optioneel)</span>
+                            <p class="mt-1 min-h-6 rounded border border-border bg-secondary-bg px-2 py-1 whitespace-pre-line">{{ question.explanation ?? '' }}</p>
+                          </div>
                         </div>
                         <div class="flex flex-wrap gap-2">
                           <button type="button" class="btn btn-secondary" (click)="editQuestion(domain, question)">Wijzigen<span class="sr-only"> vraag {{ question.title }}</span></button>
