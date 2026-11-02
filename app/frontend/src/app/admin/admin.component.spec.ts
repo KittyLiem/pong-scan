@@ -31,13 +31,13 @@ const domains: AdminDomain[] = [
   },
 ];
 
-function setup() {
+function setup(items: AdminDomain[] = domains) {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({ imports: [AdminComponent], providers: [provideHttpClient(), provideHttpClientTesting()] });
   const fixture = TestBed.createComponent(AdminComponent);
   const http = TestBed.inject(HttpTestingController);
   fixture.detectChanges();
-  http.expectOne('/v1/admin/domains?pageSize=20').flush({ items: domains, nextCursor: 'next' });
+  http.expectOne('/v1/admin/domains?pageSize=20').flush({ items, nextCursor: 'next' });
   render(fixture);
   return { fixture, http, root: fixture.nativeElement as HTMLElement };
 }
@@ -60,6 +60,15 @@ describe('AdminComponent', () => {
     http.expectOne('/v1/admin/domains?pageSize=20&cursor=next').flush({ items: [{ ...domains[0], id: 'd2', name: 'Governance', questions: [] }], nextCursor: null });
     render(fixture);
     expect(text(fixture)).toContain('Governance');
+  });
+
+  it('always shows the question explanation box in the list, empty when there is no explanation', () => {
+    const empty = setup().fixture;
+    expect(text(empty)).toContain('Uitgebreide toelichting (optioneel)');
+    expect(text(empty)).not.toContain('null');
+    const withExplanation = [{ ...domains[0], questions: [{ ...domains[0].questions![0], explanation: 'Een visie beschrijft de ambitie.' }] }];
+    const { fixture } = setup(withExplanation);
+    expect(text(fixture)).toContain('Uitgebreide toelichting (optioneel)Een visie beschrijft de ambitie.');
   });
 
   it('validates the option score between 0 and 5 and creates the option', () => {
