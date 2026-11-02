@@ -236,4 +236,17 @@ describe('radarGeometry', () => {
     expect(geometry.axes[1]).toMatchObject({ pointX: 100, pointY: 100 });
     expect(geometry.rings.length).toBe(5);
   });
+
+  it('widens the viewBox so long labels fit', () => {
+    const score = (domainName: string) => ({ domainId: domainName, domainName, score: 3, maturityLevel: { level: 3, label: '' } });
+    const short = radarGeometry([score('A'), score('B'), score('C'), score('D')]);
+    const long = radarGeometry([score('A'), score('Datageletterdheid en specialistische competenties'), score('C'), score('Data-eigenaarschap en verantwoording')]);
+    const [shortX, , shortWidth] = short.viewBox.split(' ').map(Number);
+    const [minX, , width] = long.viewBox.split(' ').map(Number);
+
+    expect(width).toBeGreaterThan(shortWidth);
+    expect(minX).toBeLessThan(shortX);
+    // Rechterlabel (index 1, anchor start): eindigt binnen de viewBox
+    expect(long.axes[1].labelX + 'Datageletterdheid en specialistische competenties (3,0)'.length * 7.2).toBeLessThanOrEqual(minX + width);
+  });
 });
