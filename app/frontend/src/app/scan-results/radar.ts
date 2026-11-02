@@ -1,4 +1,5 @@
 import { DomainScore } from '../core/model/results';
+import { formatScore } from '../shared/labels';
 
 export interface RadarAxis {
   label: string;
@@ -14,7 +15,7 @@ export interface RadarAxis {
 
 export interface RadarGeometry {
   size: number;
-  /** Extra horizontale ruimte zodat lange domeinnamen niet worden afgekapt. */
+  /** Breed genoeg voor de geschatte breedte van alle labels, zodat lange domeinnamen niet worden afgekapt. */
   viewBox: string;
   rings: string[];
   axes: RadarAxis[];
@@ -22,9 +23,17 @@ export interface RadarGeometry {
 }
 
 const MAX_SCORE = 5;
+const FONT_SIZE = 12;
+/** Ruwe gemiddelde tekenbreedte; liever iets te ruim dan afgekapt. */
+const CHAR_WIDTH = FONT_SIZE * 0.6;
+
+/** Tekst van een aslabel, zoals getoond in de template. */
+export function radarLabelText(axis: Pick<RadarAxis, 'label' | 'score'>): string {
+  return `${axis.label} (${formatScore(axis.score)})`;
+}
 
 /** Berekent een radarvisualisatie (inline SVG) voor domeinscores op een schaal van 0–5. */
-export function radarGeometry(scores: DomainScore[], size = 420, padding = 70, sidePadding = 110): RadarGeometry {
+export function radarGeometry(scores: DomainScore[], size = 420, padding = 70, minSidePadding = 20): RadarGeometry {
   const center = size / 2;
   const radius = center - padding;
   const count = scores.length;
@@ -61,5 +70,13 @@ export function radarGeometry(scores: DomainScore[], size = 420, padding = 70, s
     };
   });
 
-  return { size, viewBox: `${-sidePadding} 0 ${size + 2 * sidePadding} ${size}`, rings, axes, polygon: axes.map(axis => `${axis.pointX},${axis.pointY}`).join(' ') };
+  const extents = axes.map(axis => {
+    const width = radarLabelText(axis).length * CHAR_WIDTH;
+    const left = axis.anchor === 'start' ? axis.labelX : axis.anchor === 'end' ? axis.labelX - width : axis.labelX - width / 2;
+    return { left, right: left + width };
+  });
+  const minX = Math.min(-minSidePadding, ...extents.map(extent => extent.left - minSidePadding));
+  const maxX = Math.max(size + minSidePadding, ...extents.map(extent => extent.right + minSidePadding));
+
+  return { size, viewBox: `${round(minX)} 0 ${round(maxX - minX)} ${size}`, rings, axes, polygon: axes.map(axis => `${axis.pointX},${axis.pointY}`).join(' ') };
 }

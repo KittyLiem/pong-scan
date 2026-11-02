@@ -86,7 +86,7 @@
           </div>
           <figcaption class="mt-2 text-xs text-secondary-color">Scores per kennisgebied (0–5). Bij minder dan drie kennisgebieden wordt geen radar getoond. De tabel bevat dezelfde gegevens.</figcaption>
         } @else {
-        <svg [attr.viewBox]="radar().viewBox" class="h-auto w-full max-w-xl" role="img" [attr.aria-label]="radarLabel()" aria-describedby="domain-score-table" data-testid="radar">
+        <svg [attr.viewBox]="radar().viewBox" class="h-auto w-full max-w-xl lg:max-w-3xl" role="img" [attr.aria-label]="radarLabel()" aria-describedby="domain-score-table" data-testid="radar">
           <g fill="none" stroke="var(--bpc-border)" stroke-width="1">
             @for (ring of radar().rings; track $index) { <polygon [attr.points]="ring" /> }
             @for (axis of radar().axes; track axis.label) { <line [attr.x1]="radar().size / 2" [attr.y1]="radar().size / 2" [attr.x2]="axis.x2" [attr.y2]="axis.y2" /> }
