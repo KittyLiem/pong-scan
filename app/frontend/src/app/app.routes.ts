@@ -2,12 +2,25 @@ import { Routes } from '@angular/router';
 import { AccountAccessComponent } from './account-access/account-access.component';
 import { adminGuard } from './core/auth/admin.guard';
 import { authenticatedGuard } from './core/auth/auth.guard';
+import { fullAccountGuard, quickscanAccountGuard, quickscanLandingGuard } from './core/auth/quickscan.guards';
 
 export const routes: Routes = [
   { path: 'start', component: AccountAccessComponent, title: 'Aanmelden en organisatie starten · Pong data maturity scan' },
   {
+    path: 'quickscan',
+    canActivate: [quickscanLandingGuard],
+    loadComponent: () => import('./quickscan/quickscan-landing.component').then(m => m.QuickscanLandingComponent),
+    title: 'Quickscan · Pong data maturity scan',
+  },
+  {
+    path: 'quickscan/start',
+    canActivate: [authenticatedGuard, quickscanAccountGuard],
+    loadComponent: () => import('./quickscan/quickscan-start.component').then(m => m.QuickscanStartComponent),
+    title: 'Quickscan openen · Pong data maturity scan',
+  },
+  {
     path: 'scans',
-    canActivate: [authenticatedGuard],
+    canActivate: [authenticatedGuard, fullAccountGuard],
     loadComponent: () => import('./scan-overview/scan-overview.component').then(m => m.ScanOverviewComponent),
     title: 'Scanoverzicht · Pong data maturity scan',
   },

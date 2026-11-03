@@ -21,14 +21,21 @@ export class AccountAccessComponent {
   readonly organizations = inject(OrganizationService);
   private readonly router = inject(Router);
   private readonly fb = inject(NonNullableFormBuilder);
-  private readonly returnUrl = safeInternalRoute(inject(ActivatedRoute).snapshot.queryParamMap.get('returnUrl'));
+  private readonly query = inject(ActivatedRoute).snapshot.queryParamMap;
+  private readonly returnUrl = safeInternalRoute(this.query.get('returnUrl'));
+  /** Via de quickscan-landingspagina: registratie levert een quickscan-account op. */
+  readonly quickscanEntry = this.query.get('entry') === 'quickscan';
 
-  readonly mode = signal<Mode>('login');
+  readonly mode = signal<Mode>(this.quickscanEntry ? 'register' : 'login');
   readonly showPassword = signal(false);
   readonly busy = signal(false);
   readonly submitted = signal(false);
   readonly problem = signal<Problem | null>(null);
-  readonly notice = signal<string | null>(this.returnUrl && this.returnUrl !== '/scans' ? 'Meld je (opnieuw) aan om verder te gaan waar je gebleven was.' : null);
+  readonly notice = signal<string | null>(
+    this.returnUrl && this.returnUrl !== '/scans' && !this.returnUrl.startsWith('/quickscan')
+      ? 'Meld je (opnieuw) aan om verder te gaan waar je gebleven was.'
+      : null,
+  );
 
   readonly loadingOrganizations = signal(false);
   readonly organizationsProblem = signal<Problem | null>(null);
@@ -81,7 +88,7 @@ export class AccountAccessComponent {
     const { accountIdentifier, credential } = this.form.getRawValue();
     const email = accountIdentifier.trim();
     const login$: Observable<Session> = this.mode() === 'register'
-      ? this.auth.register(email, credential).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
+      ? this.auth.register(email, credential, this.quickscanEntry ? 'quickscan' : undefined).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
       : this.auth.login(email, credential, this.returnUrl);
 
     this.busy.set(true);

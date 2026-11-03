@@ -37,6 +37,7 @@ export function scan(overrides: Partial<Scan> = {}): Scan {
     name: 'Nulmeting 2026',
     assessmentPeriod: 'Q2 2026',
     status: 'concept',
+    kind: 'full',
     progress: 0,
     revision: 1,
     revisionOf: null,

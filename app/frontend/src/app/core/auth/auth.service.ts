@@ -28,6 +28,7 @@ export class AuthService {
   readonly isAdmin = computed(() => this.member()?.role === 'admin');
   /** Quickscan bestaat alleen op het centrale platform, niet op tenant-installaties. */
   readonly quickscanEnabled = computed(() => this.member()?.features?.quickscan === true);
+  readonly isQuickscanAccount = computed(() => this.member()?.plan === 'quickscan');
 
   /** Token aanwezig en (voor zover bekend) niet verlopen. */
   hasValidSession(now = Date.now()): boolean {
@@ -35,9 +36,11 @@ export class AuthService {
     return this.accessToken() !== null && (expiresAt === null || expiresAt > now);
   }
 
-  register(accountIdentifier: string, credential: string): Observable<Member> {
+  /** Met `entry: 'quickscan'` ontstaat een quickscan-account. */
+  register(accountIdentifier: string, credential: string, entry?: 'quickscan'): Observable<Member> {
+    const body = entry ? { accountIdentifier, credential, entry } : { accountIdentifier, credential };
     return this.http
-      .post<Member>('/v1/auth/registrations', { accountIdentifier, credential })
+      .post<Member>('/v1/auth/registrations', body)
       .pipe(mapProblem('Account aanmaken mislukt'));
   }
 

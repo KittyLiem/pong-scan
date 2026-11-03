@@ -28,6 +28,8 @@ const results: ScanResults = {
   ],
   goals: [{ name: 'Anders', priority: 'high', customText: 'Minder handwerk' }],
   availablePrioritySetRevisions: [1],
+  kind: 'full',
+  notAssessedDomains: [],
   priorities: { setRevision: 1, items: [{ developmentPointId: 'p2', impact: 'high', urgency: 'low', selected: true }] },
 };
 
@@ -248,5 +250,20 @@ describe('radarGeometry', () => {
     expect(minX).toBeLessThan(shortX);
     // Rechterlabel (index 1, anchor start): eindigt binnen de viewBox
     expect(long.axes[1].labelX + 'Datageletterdheid en specialistische competenties (3,0)'.length * 7.2).toBeLessThanOrEqual(minX + width);
+  });
+
+  it('labels a quickscan, names the domains a full scan adds and offers no revision', () => {
+    const { fixture, http, root } = setup();
+    http.expectOne('/v1/scans/s1/results').flush({ ...results, kind: 'quick', notAssessedDomains: ['Technologie', 'Processen'] });
+    render(fixture);
+    expect(root.querySelector('[data-testid="quickscan-label"]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="quickscan-upgrade"]')!.textContent).toContain('Technologie, Processen');
+    expect(root.querySelector('#revision-heading')).toBeNull();
+  });
+
+  it('offers a revision for a full scan', () => {
+    const { root } = loaded();
+    expect(root.querySelector('[data-testid="quickscan-upgrade"]')).toBeNull();
+    expect(root.querySelector('#revision-heading')).not.toBeNull();
   });
 });

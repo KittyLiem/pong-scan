@@ -1175,8 +1175,16 @@ components:
             $ref: '#/components/schemas/PriorityItem'
     ScanResults:
       type: object
-      required: [scanId, scanName, assessmentPeriod, completedAt, totalScore, maturityLevel, domainScores, developmentPoints, goals, priorities, availablePrioritySetRevisions]
+      required: [scanId, scanName, assessmentPeriod, completedAt, totalScore, maturityLevel, domainScores, developmentPoints, goals, priorities, availablePrioritySetRevisions, kind, notAssessedDomains]
       properties:
+        kind:
+          type: string
+          enum: [full, quick]
+        notAssessedDomains:
+          type: array
+          description: Alleen bij een quickscan - actieve kennisgebieden die een volledige scan daarnaast beoordeelt.
+          items:
+            type: string
         scanId:
           type: string
           format: uuid

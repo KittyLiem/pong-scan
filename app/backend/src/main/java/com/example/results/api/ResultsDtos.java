@@ -31,5 +31,8 @@ public final class ResultsDtos {
       List<DevelopmentPoint> developmentPoints,
       List<OrganizationGoal> goals,
       ActionOverview priorities,
-      List<Integer> availablePrioritySetRevisions) {}
+      List<Integer> availablePrioritySetRevisions,
+      String kind,
+      /** Alleen bij een quickscan: actieve kennisgebieden die een volledige scan daarnaast beoordeelt. */
+      List<String> notAssessedDomains) {}
 }
