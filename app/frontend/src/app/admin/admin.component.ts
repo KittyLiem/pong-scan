@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { AbstractControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Observable, finalize } from 'rxjs';
 import { AdminContentService } from '../core/admin/admin-content.service';
+import { AuthService } from '../core/auth/auth.service';
 import { SubmissionKey } from '../core/http/idempotency';
 import { Problem, applyServerErrors } from '../core/http/problem';
 import { AdminDomain, AdminOption, AdminQuestion } from '../core/model/admin';
@@ -23,6 +24,11 @@ function byOrder<T extends { order: number }>(items: T[] | undefined): T[] {
   return [...(items ?? [])].sort((a, b) => a.order - b.order);
 }
 
+/** Zelfde regel als de backend: actief, met een actieve vraag die een beschikbare optie heeft. */
+function hasActiveContent(domain: AdminDomain): boolean {
+  return domain.active && (domain.questions ?? []).some(question => question.active && (question.options ?? []).some(option => option.available));
+}
+
 @Component({
   selector: 'app-admin',
   imports: [ReactiveFormsModule, NgTemplateOutlet, FieldErrorComponent],
@@ -31,6 +37,7 @@ function byOrder<T extends { order: number }>(items: T[] | undefined): T[] {
 export class AdminComponent {
   private readonly api = inject(AdminContentService);
   private readonly fb = inject(NonNullableFormBuilder);
+  readonly quickscanEnabled = inject(AuthService).quickscanEnabled;
 
   readonly domains = signal<AdminDomain[]>([]);
   readonly nextCursor = signal<string | null>(null);
@@ -55,6 +62,18 @@ export class AdminComponent {
     description: ['', [Validators.maxLength(2000)]],
     order: [1, [Validators.required, Validators.min(0), Validators.max(10000), integer]],
     active: [true],
+    inQuickscan: [false],
+  });
+
+  /** Kennisgebieden in de quickscan, met de gekozen gebieden die (nog) geen bruikbare inhoud hebben. */
+  readonly quickscanSummary = computed(() => {
+    const all = this.domains();
+    const included = byOrder(all.filter(domain => domain.inQuickscan));
+    return {
+      included: included.length,
+      total: all.length,
+      withoutContent: included.filter(domain => !hasActiveContent(domain)).map(domain => domain.name),
+    };
   });
 
   readonly questionForm = this.fb.group({
@@ -128,6 +147,7 @@ export class AdminComponent {
       description: domain?.description ?? '',
       order: domain?.order ?? this.domains().length + 1,
       active: domain?.active ?? true,
+      inQuickscan: domain?.inQuickscan ?? false,
     });
     this.open({ kind: 'domain', domain });
   }
@@ -179,7 +199,15 @@ export class AdminComponent {
 
     if (editor.kind === 'domain') {
       const v = this.domainForm.getRawValue();
-      const input = { name: v.name.trim(), description: optional(v.description), order: Number(v.order), active: v.active, version: editor.domain?.version ?? 0 };
+      const input = {
+        name: v.name.trim(),
+        description: optional(v.description),
+        order: Number(v.order),
+        active: v.active,
+        version: editor.domain?.version ?? 0,
+        // Zonder quickscan op deze installatie wordt het veld niet meegestuurd en blijft de waarde staan.
+        ...(this.quickscanEnabled() ? { inQuickscan: v.inQuickscan } : {}),
+      };
       request = editor.domain ? this.api.updateDomain(editor.domain.id, input) : this.api.createDomain(input, this.createKey.for(input));
       apply = result => this.mergeDomain(result as AdminDomain);
     } else if (editor.kind === 'question') {

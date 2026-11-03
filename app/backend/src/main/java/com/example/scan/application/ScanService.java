@@ -98,14 +98,19 @@ public class ScanService {
   }
 
   /**
-   * Maakt een quickscan met alle kennisgebieden van de actieve inhoud geselecteerd. De aanroeper bewaakt de limiet
-   * per account; de quota per organisatie gelden ook hier.
+   * Maakt een quickscan met alle door de beheerder gekozen kennisgebieden geselecteerd (de selectie ligt vast). De
+   * aanroeper bewaakt de limiet per account; de quota per organisatie gelden ook hier. De vlag "verplicht" geldt
+   * alleen voor volledige scans.
    */
   @Transactional
   public ScanDtos.Scan createQuick(UUID memberId, UUID organizationId) {
     lockOrganization(memberId, organizationId);
     checkQuota(organizationId);
-    List<ActiveContentService.ActiveDomain> content = loadContent();
+    List<ActiveContentService.ActiveDomain> content = activeContent.loadForQuickscan();
+    if (content.isEmpty()) {
+      throw ApiException.unprocessable("Quickscan niet beschikbaar",
+          "Er is nog geen kennisgebied met actieve inhoud voor de quickscan gekozen.");
+    }
     String period = String.valueOf(OffsetDateTime.now(ZoneOffset.UTC).getYear());
     ScanEntity scan = newScan(organizationId, "Quickscan", period, ScanEntity.KIND_QUICK, null, null);
     scan.selectedDomainIds.addAll(snapshot(scan.id, content).values());
@@ -246,6 +251,11 @@ public class ScanService {
     }
     if (input.selectedDomainIds() != null) {
       Set<UUID> selected = new LinkedHashSet<>(input.selectedDomainIds());
+      // De beoordeling stuurt de selectie mee bij iedere wijziging; alleen een afwijkende selectie wordt geweigerd.
+      if (scan.isQuick() && !selected.equals(scan.selectedDomainIds)) {
+        throw new ApiException(422, "Selectie ligt vast", "De kennisgebieden van een quickscan kunnen niet worden gewijzigd.",
+            List.of(new Problem.FieldError("selectedDomainIds", "kan bij een quickscan niet worden gewijzigd")));
+      }
       long known = SnapshotDomainEntity.count("scanId = ?1 and id in ?2", scan.id, selected);
       if (known != selected.size()) {
         throw new ApiException(422, "Ongeldige selectie", "Een of meer kennisgebieden horen niet bij deze scan.",
