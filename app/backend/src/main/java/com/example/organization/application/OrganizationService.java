@@ -1,5 +1,6 @@
 package com.example.organization.application;
 
+import com.example.account.domain.MemberEntity;
 import com.example.audit.AuditService;
 import com.example.common.ApiException;
 import com.example.common.Hashing;
@@ -47,6 +48,14 @@ public class OrganizationService {
         throw ApiException.idempotencyConflict();
       }
       return toResponse(replay.get());
+    }
+    if (MemberEntity.isQuickscan(memberId)) {
+      MemberEntity.lock(memberId);
+      if (OrganizationEntity.count("id in (" + OrganizationEntity.ACCESSIBLE_IDS + ")",
+          Parameters.with("memberId", memberId)) > 0) {
+        audit.failure(memberId, "quickscan.denied", "member", memberId, null);
+        throw ApiException.forbidden("Een quickscan-account heeft één organisatie.");
+      }
     }
 
     OrganizationEntity organization = new OrganizationEntity();

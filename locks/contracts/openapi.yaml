@@ -111,6 +111,29 @@ paths:
                 $ref: '#/components/schemas/Organization'
         default:
           $ref: '#/components/responses/Problem'
+  /v1/quickscan:
+    put:
+      operationId: openQuickscan
+      summary: Quickscan openen of aanmaken
+      description: >-
+        Alleen voor quickscan-accounts (403 voor andere accounts). Idempotent: geeft de bestaande quickscan (200) of
+        maakt hem aan (201) zolang de limiet per account dat toelaat. 409 als er nog geen organisatie is; 404 als de
+        quickscan op deze installatie uit staat.
+      responses:
+        '200':
+          description: Bestaande quickscan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        '201':
+          description: Quickscan aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        default:
+          $ref: '#/components/responses/Problem'
   /v1/models/active:
     get:
       operationId: getActiveModel
@@ -626,9 +649,13 @@ components:
           format: password
           minLength: 8
           maxLength: 128
+        entry:
+          type: [string, 'null']
+          enum: [quickscan, null]
+          description: Registratie via /quickscan levert een quickscan-account op (422 als de quickscan uit staat).
     Member:
       type: object
-      required: [id, accountIdentifier, role]
+      required: [id, accountIdentifier, role, plan, features]
       properties:
         id:
           type: string
@@ -638,6 +665,15 @@ components:
         role:
           type: string
           enum: [member, admin]
+        plan:
+          type: string
+          enum: [full, quickscan]
+        features:
+          type: object
+          required: [quickscan]
+          properties:
+            quickscan:
+              type: boolean
     SessionInput:
       type: object
       required: [accountIdentifier, credential]
@@ -817,7 +853,7 @@ components:
           enum: [copy, new-revision]
     Scan:
       type: object
-      required: [id, organizationId, name, assessmentPeriod, status, progress, revision, selectedDomainIds, version, createdAt, updatedAt, goals]
+      required: [id, organizationId, name, assessmentPeriod, status, kind, progress, revision, selectedDomainIds, version, createdAt, updatedAt, goals]
       properties:
         id:
           type: string
@@ -832,6 +868,9 @@ components:
         status:
           type: string
           enum: [concept, in-progress, content-complete, completed]
+        kind:
+          type: string
+          enum: [full, quick]
         progress:
           type: integer
           minimum: 0

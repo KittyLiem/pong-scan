@@ -28,12 +28,15 @@ public class ScanEntity extends PanacheEntityBase {
   public static final String IN_PROGRESS = "in-progress";
   public static final String CONTENT_COMPLETE = "content-complete";
   public static final String COMPLETED = "completed";
+  public static final String KIND_FULL = "full";
+  public static final String KIND_QUICK = "quick";
 
   @Id public UUID id;
   @Column(name = "organization_id", nullable = false) public UUID organizationId;
   @Column(nullable = false) public String name;
   @Column(name = "assessment_period", nullable = false) public String assessmentPeriod;
   @Column(nullable = false) public String status;
+  @Column(nullable = false) public String kind = KIND_FULL;
   @Column(nullable = false) public int progress;
   @Column(nullable = false) public int revision = 1;
   @Column(name = "revision_of") public UUID revisionOf;
@@ -62,6 +65,10 @@ public class ScanEntity extends PanacheEntityBase {
 
   public boolean isCompleted() {
     return COMPLETED.equals(status);
+  }
+
+  public boolean isQuick() {
+    return KIND_QUICK.equals(kind);
   }
 
   public static Optional<ScanEntity> byOrganizationAndIdempotencyKey(UUID organizationId, String keyHash) {
