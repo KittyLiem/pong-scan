@@ -2,12 +2,12 @@
   <div class="grid gap-10 lg:grid-cols-5 lg:items-start">
     <header class="lg:col-span-2">
       <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-content" aria-hidden="true">✓</div>
-      <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">Start met de datavolwassenheidsscan</h1>
+      <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">{{ quickscanEntry ? 'Start de quickscan' : 'Start met de datavolwassenheidsscan' }}</h1>
       <p class="mt-4 leading-7 text-secondary-color">Meld je aan, leg de organisatiecontext vast en beoordeel de datavolwassenheid van je organisatie.</p>
       <ol class="mt-8 space-y-3 text-sm">
         <li [class.font-semibold]="stage() === 'account'"><span aria-hidden="true">1.</span> Aanmelden of account aanmaken</li>
         <li [class.font-semibold]="stage() === 'organization'"><span aria-hidden="true">2.</span> Organisatiecontext vastleggen</li>
-        <li><span aria-hidden="true">3.</span> Scan starten vanuit het scanoverzicht</li>
+        <li><span aria-hidden="true">3.</span> {{ quickscanEntry ? 'Quickscan invullen' : 'Scan starten vanuit het scanoverzicht' }}</li>
       </ol>
     </header>
 
@@ -107,7 +107,11 @@
         @case ('ready') {
           <h2 id="start-heading" class="text-2xl font-semibold">Je bent aangemeld</h2>
           <p class="mt-2">Organisatie: <strong>{{ organizations.current()?.name }}</strong></p>
-          <a routerLink="/scans" class="btn btn-primary mt-5">Naar het scanoverzicht</a>
+          @if (auth.isQuickscanAccount()) {
+            <a routerLink="/quickscan/start" class="btn btn-primary mt-5">Naar je quickscan</a>
+          } @else {
+            <a routerLink="/scans" class="btn btn-primary mt-5">Naar het scanoverzicht</a>
+          }
         }
       }
     </section>

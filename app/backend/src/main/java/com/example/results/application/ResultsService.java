@@ -1,6 +1,7 @@
 package com.example.results.application;
 
 import com.example.common.ApiException;
+import com.example.content.domain.DomainEntity;
 import com.example.priority.domain.DevelopmentPriorityEntity;
 import com.example.priority.domain.PrioritySetEntity;
 import com.example.results.api.ResultsDtos;
@@ -15,7 +16,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -91,8 +94,19 @@ public class ResultsService {
     List<ResultsDtos.OrganizationGoal> goals = scan.goals.stream()
         .map(goal -> new ResultsDtos.OrganizationGoal(goal.name, goal.priority, goal.customText)).toList();
     ResultsDtos.ScanResults results = new ResultsDtos.ScanResults(scan.id, scan.name, scan.assessmentPeriod,
-        scan.completedAt, total, level(total), domainScores, points, goals, priorities(scan.id, prioritySetRevision), availableRevisions(scan.id));
+        scan.completedAt, total, level(total), domainScores, points, goals, priorities(scan.id, prioritySetRevision), availableRevisions(scan.id),
+        scan.kind, scan.isQuick() ? notAssessedDomains(snapshot) : List.of());
     return new Computed(scan, results);
+  }
+
+  /** Actieve kennisgebieden die niet in de snapshot van de (quick)scan zitten, in beheervolgorde. */
+  private static List<String> notAssessedDomains(ScanContentService.Snapshot snapshot) {
+    Set<UUID> assessed = new HashSet<>();
+    snapshot.domains().forEach(domain -> assessed.add(domain.sourceId));
+    return DomainEntity.<DomainEntity>list("active = true order by displayOrder, id").stream()
+        .filter(domain -> !assessed.contains(domain.id))
+        .map(domain -> domain.name)
+        .toList();
   }
 
   public static ResultsDtos.ActionOverview latestPriorities(UUID scanId) {

@@ -154,4 +154,18 @@ describe('AccountAccessComponent', () => {
     render(fixture);
     expect(root.querySelector<HTMLInputElement>('#password')!.type).toBe('text');
   });
+
+  it('registers a quickscan account when coming from the quickscan landing page', () => {
+    const { fixture, navigate, http } = setup({ entry: 'quickscan', returnUrl: '/quickscan/start' });
+    expect(text(fixture)).toContain('Start de quickscan');
+    expect(text(fixture)).not.toContain('Meld je (opnieuw) aan');
+    fill(fixture, 'nieuw@pong.example', 'wachtwoord123');
+
+    const registration = http.expectOne('/v1/auth/registrations');
+    expect(registration.request.body).toEqual({ accountIdentifier: 'nieuw@pong.example', credential: 'wachtwoord123', entry: 'quickscan' });
+    registration.flush({ ...session().member, plan: 'quickscan' });
+    http.expectOne('/v1/auth/sessions').flush(session({ desiredRoute: '/quickscan/start' }));
+    http.expectOne('/v1/organizations').flush({ items: [organization] });
+    expect(navigate).toHaveBeenCalledWith('/quickscan/start');
+  });
 });

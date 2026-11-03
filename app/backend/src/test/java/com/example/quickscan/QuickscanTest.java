@@ -20,6 +20,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -137,6 +140,29 @@ class QuickscanTest {
     } finally {
       for (String id : chosen) execute("update domains set in_quickscan = true where id = ?", id);
     }
+  }
+
+  @Test
+  void resultsAndPdfOfAQuickscanNameTheDomainsAFullScanAdds() throws Exception {
+    String token = quickscanToken();
+    Api.createOrganization(token);
+    String scanId = Api.as(token).when().put("/v1/quickscan").then().statusCode(201).extract().path("id");
+    answerAll(token, scanId);
+    Api.complete(token, scanId);
+
+    var results = Api.as(token).when().get("/v1/scans/{id}/results", scanId).then().statusCode(200)
+        .body("kind", equalTo("quick")).extract().jsonPath();
+    List<String> notAssessed = results.getList("notAssessedDomains", String.class);
+    assertThat(notAssessed).contains("Technologie", "Processen").doesNotContain("Datastrategie");
+
+    byte[] pdf = Api.as(token).when().get("/v1/scans/{id}/export", scanId).then().statusCode(200)
+        .extract().asByteArray();
+    try (PDDocument document = Loader.loadPDF(pdf)) {
+      String text = new PDFTextStripper().getText(document).replaceAll("\\s+", " ");
+      assertThat(text).contains("Resultaten quickscan datavolwassenheid").contains("Technologie");
+    }
+    Api.as(Api.demoToken()).when().get("/v1/scans/{id}/results", Api.DEMO_COMPLETED_SCAN).then().statusCode(200)
+        .body("kind", equalTo("full")).body("notAssessedDomains.size()", equalTo(0));
   }
 
   @Test

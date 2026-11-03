@@ -360,4 +360,19 @@ describe('MaturityAssessmentComponent', () => {
     component.saveQuestion(q);
     expect(component.saveState(q.id)).toBe('idle');
   });
+
+  it('shows a quickscan with its fixed domain selection', () => {
+    const { fixture, root } = setup(content([domain('d1', { selected: true }), domain('d2', { order: 2, selected: true })]), {
+      kind: 'quick',
+      selectedDomainIds: ['d1', 'd2'],
+    });
+    expect(root.querySelector('[data-testid="quickscan-label"]')).not.toBeNull();
+    fixture.componentInstance.goTo('domains');
+    render(fixture);
+    expect(text(fixture)).toContain('Kennisgebieden van de quickscan');
+    expect(root.querySelector('[data-testid="selection-counter"]')).toBeNull();
+    const checkboxes = Array.from(root.querySelectorAll<HTMLInputElement>('input[id^="domain-"]'));
+    expect(checkboxes.length).toBe(2);
+    expect(checkboxes.every(box => box.disabled && box.checked)).toBe(true);
+  });
 });

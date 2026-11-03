@@ -1,4 +1,4 @@
-import { OrganizationGoal } from './scan';
+import { OrganizationGoal, ScanKind } from './scan';
 
 /** Contracttypes voor resultaten en ontwikkelprioriteiten (`/v1/scans/{id}/results`, `/development-priorities`). */
 export interface MaturityLevel {
@@ -52,4 +52,7 @@ export interface ScanResults {
   /** `{setRevision: 0, items: []}` vóór de eerste opslag; `null` wordt ook getolereerd. */
   priorities: ActionOverview | null;
   availablePrioritySetRevisions: number[];
+  kind: ScanKind;
+  /** Alleen bij een quickscan: kennisgebieden die een volledige scan daarnaast beoordeelt. */
+  notAssessedDomains: string[];
 }

@@ -1,0 +1,13 @@
+<div class="mx-auto w-full max-w-3xl px-4 py-8 md:px-6 md:py-12">
+  <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Quickscan</h1>
+  @if (problem(); as p) {
+    @if (p.status === 422) {
+      <p class="alert-info mt-5" role="status">De quickscan is op dit moment niet beschikbaar. Probeer het later opnieuw.</p>
+    } @else {
+      <div class="alert-error mt-5" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+    }
+    <button type="button" class="btn btn-secondary mt-4" (click)="open()">Opnieuw proberen</button>
+  } @else {
+    <p class="mt-5" role="status">Je quickscan wordt geopend…</p>
+  }
+</div>
