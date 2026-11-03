@@ -18,6 +18,7 @@ public class DomainEntity extends PanacheEntityBase {
   @Column(name = "display_order", nullable = false) public int displayOrder;
   @Column(nullable = false) public boolean active;
   @Column(nullable = false) public boolean required;
+  @Column(name = "in_quickscan", nullable = false) public boolean inQuickscan;
   @Column(name = "idempotency_key_hash", unique = true) public String idempotencyKeyHash;
   @Column(name = "request_fingerprint") public String requestFingerprint;
   @Version public long version;

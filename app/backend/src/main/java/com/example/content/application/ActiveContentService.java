@@ -54,4 +54,10 @@ public class ActiveContentService {
     }
     return result;
   }
+
+  /** Actieve inhoud van de kennisgebieden die de beheerder voor de quickscan heeft gekozen. */
+  @Transactional
+  public List<ActiveDomain> loadForQuickscan() {
+    return load().stream().filter(item -> item.domain().inQuickscan).toList();
+  }
 }

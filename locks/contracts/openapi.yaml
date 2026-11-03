@@ -134,6 +134,21 @@ paths:
                 $ref: '#/components/schemas/Scan'
         default:
           $ref: '#/components/responses/Problem'
+  /v1/quickscan/domains:
+    get:
+      operationId: getQuickscanDomains
+      summary: Kennisgebieden van de quickscan (openbaar)
+      description: Actieve kennisgebieden die de beheerder voor de quickscan heeft gekozen. 404 als de quickscan uit staat.
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickscanDomains'
+        default:
+          $ref: '#/components/responses/Problem'
   /v1/models/active:
     get:
       operationId: getActiveModel
@@ -653,6 +668,27 @@ components:
           type: [string, 'null']
           enum: [quickscan, null]
           description: Registratie via /quickscan levert een quickscan-account op (422 als de quickscan uit staat).
+    QuickscanDomains:
+      type: object
+      required: [domains]
+      properties:
+        domains:
+          type: array
+          items:
+            type: object
+            required: [id, name, order, questionCount]
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              description:
+                type: [string, 'null']
+              order:
+                type: integer
+              questionCount:
+                type: integer
     Member:
       type: object
       required: [id, accountIdentifier, role, plan, features]
@@ -1196,12 +1232,15 @@ components:
           maximum: 10000
         active:
           type: boolean
+        inQuickscan:
+          type: [boolean, 'null']
+          description: Opnemen in nieuwe quickscans. Ontbreekt het veld, dan blijft de huidige waarde (nieuw kennisgebied - niet opgenomen).
         version:
           type: integer
           minimum: 0
     Domain:
       type: object
-      required: [id, name, order, active, required, version, questions]
+      required: [id, name, order, active, required, inQuickscan, version, questions]
       properties:
         id:
           type: string
@@ -1216,6 +1255,8 @@ components:
           type: boolean
           readOnly: true
         active:
+          type: boolean
+        inQuickscan:
           type: boolean
         version:
           type: integer

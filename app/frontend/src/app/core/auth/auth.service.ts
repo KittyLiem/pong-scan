@@ -26,6 +26,8 @@ export class AuthService {
   readonly token = this.accessToken.asReadonly();
   readonly isAuthenticated = computed(() => this.accessToken() !== null);
   readonly isAdmin = computed(() => this.member()?.role === 'admin');
+  /** Quickscan bestaat alleen op het centrale platform, niet op tenant-installaties. */
+  readonly quickscanEnabled = computed(() => this.member()?.features?.quickscan === true);
 
   /** Token aanwezig en (voor zover bekend) niet verlopen. */
   hasValidSession(now = Date.now()): boolean {

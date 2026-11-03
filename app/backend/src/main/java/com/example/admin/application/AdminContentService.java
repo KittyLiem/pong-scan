@@ -201,6 +201,9 @@ public class AdminContentService {
     domain.description = Texts.blankToNull(input.description());
     domain.displayOrder = input.order();
     domain.active = input.active();
+    if (input.inQuickscan() != null) {
+      domain.inQuickscan = input.inQuickscan();
+    }
   }
 
   private static void apply(AnswerOptionEntity option, AdminDtos.AnswerOptionWrite input) {
@@ -253,7 +256,7 @@ public class AdminContentService {
 
   private static AdminDtos.Domain domainDto(DomainEntity domain, List<AdminDtos.Question> questions) {
     return new AdminDtos.Domain(domain.id, domain.name, domain.description, domain.displayOrder, domain.active, domain.required,
-        domain.version, questions);
+        domain.inQuickscan, domain.version, questions);
   }
 
   private static AdminDtos.Question questionDto(QuestionEntity question, List<AnswerOptionEntity> options) {

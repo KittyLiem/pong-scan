@@ -32,6 +32,7 @@ class QuickscanDisabledTest {
     String token = Api.newMemberToken();
     Api.as(token).when().get("/v1/me").then().statusCode(200).body("features.quickscan", equalTo(false));
     Api.as(token).when().put("/v1/quickscan").then().statusCode(404);
+    given().when().get("/v1/quickscan/domains").then().statusCode(404);
     given().contentType(ContentType.JSON).header("X-Idempotency-Key", Api.key())
         .body(Map.of("accountIdentifier", Api.uniqueEmail("quick"), "credential", "geheim-wachtwoord",
             "entry", "quickscan"))

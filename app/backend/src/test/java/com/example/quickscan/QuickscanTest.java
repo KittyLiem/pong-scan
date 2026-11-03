@@ -54,7 +54,7 @@ class QuickscanTest {
     String organizationId = Api.createOrganization(token);
     String scanId = Api.as(token).when().put("/v1/quickscan").then().statusCode(201)
         .body("kind", equalTo("quick")).body("organizationId", equalTo(organizationId))
-        .body("selectedDomainIds.size()", equalTo(Api.activeDomainIds(token).size()))
+        .body("selectedDomainIds.size()", equalTo(quickscanDomainNames().size()))
         .extract().path("id");
     Api.as(token).when().put("/v1/quickscan").then().statusCode(200).body("id", equalTo(scanId));
   }
@@ -95,6 +95,51 @@ class QuickscanTest {
   }
 
   @Test
+  void quickscanContainsOnlyTheChosenDomainsWithAFixedSelection() throws SQLException {
+    List<String> chosen = quickscanDomainNames();
+    assertThat(chosen).containsExactly("Datastrategie", "Datakwaliteit", "Governance");
+
+    String token = quickscanToken();
+    Api.createOrganization(token);
+    var scan = Api.as(token).when().put("/v1/quickscan").then().statusCode(201).extract().jsonPath();
+    String scanId = scan.getString("id");
+    var content = Api.content(token, scanId);
+    assertThat(content.getList("domains.name", String.class)).containsExactlyElementsOf(chosen);
+    assertThat(content.getList("domains.selected", Boolean.class)).containsOnly(true);
+
+    List<String> selected = scan.getList("selectedDomainIds", String.class);
+    Api.as(token).body(Map.of("version", scan.getLong("version"), "selectedDomainIds", selected.subList(0, 1)))
+        .when().patch("/v1/scans/{id}", scanId).then().statusCode(422)
+        .body("errors[0].field", equalTo("selectedDomainIds"));
+    // De beoordeling stuurt de ongewijzigde selectie mee; dat blijft toegestaan.
+    Api.as(token).body(Map.of("version", scan.getLong("version"), "selectedDomainIds", selected,
+            "goals", List.of()))
+        .when().patch("/v1/scans/{id}", scanId).then().statusCode(200);
+
+    // Een latere keuze van de beheerder verandert een bestaande quickscan niet.
+    execute("update domains set in_quickscan = true where id = ?", "10000000-0000-0000-0000-000000000004");
+    try {
+      assertThat(Api.content(token, scanId).getList("domains.name", String.class)).containsExactlyElementsOf(chosen);
+    } finally {
+      execute("update domains set in_quickscan = false where id = ?", "10000000-0000-0000-0000-000000000004");
+    }
+  }
+
+  @Test
+  void quickscanIsUnavailableWithoutChosenDomains() throws SQLException {
+    String token = quickscanToken();
+    Api.createOrganization(token);
+    List<String> chosen = quickscanDomainIds();
+    for (String id : chosen) execute("update domains set in_quickscan = false where id = ?", id);
+    try {
+      given().when().get("/v1/quickscan/domains").then().statusCode(200).body("domains.size()", equalTo(0));
+      Api.as(token).when().put("/v1/quickscan").then().statusCode(422);
+    } finally {
+      for (String id : chosen) execute("update domains set in_quickscan = true where id = ?", id);
+    }
+  }
+
+  @Test
   void fullAccountHasNoQuickscan() {
     Api.as(Api.newMemberToken()).when().put("/v1/quickscan").then().statusCode(403);
     Api.as(Api.adminToken()).when().put("/v1/quickscan").then().statusCode(403);
@@ -122,6 +167,17 @@ class QuickscanTest {
     } finally {
       executor.shutdownNow();
     }
+  }
+
+  /** Openbaar endpoint, zonder token. */
+  private static List<String> quickscanDomainNames() {
+    return given().when().get("/v1/quickscan/domains").then().statusCode(200).extract()
+        .jsonPath().getList("domains.name", String.class);
+  }
+
+  private static List<String> quickscanDomainIds() {
+    return given().when().get("/v1/quickscan/domains").then().statusCode(200).extract()
+        .jsonPath().getList("domains.id", String.class);
   }
 
   private static String quickscanToken() {
