@@ -6,6 +6,8 @@ import com.example.common.Hashing;
 import com.example.common.Texts;
 import com.example.organization.api.OrganizationDtos;
 import com.example.organization.domain.OrganizationEntity;
+import com.example.organization.domain.OrganizationMemberEntity;
+import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
@@ -23,7 +25,9 @@ public class OrganizationService {
 
   @Transactional
   public OrganizationDtos.OrganizationCollection list(UUID memberId) {
-    List<OrganizationEntity> entities = OrganizationEntity.list("memberId = ?1 order by createdAt, id", memberId);
+    List<OrganizationEntity> entities = OrganizationEntity.list(
+        "id in (" + OrganizationEntity.ACCESSIBLE_IDS + ") order by createdAt, id",
+        Parameters.with("memberId", memberId));
     return new OrganizationDtos.OrganizationCollection(entities.stream().map(OrganizationService::toResponse).toList());
   }
 
@@ -57,6 +61,12 @@ public class OrganizationService {
     organization.requestFingerprint = fingerprint;
     organization.createdAt = OffsetDateTime.now(ZoneOffset.UTC);
     organization.persistAndFlush();
+    OrganizationMemberEntity owner = new OrganizationMemberEntity();
+    owner.organizationId = organization.id;
+    owner.memberId = memberId;
+    owner.role = OrganizationMemberEntity.OWNER;
+    owner.createdAt = organization.createdAt;
+    owner.persistAndFlush();
     audit.success(memberId, "organization.create", "organization", organization.id, organization.id);
     return toResponse(organization);
   }
