@@ -24,6 +24,7 @@ export interface AdminQuestion {
 
 export interface AdminDomain {
   required: boolean;
+  inQuickscan: boolean;
   id: string;
   name: string;
   description?: string | null;
@@ -44,6 +45,8 @@ export interface AdminDomainInput {
   order: number;
   active: boolean;
   version: number;
+  /** Weggelaten: de huidige waarde blijft staan. */
+  inQuickscan?: boolean;
 }
 
 export interface AdminQuestionInput {

@@ -1,6 +1,8 @@
 /** Contracttypes voor scans, beoordelingsinhoud en antwoorden (`/v1/scans/**`). */
 export type ScanStatus = 'concept' | 'in-progress' | 'content-complete' | 'completed';
 export type GoalPriority = 'high' | 'medium' | 'low';
+/** `quick`: quickscan met een vaste selectie van door de beheerder gekozen kennisgebieden. */
+export type ScanKind = 'full' | 'quick';
 
 export interface OrganizationGoal {
   name: string;
@@ -14,6 +16,7 @@ export interface Scan {
   name: string;
   assessmentPeriod: string;
   status: ScanStatus;
+  kind: ScanKind;
   progress: number;
   revision: number;
   revisionOf?: string | null;

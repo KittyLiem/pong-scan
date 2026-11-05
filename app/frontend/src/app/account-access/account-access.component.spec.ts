@@ -154,4 +154,99 @@ describe('AccountAccessComponent', () => {
     render(fixture);
     expect(root.querySelector<HTMLInputElement>('#password')!.type).toBe('text');
   });
+
+  it('registers a quickscan account when coming from the quickscan landing page', () => {
+    const { fixture, navigate, http } = setup({ entry: 'quickscan', returnUrl: '/quickscan/start' });
+    expect(text(fixture)).toContain('Start de quickscan');
+    expect(text(fixture)).not.toContain('Meld je (opnieuw) aan');
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('#accepted-terms')!.click();
+    fill(fixture, 'nieuw@pong.example', 'wachtwoord123');
+
+    const registration = http.expectOne('/v1/auth/registrations');
+    expect(registration.request.body).toEqual({ accountIdentifier: 'nieuw@pong.example', credential: 'wachtwoord123', entry: 'quickscan', acceptedTerms: true, marketingConsent: false });
+    registration.flush({ ...session().member, plan: 'quickscan' });
+    http.expectOne('/v1/auth/sessions').flush(session({ desiredRoute: '/quickscan/start' }));
+    http.expectOne('/v1/organizations').flush({ items: [organization] });
+    expect(navigate).toHaveBeenCalledWith('/quickscan/start');
+  });
+
+  it('requires agreeing to the terms before a quickscan account is created', () => {
+    const { fixture, http } = setup({ entry: 'quickscan', returnUrl: '/quickscan/start' });
+    const root = fixture.nativeElement as HTMLElement;
+    const link = root.querySelector<HTMLAnchorElement>('label[for="accepted-terms"] a')!;
+    expect(root.querySelector('label[for="accepted-terms"]')!.textContent!.replace(/\s+/g, ' ').trim())
+      .toBe('Ik ga akkoord met de voorwaarden en het privacybeleid.');
+    expect(link.textContent).toBe('voorwaarden en het privacybeleid');
+    expect(link.getAttribute('href')).toBe('https://www.pong.nl');
+    expect(link.getAttribute('target')).toBe('_blank');
+
+    fill(fixture, 'nieuw@pong.example', 'wachtwoord123');
+    http.expectNone('/v1/auth/registrations');
+    expect(text(fixture)).toContain('Ga akkoord met de voorwaarden en het privacybeleid om de quickscan te starten.');
+  });
+
+  it('shows no terms checkbox when signing in or creating a normal account', () => {
+    const quickscanLogin = setup({ entry: 'quickscan' });
+    quickscanLogin.fixture.componentInstance.setMode('login');
+    render(quickscanLogin.fixture);
+    expect((quickscanLogin.fixture.nativeElement as HTMLElement).querySelector('#accepted-terms')).toBeNull();
+
+    const { fixture, http } = setup();
+    fixture.componentInstance.setMode('register');
+    render(fixture);
+    expect((fixture.nativeElement as HTMLElement).querySelector('#accepted-terms')).toBeNull();
+    fill(fixture, 'gewoon@pong.example', 'wachtwoord123');
+    expect(http.expectOne('/v1/auth/registrations').request.body).toEqual({ accountIdentifier: 'gewoon@pong.example', credential: 'wachtwoord123' });
+    expect((fixture.nativeElement as HTMLElement).querySelector('#marketing-consent')).toBeNull();
+  });
+
+  it('offers an optional marketing consent, unticked by default, and sends the choice', () => {
+    const { fixture, http } = setup({ entry: 'quickscan', returnUrl: '/quickscan/start' });
+    const root = fixture.nativeElement as HTMLElement;
+    const consent = root.querySelector<HTMLInputElement>('#marketing-consent')!;
+    expect(consent.checked).toBe(false);
+    expect(consent.required).toBe(false);
+    expect(root.querySelector('label[for="marketing-consent"]')!.textContent!.trim()).toBe(
+      'Ik geef toestemming aan Pong om mij per e-mail op de hoogte te houden van persoonlijke aanbiedingen, acties en nieuwe producten. Ik kan deze toestemming altijd weer intrekken via de link onderaan de e-mails.',
+    );
+    root.querySelector<HTMLInputElement>('#accepted-terms')!.click();
+    consent.click();
+    fill(fixture, 'nieuw@pong.example', 'wachtwoord123');
+    expect(http.expectOne('/v1/auth/registrations').request.body).toMatchObject({ entry: 'quickscan', acceptedTerms: true, marketingConsent: true });
+  });
+
+  it('keeps the quickscan context after a failed sign-in and offers a quickscan account', () => {
+    const { fixture, http } = setup({ entry: 'quickscan', mode: 'login', returnUrl: '/quickscan/start' });
+    const root = fixture.nativeElement as HTMLElement;
+    expect(text(fixture)).toContain('Start de quickscan');
+    expect(fixture.componentInstance.mode()).toBe('login');
+    expect(root.querySelector('#accepted-terms')).toBeNull();
+
+    fill(fixture, 'vergeten@pong.example', 'wachtwoord123');
+    http.expectOne('/v1/auth/sessions').flush({ title: 'Niet aangemeld', status: 401 }, { status: 401, statusText: 'Unauthorized' });
+    render(fixture);
+    expect(text(fixture)).toContain('De combinatie van e-mailadres en wachtwoord is onbekend.');
+    const hint = root.querySelector('[data-testid="quickscan-register-hint"]')!;
+    expect(hint.textContent).toContain('Nog geen account? Maak een quickscan-account aan.');
+
+    hint.querySelector('button')!.click();
+    render(fixture);
+    expect(fixture.componentInstance.mode()).toBe('register');
+    expect(root.querySelector<HTMLInputElement>('#email')!.value).toBe('vergeten@pong.example');
+    expect(root.querySelector('#accepted-terms')).not.toBeNull();
+    expect(root.querySelector('#marketing-consent')).not.toBeNull();
+
+    root.querySelector<HTMLInputElement>('#accepted-terms')!.click();
+    fill(fixture, 'vergeten@pong.example', 'wachtwoord123');
+    expect(http.expectOne('/v1/auth/registrations').request.body).toMatchObject({ entry: 'quickscan', acceptedTerms: true });
+  });
+
+  it('shows no quickscan hint after a failed sign-in on the normal start page', () => {
+    const { fixture, http } = setup();
+    fill(fixture, 'demo@pong.example', 'wachtwoord123');
+    http.expectOne('/v1/auth/sessions').flush({ title: 'Niet aangemeld', status: 401 }, { status: 401, statusText: 'Unauthorized' });
+    render(fixture);
+    expect(text(fixture)).toContain('De combinatie van e-mailadres en wachtwoord is onbekend.');
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-testid="quickscan-register-hint"]')).toBeNull();
+  });
 });

@@ -12,6 +12,7 @@ import {
   PriorityRating,
   ScanResults,
 } from '../core/model/results';
+import { AuthService } from '../core/auth/auth.service';
 import { RevisionMode } from '../core/model/scan';
 import { ScanResultsService } from '../core/scans/scan-results.service';
 import { CLASSIFICATION_LABELS, PRIORITY_LABELS, formatDate, formatScore } from '../shared/labels';
@@ -42,6 +43,7 @@ export class ScanResultsComponent {
 
   private loadSubscription?: Subscription;
   readonly selectedPrioritySetRevision = signal<number | undefined>(undefined);
+  readonly isQuickscanAccount = inject(AuthService).isQuickscanAccount;
   readonly scanId = signal('');
   readonly results = signal<ScanResults | null>(null);
   readonly loading = signal(false);

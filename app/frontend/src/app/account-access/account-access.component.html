@@ -2,12 +2,12 @@
   <div class="grid gap-10 lg:grid-cols-5 lg:items-start">
     <header class="lg:col-span-2">
       <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-content" aria-hidden="true">✓</div>
-      <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">Start met de datavolwassenheidsscan</h1>
+      <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">{{ quickscanEntry ? 'Start de quickscan' : 'Start met de datavolwassenheidsscan' }}</h1>
       <p class="mt-4 leading-7 text-secondary-color">Meld je aan, leg de organisatiecontext vast en beoordeel de datavolwassenheid van je organisatie.</p>
       <ol class="mt-8 space-y-3 text-sm">
         <li [class.font-semibold]="stage() === 'account'"><span aria-hidden="true">1.</span> Aanmelden of account aanmaken</li>
         <li [class.font-semibold]="stage() === 'organization'"><span aria-hidden="true">2.</span> Organisatiecontext vastleggen</li>
-        <li><span aria-hidden="true">3.</span> Scan starten vanuit het scanoverzicht</li>
+        <li><span aria-hidden="true">3.</span> {{ quickscanEntry ? 'Quickscan invullen' : 'Scan starten vanuit het scanoverzicht' }}</li>
       </ol>
     </header>
 
@@ -46,12 +46,35 @@
               <p id="password-hint" class="form-hint">Minimaal 8 tekens.</p>
               <app-field-error fieldId="password-error" [control]="form.controls.credential" [submitted]="submitted()" />
             </div>
+            @if (asksTerms()) {
+              <div>
+                <div class="flex items-start gap-2">
+                  <input id="accepted-terms" type="checkbox" class="mt-0.5 h-5 w-5 shrink-0" [formControl]="acceptedTerms" required
+                    [attr.aria-invalid]="showError(acceptedTerms, submitted())" aria-describedby="accepted-terms-error" />
+                  <label for="accepted-terms" class="text-sm">Ik ga akkoord met de
+                    <a [href]="termsUrl" target="_blank" rel="noopener noreferrer" class="font-medium text-primary underline">voorwaarden en het privacybeleid</a>.</label>
+                </div>
+                <p id="accepted-terms-error" class="mt-1 text-sm font-medium text-error-text-emphasis" aria-live="polite">
+                  @if (showError(acceptedTerms, submitted())) { Ga akkoord met de voorwaarden en het privacybeleid om de quickscan te starten. }
+                </p>
+              </div>
+              <div class="flex items-start gap-2">
+                <input id="marketing-consent" type="checkbox" class="mt-0.5 h-5 w-5 shrink-0" [formControl]="marketingConsent" />
+                <label for="marketing-consent" class="text-sm">Ik geef toestemming aan Pong om mij per e-mail op de hoogte te houden van persoonlijke aanbiedingen, acties en nieuwe producten. Ik kan deze toestemming altijd weer intrekken via de link onderaan de e-mails.</label>
+              </div>
+            }
             <button type="submit" class="btn btn-primary w-full" [disabled]="busy()">
               @if (busy()) { Bezig… } @else { {{ mode() === 'register' ? 'Account aanmaken' : 'Aanmelden' }} }
             </button>
           </form>
           @if (problem(); as p) {
             <div class="alert-error mt-5" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+            @if (quickscanEntry && mode() === 'login' && p.status === 401) {
+              <div class="mt-3 flex flex-wrap items-center gap-3" data-testid="quickscan-register-hint">
+                <p class="text-sm">Nog geen account? Maak een quickscan-account aan.</p>
+                <button type="button" class="btn btn-secondary" (click)="setMode('register')">Quickscan-account aanmaken</button>
+              </div>
+            }
           }
         }
 
@@ -107,7 +130,11 @@
         @case ('ready') {
           <h2 id="start-heading" class="text-2xl font-semibold">Je bent aangemeld</h2>
           <p class="mt-2">Organisatie: <strong>{{ organizations.current()?.name }}</strong></p>
-          <a routerLink="/scans" class="btn btn-primary mt-5">Naar het scanoverzicht</a>
+          @if (auth.isQuickscanAccount()) {
+            <a routerLink="/quickscan/start" class="btn btn-primary mt-5">Naar je quickscan</a>
+          } @else {
+            <a routerLink="/scans" class="btn btn-primary mt-5">Naar het scanoverzicht</a>
+          }
         }
       }
     </section>

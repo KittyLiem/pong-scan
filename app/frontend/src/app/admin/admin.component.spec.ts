@@ -2,7 +2,8 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { render, text } from '../../testing/fixtures';
+import { admin, render, text } from '../../testing/fixtures';
+import { AuthService } from '../core/auth/auth.service';
 import { AdminDomain } from '../core/model/admin';
 import { AdminComponent } from './admin.component';
 
@@ -10,6 +11,7 @@ const domains: AdminDomain[] = [
   {
     id: 'd1',
     required: true,
+    inQuickscan: false,
     name: 'Datastrategie',
     description: 'Strategie',
     order: 1,
@@ -171,5 +173,49 @@ describe('AdminComponent', () => {
     fixture.componentInstance.editDomain();
     render(fixture);
     expect(root.querySelector<HTMLInputElement>('#domain-active')!.disabled).toBe(false);
+  });
+
+  it('hides the quickscan controls when the quickscan is not available on this installation', () => {
+    const { fixture, root } = setup([{ ...domains[0], inQuickscan: true }]);
+    expect(root.querySelector('[data-testid="quickscan-summary"]')).toBeNull();
+    expect(root.querySelector('[data-testid="quickscan-badge"]')).toBeNull();
+    fixture.componentInstance.editDomain(domains[0]);
+    render(fixture);
+    expect(root.querySelector('#domain-in-quickscan')).toBeNull();
+  });
+
+  it('shows the quickscan summary, badges and a warning for chosen domains without active content', () => {
+    const inactive: AdminDomain = { ...domains[0], id: 'd2', name: 'Governance', required: false, active: false, inQuickscan: true, order: 2 };
+    const other: AdminDomain = { ...domains[0], id: 'd3', name: 'Technologie', required: false, inQuickscan: false, order: 3 };
+    const { fixture, root } = setup([{ ...domains[0], inQuickscan: true }, inactive, other]);
+    TestBed.inject(AuthService).member.set(admin);
+    render(fixture);
+    const summary = root.querySelector('[data-testid="quickscan-summary"]')!.textContent!.replace(/\s+/g, ' ');
+    expect(summary).toContain('Quickscan: 2 van 3 kennisgebieden');
+    expect(summary).toContain('Zonder actieve inhoud, dus niet in de quickscan: Governance.');
+    expect(root.querySelectorAll('[data-testid="quickscan-badge"]').length).toBe(2);
+  });
+
+  it('warns when no domain is chosen for the quickscan', () => {
+    const { fixture, root } = setup();
+    TestBed.inject(AuthService).member.set(admin);
+    render(fixture);
+    expect(root.querySelector('[data-testid="quickscan-summary"]')!.textContent).toContain('een quickscan kan nu niet starten');
+  });
+
+  it('saves the quickscan choice of a domain', () => {
+    const { fixture, http, root } = setup();
+    TestBed.inject(AuthService).member.set(admin);
+    fixture.componentInstance.editDomain(domains[0]);
+    render(fixture);
+    const checkbox = root.querySelector<HTMLInputElement>('#domain-in-quickscan')!;
+    expect(checkbox.checked).toBe(false);
+    checkbox.click();
+    root.querySelector<HTMLFormElement>('aside form')!.dispatchEvent(new Event('submit'));
+    const patch = http.expectOne('/v1/admin/domains/d1');
+    expect(patch.request.body).toMatchObject({ name: 'Datastrategie', inQuickscan: true, version: 2 });
+    patch.flush({ ...domains[0], inQuickscan: true, version: 3, questions: undefined });
+    render(fixture);
+    expect(root.querySelector('[data-testid="quickscan-summary"]')!.textContent).toContain('1 van 1');
   });
 });
