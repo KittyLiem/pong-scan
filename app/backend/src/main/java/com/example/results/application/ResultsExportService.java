@@ -37,11 +37,16 @@ public class ResultsExportService {
     OrganizationEntity organization = OrganizationEntity.findById(computed.scan().organizationId);
 
     PdfWriter pdf = new PdfWriter();
-    pdf.title("Resultaten datavolwassenheidsscan");
+    boolean quick = computed.scan().isQuick();
+    pdf.title(quick ? "Resultaten quickscan datavolwassenheid" : "Resultaten datavolwassenheidsscan");
     pdf.text("Organisatie: " + (organization == null ? "-" : organization.name));
     pdf.text("Scan: " + results.scanName() + " (revisie " + computed.scan().revision + ")");
     pdf.text("Beoordelingsperiode: " + results.assessmentPeriod());
     pdf.text("Afgerond op: " + (results.completedAt() == null ? "-" : DATE.format(results.completedAt())));
+    if (quick && !results.notAssessedDomains().isEmpty()) {
+      pdf.small("Deze quickscan beoordeelt een deel van de kennisgebieden. Een volledige scan beoordeelt daarnaast: "
+          + String.join(", ", results.notAssessedDomains()) + ".");
+    }
 
     pdf.heading("Totaalscore");
     pdf.text(number(results.totalScore()) + " van 5 - niveau " + results.maturityLevel().level() + " ("

@@ -111,6 +111,44 @@ paths:
                 $ref: '#/components/schemas/Organization'
         default:
           $ref: '#/components/responses/Problem'
+  /v1/quickscan:
+    put:
+      operationId: openQuickscan
+      summary: Quickscan openen of aanmaken
+      description: >-
+        Alleen voor quickscan-accounts (403 voor andere accounts). Idempotent: geeft de bestaande quickscan (200) of
+        maakt hem aan (201) zolang de limiet per account dat toelaat. 409 als er nog geen organisatie is; 404 als de
+        quickscan op deze installatie uit staat.
+      responses:
+        '200':
+          description: Bestaande quickscan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        '201':
+          description: Quickscan aangemaakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/quickscan/domains:
+    get:
+      operationId: getQuickscanDomains
+      summary: Kennisgebieden van de quickscan (openbaar)
+      description: Actieve kennisgebieden die de beheerder voor de quickscan heeft gekozen. 404 als de quickscan uit staat.
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickscanDomains'
+        default:
+          $ref: '#/components/responses/Problem'
   /v1/models/active:
     get:
       operationId: getActiveModel
@@ -626,9 +664,44 @@ components:
           format: password
           minLength: 8
           maxLength: 128
+        entry:
+          type: [string, 'null']
+          enum: [quickscan, null]
+          description: Registratie via /quickscan levert een quickscan-account op (422 als de quickscan uit staat).
+        acceptedTerms:
+          type: [boolean, 'null']
+          description: >-
+            Akkoord met de voorwaarden en het privacybeleid. Verplicht true bij entry quickscan (anders 400); wordt met
+            tijdstip en versie bij het account opgeslagen.
+        marketingConsent:
+          type: [boolean, 'null']
+          description: >-
+            Optionele toestemming voor marketing per e-mail bij entry quickscan. Ontbreekt het veld, dan geldt geen
+            toestemming; bij toestemming worden tijdstip en versie van de tekst opgeslagen.
+    QuickscanDomains:
+      type: object
+      required: [domains]
+      properties:
+        domains:
+          type: array
+          items:
+            type: object
+            required: [id, name, order, questionCount]
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              description:
+                type: [string, 'null']
+              order:
+                type: integer
+              questionCount:
+                type: integer
     Member:
       type: object
-      required: [id, accountIdentifier, role]
+      required: [id, accountIdentifier, role, plan, features, termsAcceptedAt, termsVersion, marketingConsent, marketingConsentAt]
       properties:
         id:
           type: string
@@ -638,6 +711,27 @@ components:
         role:
           type: string
           enum: [member, admin]
+        plan:
+          type: string
+          enum: [full, quickscan]
+        features:
+          type: object
+          required: [quickscan]
+          properties:
+            quickscan:
+              type: boolean
+        termsAcceptedAt:
+          type: [string, 'null']
+          format: date-time
+          description: Moment van akkoord met de voorwaarden en het privacybeleid (alleen quickscan-accounts).
+        termsVersion:
+          type: [string, 'null']
+          maxLength: 32
+        marketingConsent:
+          type: boolean
+        marketingConsentAt:
+          type: [string, 'null']
+          format: date-time
     SessionInput:
       type: object
       required: [accountIdentifier, credential]
@@ -817,7 +911,7 @@ components:
           enum: [copy, new-revision]
     Scan:
       type: object
-      required: [id, organizationId, name, assessmentPeriod, status, progress, revision, selectedDomainIds, version, createdAt, updatedAt, goals]
+      required: [id, organizationId, name, assessmentPeriod, status, kind, progress, revision, selectedDomainIds, version, createdAt, updatedAt, goals]
       properties:
         id:
           type: string
@@ -832,6 +926,9 @@ components:
         status:
           type: string
           enum: [concept, in-progress, content-complete, completed]
+        kind:
+          type: string
+          enum: [full, quick]
         progress:
           type: integer
           minimum: 0
@@ -1100,8 +1197,16 @@ components:
             $ref: '#/components/schemas/PriorityItem'
     ScanResults:
       type: object
-      required: [scanId, scanName, assessmentPeriod, completedAt, totalScore, maturityLevel, domainScores, developmentPoints, goals, priorities, availablePrioritySetRevisions]
+      required: [scanId, scanName, assessmentPeriod, completedAt, totalScore, maturityLevel, domainScores, developmentPoints, goals, priorities, availablePrioritySetRevisions, kind, notAssessedDomains]
       properties:
+        kind:
+          type: string
+          enum: [full, quick]
+        notAssessedDomains:
+          type: array
+          description: Alleen bij een quickscan - actieve kennisgebieden die een volledige scan daarnaast beoordeelt.
+          items:
+            type: string
         scanId:
           type: string
           format: uuid
@@ -1157,12 +1262,15 @@ components:
           maximum: 10000
         active:
           type: boolean
+        inQuickscan:
+          type: [boolean, 'null']
+          description: Opnemen in nieuwe quickscans. Ontbreekt het veld, dan blijft de huidige waarde (nieuw kennisgebied - niet opgenomen).
         version:
           type: integer
           minimum: 0
     Domain:
       type: object
-      required: [id, name, order, active, required, version, questions]
+      required: [id, name, order, active, required, inQuickscan, version, questions]
       properties:
         id:
           type: string
@@ -1177,6 +1285,8 @@ components:
           type: boolean
           readOnly: true
         active:
+          type: boolean
+        inQuickscan:
           type: boolean
         version:
           type: integer

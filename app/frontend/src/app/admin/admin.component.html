@@ -11,6 +11,18 @@
     @if (notice(); as text) { <p class="alert-success mt-4" role="status">{{ text }}</p> }
   </div>
 
+  @if (quickscanEnabled() && loaded()) {
+    @let summary = quickscanSummary();
+    <div class="alert-info mt-4 text-sm" data-testid="quickscan-summary">
+      <p>Quickscan: <strong>{{ summary.included }} van {{ summary.total }}</strong> kennisgebieden</p>
+      @if (summary.included === 0) {
+        <p class="mt-1 font-semibold">Er is geen kennisgebied voor de quickscan gekozen; een quickscan kan nu niet starten.</p>
+      } @else if (summary.withoutContent.length) {
+        <p class="mt-1 font-semibold">Zonder actieve inhoud, dus niet in de quickscan: {{ summary.withoutContent.join(', ') }}.</p>
+      }
+    </div>
+  }
+
   <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
     <section aria-labelledby="domains-list-heading">
       <h2 id="domains-list-heading" class="sr-only">Kennisgebieden</h2>
@@ -27,6 +39,7 @@
                 <div>
                   <p class="font-semibold">{{ domain.order }}. {{ domain.name }}
                     @if (domain.required) { <span class="ml-2 rounded-full bg-tertiary-bg px-2 py-0.5 text-xs">Verplicht</span> }
+                    @if (quickscanEnabled() && domain.inQuickscan) { <span class="ml-2 rounded-full bg-tertiary-bg px-2 py-0.5 text-xs" data-testid="quickscan-badge">Quickscan</span> }
                     <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-semibold" [class]="domain.active ? 'bg-success-bg-subtle text-success-text-emphasis' : 'bg-tertiary-bg text-secondary-color'">{{ domain.active ? 'Actief' : 'Inactief' }}</span>
                   </p>
                   @if (domain.description) { <p class="mt-1 text-sm text-secondary-color">{{ domain.description }}</p> }
@@ -114,6 +127,15 @@
                   <input id="domain-active" type="checkbox" class="h-5 w-5" formControlName="active" />
                   <label for="domain-active" class="text-sm font-medium">Actief (beschikbaar voor nieuwe scans)</label>
                 </div>
+                @if (quickscanEnabled()) {
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <input id="domain-in-quickscan" type="checkbox" class="h-5 w-5" formControlName="inQuickscan" aria-describedby="domain-in-quickscan-hint" />
+                      <label for="domain-in-quickscan" class="text-sm font-medium">Opnemen in quickscan</label>
+                    </div>
+                    <p id="domain-in-quickscan-hint" class="form-hint">Geldt alleen voor nieuwe quickscans.</p>
+                  </div>
+                }
                 <ng-container *ngTemplateOutlet="actions" />
               </form>
             }

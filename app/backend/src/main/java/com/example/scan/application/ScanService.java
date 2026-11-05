@@ -1,5 +1,6 @@
 package com.example.scan.application;
 
+import com.example.account.domain.MemberEntity;
 import com.example.audit.AuditService;
 import com.example.common.ApiException;
 import com.example.common.Cursors;
@@ -59,6 +60,7 @@ public class ScanService {
   public ScanDtos.Scan create(UUID memberId, UUID organizationId, String idempotencyKey,
       ScanDtos.ScanCreateInput input) {
     lockOrganization(memberId, organizationId);
+    requireFullPlan(memberId);
     String keyHash = Hashing.requireIdempotencyKey(idempotencyKey);
     List<UUID> initial = input.initialSelectedDomainIds() == null
         ? List.of() : List.copyOf(new LinkedHashSet<>(input.initialSelectedDomainIds()));
@@ -76,6 +78,49 @@ public class ScanService {
     }
 
     checkQuota(organizationId);
+    List<ActiveContentService.ActiveDomain> content = loadContent();
+    Set<UUID> activeDomainIds = new HashSet<>();
+    content.forEach(item -> activeDomainIds.add(item.domain().id));
+    List<UUID> unknown = initial.stream().filter(id -> !activeDomainIds.contains(id)).toList();
+    if (!unknown.isEmpty()) {
+      throw new ApiException(422, "Ongeldige selectie",
+          "Een of meer gekozen kennisgebieden zijn niet (meer) actief.",
+          List.of(new Problem.FieldError("initialSelectedDomainIds", "bevat een onbekend of inactief kennisgebied")));
+    }
+
+    ScanEntity scan = newScan(organizationId, name, period, ScanEntity.KIND_FULL, keyHash, fingerprint);
+    Map<UUID, UUID> snapshotBySource = snapshot(scan.id, content);
+    initial.forEach(id -> scan.selectedDomainIds.add(snapshotBySource.get(id)));
+    state.apply(scan);
+    Panache.getEntityManager().flush();
+    audit.success(memberId, "scan.create", "scan", scan.id, organizationId);
+    return toResponse(scan);
+  }
+
+  /**
+   * Maakt een quickscan met alle door de beheerder gekozen kennisgebieden geselecteerd (de selectie ligt vast). De
+   * aanroeper bewaakt de limiet per account; de quota per organisatie gelden ook hier. De vlag "verplicht" geldt
+   * alleen voor volledige scans.
+   */
+  @Transactional
+  public ScanDtos.Scan createQuick(UUID memberId, UUID organizationId) {
+    lockOrganization(memberId, organizationId);
+    checkQuota(organizationId);
+    List<ActiveContentService.ActiveDomain> content = activeContent.loadForQuickscan();
+    if (content.isEmpty()) {
+      throw ApiException.unprocessable("Quickscan niet beschikbaar",
+          "Er is nog geen kennisgebied met actieve inhoud voor de quickscan gekozen.");
+    }
+    String period = String.valueOf(OffsetDateTime.now(ZoneOffset.UTC).getYear());
+    ScanEntity scan = newScan(organizationId, "Quickscan", period, ScanEntity.KIND_QUICK, null, null);
+    scan.selectedDomainIds.addAll(snapshot(scan.id, content).values());
+    state.apply(scan);
+    Panache.getEntityManager().flush();
+    return toResponse(scan);
+  }
+
+  /** Actieve inhoud voor een nieuwe scan; 422 als het model onvolledig of leeg is. */
+  private List<ActiveContentService.ActiveDomain> loadContent() {
     List<ActiveContentService.ActiveDomain> content = activeContent.load();
     Set<UUID> activeDomainIds = new HashSet<>();
     content.forEach(item -> activeDomainIds.add(item.domain().id));
@@ -88,13 +133,11 @@ public class ScanService {
       throw ApiException.unprocessable("Geen actieve inhoud",
           "Er is geen actieve inhoud (kennisgebied met een actieve vraag en beschikbare optie) om een scan mee te starten.");
     }
-    List<UUID> unknown = initial.stream().filter(id -> !activeDomainIds.contains(id)).toList();
-    if (!unknown.isEmpty()) {
-      throw new ApiException(422, "Ongeldige selectie",
-          "Een of meer gekozen kennisgebieden zijn niet (meer) actief.",
-          List.of(new Problem.FieldError("initialSelectedDomainIds", "bevat een onbekend of inactief kennisgebied")));
-    }
+    return content;
+  }
 
+  private ScanEntity newScan(UUID organizationId, String name, String period, String kind, String keyHash,
+      String fingerprint) {
     OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
     ScanEntity scan = new ScanEntity();
     scan.id = UUID.randomUUID();
@@ -102,6 +145,7 @@ public class ScanService {
     scan.name = name;
     scan.assessmentPeriod = period;
     scan.status = ScanEntity.CONCEPT;
+    scan.kind = kind;
     scan.progress = 0;
     scan.revision = 1;
     scan.idempotencyKeyHash = keyHash;
@@ -110,13 +154,7 @@ public class ScanService {
     scan.updatedAt = now;
     scan.persist();
     Panache.getEntityManager().flush();
-
-    Map<UUID, UUID> snapshotBySource = snapshot(scan.id, content);
-    initial.forEach(id -> scan.selectedDomainIds.add(snapshotBySource.get(id)));
-    state.apply(scan);
-    Panache.getEntityManager().flush();
-    audit.success(memberId, "scan.create", "scan", scan.id, organizationId);
-    return toResponse(scan);
+    return scan;
   }
 
   /** Kopieert de actieve inhoud naar de snapshottabellen; geeft bron-domein-id → snapshot-domein-id. */
@@ -213,6 +251,11 @@ public class ScanService {
     }
     if (input.selectedDomainIds() != null) {
       Set<UUID> selected = new LinkedHashSet<>(input.selectedDomainIds());
+      // De beoordeling stuurt de selectie mee bij iedere wijziging; alleen een afwijkende selectie wordt geweigerd.
+      if (scan.isQuick() && !selected.equals(scan.selectedDomainIds)) {
+        throw new ApiException(422, "Selectie ligt vast", "De kennisgebieden van een quickscan kunnen niet worden gewijzigd.",
+            List.of(new Problem.FieldError("selectedDomainIds", "kan bij een quickscan niet worden gewijzigd")));
+      }
       long known = SnapshotDomainEntity.count("scanId = ?1 and id in ?2", scan.id, selected);
       if (known != selected.size()) {
         throw new ApiException(422, "Ongeldige selectie", "Een of meer kennisgebieden horen niet bij deze scan.",
@@ -292,6 +335,11 @@ public class ScanService {
         throw ApiException.idempotencyConflict();
       }
       return toResponse(replay.get());
+    }
+    requireFullPlan(memberId);
+    if (source.isQuick()) {
+      throw ApiException.conflict("Geen revisie van een quickscan",
+          "Van een quickscan kan geen revisie worden gemaakt. Start een volledige scan.");
     }
     if (!source.isCompleted()) {
       throw ApiException.conflict("Scan is niet afgerond", "Alleen van een afgeronde scan kan een revisie worden gemaakt.");
@@ -387,6 +435,14 @@ public class ScanService {
     return toResponse(revision);
   }
 
+  /** Een quickscan-account mag alleen zijn ene quickscan doen (via PUT /v1/quickscan). */
+  private void requireFullPlan(UUID memberId) {
+    if (MemberEntity.isQuickscan(memberId)) {
+      audit.failure(memberId, "quickscan.denied", "member", memberId, null);
+      throw ApiException.forbidden("Een quickscan-account heeft één scan.");
+    }
+  }
+
   private void lockOrganization(UUID memberId, UUID organizationId) {
     access.requireOrganization(memberId, organizationId);
     var organization = OrganizationEntity.findById(organizationId);
@@ -425,7 +481,7 @@ public class ScanService {
       List<ScanDtos.OrganizationGoal> goals = scan.goals.stream()
           .map(goal -> new ScanDtos.OrganizationGoal(goal.name, goal.priority, goal.customText)).toList();
       result.add(new ScanDtos.Scan(scan.id, scan.organizationId, scan.name, scan.assessmentPeriod, scan.status,
-          scan.progress, scan.revision, scan.revisionOf, selected, scan.version, scan.createdAt, scan.updatedAt,
+          scan.kind, scan.progress, scan.revision, scan.revisionOf, selected, scan.version, scan.createdAt, scan.updatedAt,
           scan.completedAt, scan.generalComments, goals));
     }
     return result;

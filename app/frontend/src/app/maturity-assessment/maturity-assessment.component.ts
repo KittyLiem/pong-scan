@@ -15,6 +15,7 @@ import { Subscription, finalize, forkJoin, switchMap } from 'rxjs';
 import { SubmissionKey } from '../core/http/idempotency';
 import { Problem, applyServerErrors } from '../core/http/problem';
 import { ContentDomain, ContentQuestion, GoalPriority, OrganizationGoal, Scan, ScanContent } from '../core/model/scan';
+import { AuthService } from '../core/auth/auth.service';
 import { ScanService } from '../core/scans/scan.service';
 import { FieldErrorComponent, showFieldError } from '../shared/field-error/field-error.component';
 import { PRIORITY_LABELS, STATUS_BADGE_CLASSES, clampProgress, statusLabel } from '../shared/labels';
@@ -104,6 +105,9 @@ export class MaturityAssessmentComponent {
   readonly loadProblem = signal<Problem | null>(null);
   readonly conflict = signal<string | null>(null);
   readonly step = signal<AssessmentStep>('domains');
+  /** Quickscan: de kennisgebieden liggen vast (gekozen door de beheerder). */
+  readonly isQuick = computed(() => this.scan()?.kind === 'quick');
+  readonly isQuickscanAccount = inject(AuthService).isQuickscanAccount;
 
   // Stap 1: kennisgebieden en doelen
   readonly selection = signal<string[]>([]);

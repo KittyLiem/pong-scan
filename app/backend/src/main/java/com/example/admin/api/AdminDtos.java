@@ -16,10 +16,18 @@ public final class AdminDtos {
       @Size(max = 2000) String description,
       @NotNull @Min(0) @Max(10000) Integer order,
       @NotNull Boolean active,
-      @NotNull @Min(0) Long version) {}
+      @NotNull @Min(0) Long version,
+      /** Opnemen in nieuwe quickscans; ontbreekt het veld, dan blijft de huidige waarde (nieuw: niet opgenomen). */
+      Boolean inQuickscan) {
+
+    public DomainWrite(String name, String description, Integer order, Boolean active, Long version) {
+      this(name, description, order, active, version, null);
+    }
+  }
 
   public record Domain(
-      UUID id, String name, String description, int order, boolean active, boolean required, long version, List<Question> questions) {}
+      UUID id, String name, String description, int order, boolean active, boolean required, boolean inQuickscan,
+      long version, List<Question> questions) {}
 
   public record DomainCollection(List<Domain> items, String nextCursor) {}
 

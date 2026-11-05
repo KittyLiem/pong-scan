@@ -1,6 +1,7 @@
 package com.example.organization.domain;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.panache.common.Parameters;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -29,7 +30,12 @@ public class OrganizationEntity extends PanacheEntityBase {
     return find("memberId = ?1 and idempotencyKeyHash = ?2", memberId, keyHash).firstResultOptional();
   }
 
+  /** Organisaties waarvan het lid lid is (eigenaar of anders). */
+  public static final String ACCESSIBLE_IDS =
+      "select m.organizationId from OrganizationMemberEntity m where m.memberId = :memberId";
+
   public static boolean accessible(UUID memberId, UUID organizationId) {
-    return count("id = ?1 and memberId = ?2", organizationId, memberId) > 0;
+    return count("id = :organizationId and id in (" + ACCESSIBLE_IDS + ")",
+        Parameters.with("organizationId", organizationId).and("memberId", memberId)) > 0;
   }
 }

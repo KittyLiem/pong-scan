@@ -47,6 +47,7 @@ public final class ScanDtos {
       String name,
       String assessmentPeriod,
       String status,
+      String kind,
       int progress,
       int revision,
       UUID revisionOf,

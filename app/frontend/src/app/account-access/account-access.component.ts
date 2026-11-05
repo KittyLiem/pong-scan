@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Observable, finalize, switchMap } from 'rxjs';
 import { AuthService, safeInternalRoute } from '../core/auth/auth.service';
@@ -8,6 +8,7 @@ import { Problem, applyServerErrors } from '../core/http/problem';
 import { Session } from '../core/model/auth';
 import { OrganizationService } from '../core/organization/organization.service';
 import { FieldErrorComponent, showFieldError } from '../shared/field-error/field-error.component';
+import { TERMS_AND_PRIVACY_URL } from '../shared/links';
 
 type Mode = 'login' | 'register';
 
@@ -21,14 +22,27 @@ export class AccountAccessComponent {
   readonly organizations = inject(OrganizationService);
   private readonly router = inject(Router);
   private readonly fb = inject(NonNullableFormBuilder);
-  private readonly returnUrl = safeInternalRoute(inject(ActivatedRoute).snapshot.queryParamMap.get('returnUrl'));
+  private readonly query = inject(ActivatedRoute).snapshot.queryParamMap;
+  private readonly returnUrl = safeInternalRoute(this.query.get('returnUrl'));
+  /** Via de quickscan-landingspagina: registratie levert een quickscan-account op. */
+  readonly quickscanEntry = this.query.get('entry') === 'quickscan';
 
-  readonly mode = signal<Mode>('login');
+  readonly mode = signal<Mode>(this.quickscanEntry && this.query.get('mode') !== 'login' ? 'register' : 'login');
+  /** Alleen bij een quickscan-account aanmaken; wordt met tijdstip en versie bij het account opgeslagen. */
+  readonly acceptedTerms = new FormControl(false, { nonNullable: true, validators: Validators.requiredTrue });
+  /** Optioneel en standaard niet aangevinkt; wordt bij het account opgeslagen. */
+  readonly marketingConsent = new FormControl(false, { nonNullable: true });
+  readonly termsUrl = TERMS_AND_PRIVACY_URL;
+  readonly asksTerms = computed(() => this.quickscanEntry && this.mode() === 'register');
   readonly showPassword = signal(false);
   readonly busy = signal(false);
   readonly submitted = signal(false);
   readonly problem = signal<Problem | null>(null);
-  readonly notice = signal<string | null>(this.returnUrl && this.returnUrl !== '/scans' ? 'Meld je (opnieuw) aan om verder te gaan waar je gebleven was.' : null);
+  readonly notice = signal<string | null>(
+    this.returnUrl && this.returnUrl !== '/scans' && !this.returnUrl.startsWith('/quickscan')
+      ? 'Meld je (opnieuw) aan om verder te gaan waar je gebleven was.'
+      : null,
+  );
 
   readonly loadingOrganizations = signal(false);
   readonly organizationsProblem = signal<Problem | null>(null);
@@ -74,14 +88,16 @@ export class AccountAccessComponent {
   submit(): void {
     this.submitted.set(true);
     this.problem.set(null);
-    if (this.form.invalid || this.busy()) {
+    const termsMissing = this.asksTerms() && this.acceptedTerms.invalid;
+    if (this.form.invalid || termsMissing || this.busy()) {
       this.form.markAllAsTouched();
+      this.acceptedTerms.markAsTouched();
       return;
     }
     const { accountIdentifier, credential } = this.form.getRawValue();
     const email = accountIdentifier.trim();
     const login$: Observable<Session> = this.mode() === 'register'
-      ? this.auth.register(email, credential).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
+      ? this.auth.register(email, credential, this.quickscanEntry ? 'quickscan' : undefined, this.acceptedTerms.value, this.marketingConsent.value).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
       : this.auth.login(email, credential, this.returnUrl);
 
     this.busy.set(true);

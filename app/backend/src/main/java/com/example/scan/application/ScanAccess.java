@@ -4,18 +4,22 @@ import com.example.common.ApiException;
 import com.example.organization.domain.OrganizationEntity;
 import com.example.scan.domain.ScanEntity;
 import io.quarkus.hibernate.orm.panache.Panache;
+import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.LockModeType;
 import java.util.UUID;
 
-/** Toegangscontrole: een lid ziet alleen scans van eigen organisaties; anders 404 (geen informatielek). */
+/**
+ * Toegangscontrole: een lid ziet alleen scans van organisaties waarvan het lid is (organization_members);
+ * anders 404 (geen informatielek).
+ */
 @ApplicationScoped
 public class ScanAccess {
 
   public ScanEntity load(UUID memberId, UUID scanId) {
     return ScanEntity.<ScanEntity>find(
-            "id = ?1 and organizationId in (select o.id from OrganizationEntity o where o.memberId = ?2)",
-            scanId, memberId)
+            "id = :scanId and organizationId in (" + OrganizationEntity.ACCESSIBLE_IDS + ")",
+            Parameters.with("scanId", scanId).and("memberId", memberId))
         .firstResultOptional()
         .orElseThrow(() -> ApiException.notFound("Scan niet gevonden."));
   }
