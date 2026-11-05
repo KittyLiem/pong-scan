@@ -4,7 +4,10 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { admin, organization, render, session, text } from '../../testing/fixtures';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../core/auth/auth.service';
 import { authInterceptor } from '../core/http/auth.interceptor';
+import { OrganizationService } from '../core/organization/organization.service';
 import { AccountAccessComponent } from './account-access.component';
 
 function setup(queryParams: Record<string, string> = {}) {
@@ -52,7 +55,7 @@ describe('AccountAccessComponent', () => {
     const organizations = http.expectOne('/v1/organizations');
     expect(organizations.request.headers.get('Authorization')).toBe('Bearer token-123');
     organizations.flush({ items: [organization] });
-    expect(navigate).toHaveBeenCalledWith('/scans/s1/results');
+    expect(navigate).toHaveBeenCalledWith('/scans/s1/results', { replaceUrl: true });
   });
 
   it('sends an admin without organization straight to the requested admin route', () => {
@@ -60,7 +63,7 @@ describe('AccountAccessComponent', () => {
     fill(fixture, 'admin@pong.example', 'wachtwoord123');
     http.expectOne('/v1/auth/sessions').flush(session({ desiredRoute: '/admin', member: admin }));
     http.expectOne('/v1/organizations').flush({ items: [] });
-    expect(navigate).toHaveBeenCalledWith('/admin');
+    expect(navigate).toHaveBeenCalledWith('/admin', { replaceUrl: true });
   });
 
   it('keeps a member without organization on the organization form', () => {
@@ -78,7 +81,7 @@ describe('AccountAccessComponent', () => {
     expect(login.request.body.desiredRoute).toBeUndefined();
     login.flush(session());
     http.expectOne('/v1/organizations').flush({ items: [organization] });
-    expect(navigate).toHaveBeenCalledWith('/scans');
+    expect(navigate).toHaveBeenCalledWith('/scans', { replaceUrl: true });
   });
 
   it('shows the organization form when the member has no organization and continues after creating one', () => {
@@ -109,7 +112,64 @@ describe('AccountAccessComponent', () => {
     expect(create.request.method).toBe('POST');
     expect(create.request.body).toEqual({ name: 'Pong Consulting', chamberOfCommerceNumber: '12345678' });
     create.flush(organization);
-    expect(navigate).toHaveBeenCalledWith('/scans');
+    expect(navigate).toHaveBeenCalledWith('/scans', { replaceUrl: true });
+  });
+
+  it('sends a quickscan account straight to its quickscan after creating the organization', () => {
+    const { fixture, navigate, http } = setup({ entry: 'quickscan', returnUrl: '/quickscan/start' });
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('#accepted-terms')!.click();
+    fill(fixture, 'nieuw@pong.example', 'wachtwoord123');
+    http.expectOne('/v1/auth/registrations').flush({ ...session().member, plan: 'quickscan' });
+    http.expectOne('/v1/auth/sessions').flush(session({ desiredRoute: '/quickscan/start', member: { ...session().member, plan: 'quickscan' } }));
+    http.expectOne('/v1/organizations').flush({ items: [] });
+    render(fixture);
+
+    const root = fixture.nativeElement as HTMLElement;
+    const name = root.querySelector<HTMLInputElement>('#org-name')!;
+    name.value = 'Klant BV';
+    name.dispatchEvent(new Event('input'));
+    root.querySelector<HTMLFormElement>('form')!.dispatchEvent(new Event('submit'));
+    http.expectOne('/v1/organizations').flush(organization);
+    render(fixture);
+
+    expect(navigate).toHaveBeenCalledWith('/quickscan/start', { replaceUrl: true });
+    expect(text(fixture)).toContain('Je quickscan wordt geopend…');
+    expect(text(fixture)).not.toContain('Naar je quickscan');
+    expect(root.querySelector('a.btn, button.btn')).toBeNull();
+  });
+
+  it('defaults a quickscan account without a requested route to its quickscan', () => {
+    const { fixture, navigate, http } = setup();
+    fill(fixture, 'quick@pong.example', 'wachtwoord123');
+    http.expectOne('/v1/auth/sessions').flush(session({ member: { ...session().member, plan: 'quickscan' } }));
+    http.expectOne('/v1/organizations').flush({ items: [organization] });
+    expect(navigate).toHaveBeenCalledWith('/quickscan/start', { replaceUrl: true });
+  });
+
+  it('continues immediately when /start is opened while signed in with an organization', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [AccountAccessComponent],
+      providers: [
+        provideHttpClient(withInterceptors([authInterceptor])),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
+      ],
+    });
+    const auth = TestBed.inject(AuthService);
+    const http = TestBed.inject(HttpTestingController);
+    void firstValueFrom(auth.login('demo@pong.example', 'wachtwoord123'));
+    http.expectOne('/v1/auth/sessions').flush(session());
+    void firstValueFrom(TestBed.inject(OrganizationService).load());
+    http.expectOne('/v1/organizations').flush({ items: [organization] });
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    const fixture = TestBed.createComponent(AccountAccessComponent);
+    fixture.detectChanges();
+    expect(navigate).toHaveBeenCalledWith('/scans', { replaceUrl: true });
+    expect(text(fixture)).toContain('Je scanoverzicht wordt geopend…');
+    expect(text(fixture)).not.toContain('Naar het scanoverzicht');
   });
 
   it('validates e-mail and password in Dutch before calling the API', () => {
@@ -167,7 +227,7 @@ describe('AccountAccessComponent', () => {
     registration.flush({ ...session().member, plan: 'quickscan' });
     http.expectOne('/v1/auth/sessions').flush(session({ desiredRoute: '/quickscan/start' }));
     http.expectOne('/v1/organizations').flush({ items: [organization] });
-    expect(navigate).toHaveBeenCalledWith('/quickscan/start');
+    expect(navigate).toHaveBeenCalledWith('/quickscan/start', { replaceUrl: true });
   });
 
   it('requires agreeing to the terms before a quickscan account is created', () => {

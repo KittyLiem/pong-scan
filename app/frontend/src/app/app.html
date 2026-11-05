@@ -15,7 +15,10 @@
             <a routerLink="/scans" routerLinkActive="bg-primary-hover underline underline-offset-4" ariaCurrentWhenActive="page" class="rounded-md px-3 py-2 text-sm font-semibold hover:bg-primary-hover">Scanoverzicht</a>
           }
           @if (auth.isAdmin()) {
-            <a routerLink="/admin" routerLinkActive="bg-primary-hover underline underline-offset-4" ariaCurrentWhenActive="page" class="rounded-md px-3 py-2 text-sm font-semibold hover:bg-primary-hover">Beheer</a>
+            <a routerLink="/admin" routerLinkActive="bg-primary-hover underline underline-offset-4" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="rounded-md px-3 py-2 text-sm font-semibold hover:bg-primary-hover">Beheer</a>
+            @if (auth.quickscanFollowupEnabled()) {
+              <a routerLink="/admin/quickscan-opvolging" routerLinkActive="bg-primary-hover underline underline-offset-4" ariaCurrentWhenActive="page" class="rounded-md px-3 py-2 text-sm font-semibold hover:bg-primary-hover" data-testid="quickscan-followup-link">Quickscan-opvolging</a>
+            }
           }
         </nav>
         <div class="ml-auto flex flex-wrap items-center gap-3">

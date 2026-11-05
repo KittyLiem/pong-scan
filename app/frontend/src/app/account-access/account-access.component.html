@@ -127,14 +127,9 @@
           }
         }
 
-        @case ('ready') {
+        @case ('continuing') {
           <h2 id="start-heading" class="text-2xl font-semibold">Je bent aangemeld</h2>
-          <p class="mt-2">Organisatie: <strong>{{ organizations.current()?.name }}</strong></p>
-          @if (auth.isQuickscanAccount()) {
-            <a routerLink="/quickscan/start" class="btn btn-primary mt-5">Naar je quickscan</a>
-          } @else {
-            <a routerLink="/scans" class="btn btn-primary mt-5">Naar het scanoverzicht</a>
-          }
+          <p class="mt-4" role="status">{{ auth.isQuickscanAccount() ? 'Je quickscan wordt geopend…' : 'Je scanoverzicht wordt geopend…' }}</p>
         }
       }
     </section>

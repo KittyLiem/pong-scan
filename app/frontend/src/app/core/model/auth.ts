@@ -5,6 +5,8 @@ export type MemberPlan = 'full' | 'quickscan';
 /** Functies die op deze installatie beschikbaar zijn. */
 export interface Features {
   quickscan: boolean;
+  /** Handmatige opvolging van quickscan-accounts (alleen voor beheerders, tot de automatische e-mailprocedure draait). */
+  quickscanFollowup: boolean;
 }
 
 export interface Member {
