@@ -40,7 +40,7 @@ public final class AccountDtos {
       OffsetDateTime marketingConsentAt) {}
 
   /** Functies die op deze installatie beschikbaar zijn. */
-  public record Features(boolean quickscan) {}
+  public record Features(boolean quickscan, boolean quickscanFollowup) {}
 
   public record Session(
       String accessToken, String tokenType, OffsetDateTime expiresAt, String desiredRoute, Member member) {}

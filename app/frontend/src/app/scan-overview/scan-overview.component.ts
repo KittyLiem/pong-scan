@@ -78,6 +78,8 @@ export class ScanOverviewComponent {
           this.scans.set(page.items);
           this.nextCursor.set(page.nextCursor ?? null);
           this.loaded.set(true);
+          // Nog geen scans: het aanmaakformulier staat meteen open, zonder extra klik.
+          if (page.items.length === 0 && !page.nextCursor && !this.showCreate()) this.openCreate();
         },
         error: (problem: Problem) => this.loadProblem.set(problem),
       });
@@ -100,6 +102,13 @@ export class ScanOverviewComponent {
         },
         error: (problem: Problem) => this.loadProblem.set(problem),
       });
+  }
+
+  private openCreate(): void {
+    this.showCreate.set(true);
+    this.createProblem.set(null);
+    this.createKey.reset();
+    setTimeout(() => document.getElementById('scan-name')?.focus());
   }
 
   toggleCreate(): void {

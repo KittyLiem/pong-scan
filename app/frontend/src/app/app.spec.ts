@@ -41,12 +41,21 @@ describe('App shell', () => {
     expect(text(fixture)).toContain('Scanoverzicht');
     expect(text(fixture)).toContain('demo@pong.example');
     expect(text(fixture)).not.toContain('Beheer');
+    expect(text(fixture)).not.toContain('Quickscan-opvolging');
     expect(root.innerHTML).not.toContain('/scans/current');
   });
 
-  it('shows the Beheer link for admins', async () => {
+  it('shows the Beheer and Quickscan-opvolging links for admins', async () => {
     const { root } = await setup('admin');
     expect(root.querySelector('a[href="/admin"]')).toBeTruthy();
+    expect(root.querySelector('nav a[href="/admin/quickscan-opvolging"]')!.textContent).toContain('Quickscan-opvolging');
+  });
+
+  it('hides the Quickscan-opvolging link when manual follow-up is switched off', async () => {
+    const { fixture, root } = await setup('admin');
+    TestBed.inject(AuthService).member.set({ ...admin, features: { quickscan: true, quickscanFollowup: false } });
+    fixture.detectChanges();
+    expect(root.querySelector('a[href="/admin/quickscan-opvolging"]')).toBeNull();
   });
 
   it('signs out via DELETE /v1/auth/sessions/current and clears the session', async () => {

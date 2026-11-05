@@ -542,6 +542,52 @@ paths:
                 $ref: '#/components/schemas/AnswerOption'
         default:
           $ref: '#/components/responses/Problem'
+  /v1/admin/quickscan-accounts:
+    get:
+      operationId: listAdminQuickscanAccounts
+      summary: Quickscan-accounts voor handmatige opvolging (gepagineerd)
+      description: >-
+        Alleen beheerders (anders 403). 404 als de handmatige opvolging uit staat
+        (app.quickscan.manual-followup.enabled). `pending`: quickscan-accounts met een quickscan en geldige
+        marketingtoestemming die nog niet zijn benaderd (oudste registratie eerst). `contacted`: accounts die al zijn
+        benaderd binnen de campagne `quickscan-followup`, handmatig of automatisch (laatst benaderd eerst).
+      parameters:
+        - in: query
+          name: status
+          required: false
+          schema:
+            type: string
+            enum: [pending, contacted]
+            default: pending
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickscanAccountCollection'
+        default:
+          $ref: '#/components/responses/Problem'
+  /v1/admin/quickscan-accounts/{memberId}/contacted:
+    parameters:
+      - $ref: '#/components/parameters/MemberId'
+    post:
+      operationId: markAdminQuickscanAccountContacted
+      summary: Vastleggen dat het account handmatig is gemaild
+      description: >-
+        Eenmalig per account: 409 als het account al is benaderd, 422 zonder (geldige) marketingtoestemming,
+        404 als het geen quickscan-account met een quickscan is of als de handmatige opvolging uit staat.
+      responses:
+        '200':
+          description: Contactmoment vastgelegd
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickscanAccount'
+        default:
+          $ref: '#/components/responses/Problem'
 components:
   securitySchemes:
     bearerAuth:
@@ -611,6 +657,13 @@ components:
     OptionId:
       in: path
       name: optionId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    MemberId:
+      in: path
+      name: memberId
       required: true
       schema:
         type: string
@@ -716,10 +769,13 @@ components:
           enum: [full, quickscan]
         features:
           type: object
-          required: [quickscan]
+          required: [quickscan, quickscanFollowup]
           properties:
             quickscan:
               type: boolean
+            quickscanFollowup:
+              type: boolean
+              description: Handmatige opvolging van quickscan-accounts beschikbaar (alleen voor beheerders).
         termsAcceptedAt:
           type: [string, 'null']
           format: date-time
@@ -1434,3 +1490,86 @@ components:
         version:
           type: integer
           minimum: 0
+    QuickscanAccountCollection:
+      type: object
+      required: [items, declinedCount]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuickscanAccount'
+        nextCursor:
+          type: [string, 'null']
+        declinedCount:
+          type: integer
+          minimum: 0
+          description: >-
+            Quickscan-accounts met een quickscan die niet benaderd willen worden (geen marketingtoestemming gegeven
+            of ingetrokken); onafhankelijk van status en paginering.
+    QuickscanAccount:
+      type: object
+      required: [memberId, accountIdentifier, registeredAt, organizationName, quickscan, marketingConsent,
+        marketingConsentAt, marketingConsentVersion, marketingConsentWithdrawnAt, contact]
+      properties:
+        memberId:
+          type: string
+          format: uuid
+        accountIdentifier:
+          type: string
+          description: E-mailadres van het account.
+        registeredAt:
+          type: string
+          format: date-time
+        organizationName:
+          type: [string, 'null']
+        quickscan:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [scanId, status, progress, createdAt, completedAt]
+              properties:
+                scanId:
+                  type: string
+                  format: uuid
+                status:
+                  type: string
+                  enum: [concept, in-progress, content-complete, completed]
+                progress:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                createdAt:
+                  type: string
+                  format: date-time
+                completedAt:
+                  type: [string, 'null']
+                  format: date-time
+        marketingConsent:
+          type: boolean
+        marketingConsentAt:
+          type: [string, 'null']
+          format: date-time
+        marketingConsentVersion:
+          type: [string, 'null']
+          maxLength: 32
+        marketingConsentWithdrawnAt:
+          type: [string, 'null']
+          format: date-time
+        contact:
+          oneOf:
+            - type: 'null'
+            - type: object
+              required: [channel, status, contactedAt, contactedBy]
+              properties:
+                channel:
+                  type: string
+                  enum: [manual, automatic]
+                status:
+                  type: string
+                  enum: [queued, sent, failed, bounced]
+                contactedAt:
+                  type: string
+                  format: date-time
+                contactedBy:
+                  type: [string, 'null']
+                  description: E-mailadres van de beheerder; leeg bij automatische verzending.

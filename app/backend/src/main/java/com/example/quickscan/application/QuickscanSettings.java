@@ -13,9 +13,23 @@ public class QuickscanSettings {
   int maxPerAccount;
   @ConfigProperty(name = "app.quickscan.terms-version", defaultValue = "2026-11")
   String termsVersion;
+  /** Handmatige opvolging door beheerders; uitzetten zodra de automatische e-mailprocedure draait. */
+  @ConfigProperty(name = "app.quickscan.manual-followup.enabled", defaultValue = "true")
+  boolean manualFollowupEnabled;
 
   public boolean enabled() {
     return enabled;
+  }
+
+  public boolean manualFollowupEnabled() {
+    return enabled && manualFollowupEnabled;
+  }
+
+  /** 404 als de handmatige opvolging op deze installatie niet (meer) bestaat. */
+  public void requireManualFollowupEnabled() {
+    if (!manualFollowupEnabled()) {
+      throw ApiException.notFound("Handmatige opvolging van quickscans is niet beschikbaar.");
+    }
   }
 
   public int maxPerAccount() {

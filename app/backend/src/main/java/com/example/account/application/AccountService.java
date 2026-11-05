@@ -209,7 +209,9 @@ public class AccountService {
 
   private AccountDtos.Member toMember(MemberEntity member) {
     return new AccountDtos.Member(member.id, member.accountIdentifier, member.role, member.plan,
-        new AccountDtos.Features(quickscan.enabled()), member.termsAcceptedAt, member.termsVersion,
+        new AccountDtos.Features(quickscan.enabled(),
+            quickscan.manualFollowupEnabled() && MemberEntity.ROLE_ADMIN.equals(member.role)),
+        member.termsAcceptedAt, member.termsVersion,
         member.marketingConsent, member.marketingConsentAt);
   }
 }

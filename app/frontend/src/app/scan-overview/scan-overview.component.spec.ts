@@ -69,6 +69,30 @@ describe('ScanOverviewComponent', () => {
     expect(text(fixture)).not.toContain('Meer laden');
   });
 
+  it('opens the create-scan form straight away when the organization has no scans yet', async () => {
+    const { fixture, http } = setup();
+    http.expectOne('/v1/organizations/o1/scans?pageSize=20').flush({ items: [], nextCursor: null });
+    render(fixture);
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelector('#nieuwe-scan')).not.toBeNull();
+    expect(text(fixture)).not.toContain('Eerste scan starten');
+    await new Promise(resolve => setTimeout(resolve));
+    expect(document.activeElement).toBe(root.querySelector('#scan-name'));
+
+    // Sluiten blijft mogelijk; dan verschijnt de knop om alsnog te starten.
+    fixture.componentInstance.toggleCreate();
+    render(fixture);
+    expect(root.querySelector('#nieuwe-scan')).toBeNull();
+    expect(text(fixture)).toContain('Eerste scan starten');
+  });
+
+  it('keeps the create-scan form closed when the organization already has scans', () => {
+    const { fixture, http } = setup();
+    http.expectOne('/v1/organizations/o1/scans?pageSize=20').flush({ items: scans, nextCursor: null });
+    render(fixture);
+    expect((fixture.nativeElement as HTMLElement).querySelector('#nieuwe-scan')).toBeNull();
+  });
+
   it('shows a retry action when loading fails', () => {
     const { fixture, http } = setup();
     http.expectOne('/v1/organizations/o1/scans?pageSize=20').flush({}, { status: 500, statusText: 'Error' });
@@ -120,7 +144,7 @@ describe('ScanOverviewComponent', () => {
     http.expectOne('/v1/organizations/o1/scans?pageSize=20').flush({ items: [], nextCursor: null });
     vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const component = fixture.componentInstance;
-    component.toggleCreate();
+    expect(component.showCreate()).toBe(true);
     component.createForm.setValue({ name: 'Nulmeting', assessmentPeriod: '2026' });
 
     component.createScan();
@@ -161,7 +185,6 @@ describe('ScanOverviewComponent', () => {
   it('maps server field errors to the form', () => {
     const { fixture, http } = setup();
     http.expectOne('/v1/organizations/o1/scans?pageSize=20').flush({ items: [], nextCursor: null });
-    fixture.componentInstance.toggleCreate();
     render(fixture);
     fixture.componentInstance.createForm.setValue({ name: 'Scan', assessmentPeriod: '2026' });
     fixture.componentInstance.createScan();

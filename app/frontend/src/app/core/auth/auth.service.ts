@@ -28,6 +28,7 @@ export class AuthService {
   readonly isAdmin = computed(() => this.member()?.role === 'admin');
   /** Quickscan bestaat alleen op het centrale platform, niet op tenant-installaties. */
   readonly quickscanEnabled = computed(() => this.member()?.features?.quickscan === true);
+  readonly quickscanFollowupEnabled = computed(() => this.member()?.features?.quickscanFollowup === true);
   readonly isQuickscanAccount = computed(() => this.member()?.plan === 'quickscan');
 
   /** Token aanwezig en (voor zover bekend) niet verlopen. */
