@@ -16,10 +16,12 @@ public final class AccountDtos {
       @Size(max = 128, message = "mag maximaal 128 tekens bevatten") String credential,
       @Pattern(regexp = ENTRY_QUICKSCAN, message = "moet quickscan zijn of ontbreken") String entry,
       /** Verplicht {@code true} bij {@code entry = quickscan}; wordt met tijdstip en versie bij het account opgeslagen. */
-      Boolean acceptedTerms) {
+      Boolean acceptedTerms,
+      /** Optioneel bij {@code entry = quickscan}; ontbreekt het veld, dan geldt geen toestemming. */
+      Boolean marketingConsent) {
 
     public RegistrationInput(String accountIdentifier, String credential) {
-      this(accountIdentifier, credential, null, null);
+      this(accountIdentifier, credential, null, null, null);
     }
   }
 
@@ -34,7 +36,8 @@ public final class AccountDtos {
       String desiredRoute) {}
 
   public record Member(UUID id, String accountIdentifier, String role, String plan, Features features,
-      OffsetDateTime termsAcceptedAt, String termsVersion) {}
+      OffsetDateTime termsAcceptedAt, String termsVersion, boolean marketingConsent,
+      OffsetDateTime marketingConsentAt) {}
 
   /** Functies die op deze installatie beschikbaar zijn. */
   public record Features(boolean quickscan) {}

@@ -75,6 +75,37 @@ class QuickscanTest {
   }
 
   @Test
+  void marketingConsentIsOptionalAndSavedWithTheAccount() throws SQLException {
+    String email = Api.uniqueEmail("quick");
+    String key = Api.key();
+    String memberId = register(key, Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan",
+        "acceptedTerms", true, "marketingConsent", true))
+        .statusCode(201).body("marketingConsent", equalTo(true)).body("marketingConsentAt", notNullValue())
+        .extract().path("id");
+    assertThat(single("select marketing_consent_version from account_members where id = ?", memberId))
+        .isEqualTo("2026-11");
+    assertThat(single("select count(*) from audit_events where actor_member_id = ? "
+        + "and action = 'account.marketing.consent.granted'", memberId)).isEqualTo("1");
+    // Dezelfde sleutel met een andere keuze is een ander verzoek.
+    register(key, Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan",
+        "acceptedTerms", true, "marketingConsent", false)).statusCode(409);
+
+    // Zonder toestemming ontstaat het account ook, en kan de quickscan starten.
+    String token = quickscanToken();
+    String withoutId = Api.as(token).when().get("/v1/me").then().statusCode(200)
+        .body("marketingConsent", equalTo(false)).body("marketingConsentAt", nullValue()).extract().path("id");
+    assertThat(single("select marketing_consent_version from account_members where id = ?", withoutId)).isNull();
+    assertThat(single("select count(*) from audit_events where actor_member_id = ? "
+        + "and action = 'account.marketing.consent.granted'", withoutId)).isEqualTo("0");
+    Api.createOrganization(token);
+    Api.as(token).when().put("/v1/quickscan").then().statusCode(201);
+
+    // Een gewone registratie legt geen toestemming vast.
+    register(Api.key(), Map.of("accountIdentifier", Api.uniqueEmail("gewoon"), "credential", PASSWORD,
+        "marketingConsent", true)).statusCode(201).body("marketingConsent", equalTo(false));
+  }
+
+  @Test
   void registrationReplayWithDifferentEntryConflicts() {
     String key = Api.key();
     String email = Api.uniqueEmail("quick");
@@ -262,6 +293,16 @@ class QuickscanTest {
     for (Api.Question question : Api.questions(Api.content(token, scanId), true)) {
       String optionId = question.optionsByScore().values().iterator().next();
       Api.answer(token, scanId, question.questionId(), optionId, 0, "Toelichting");
+    }
+  }
+
+  private String single(String sql, String id) throws SQLException {
+    try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setObject(1, UUID.fromString(id));
+      try (var rows = statement.executeQuery()) {
+        rows.next();
+        return rows.getString(1);
+      }
     }
   }
 

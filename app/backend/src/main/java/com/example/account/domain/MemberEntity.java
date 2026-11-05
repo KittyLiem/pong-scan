@@ -29,6 +29,9 @@ public class MemberEntity extends PanacheEntityBase {
   @Column(name = "created_at", nullable = false) public OffsetDateTime createdAt;
   @Column(name = "terms_accepted_at") public OffsetDateTime termsAcceptedAt;
   @Column(name = "terms_version") public String termsVersion;
+  @Column(name = "marketing_consent", nullable = false) public boolean marketingConsent;
+  @Column(name = "marketing_consent_at") public OffsetDateTime marketingConsentAt;
+  @Column(name = "marketing_consent_version") public String marketingConsentVersion;
   @Column(name = "failed_login_count", nullable = false) public int failedLoginCount;
   @Column(name = "failed_login_window_ends") public OffsetDateTime failedLoginWindowEnds;
   @Version public long version;

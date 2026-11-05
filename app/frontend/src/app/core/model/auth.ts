@@ -16,6 +16,9 @@ export interface Member {
   /** Akkoord met de voorwaarden en het privacybeleid (alleen quickscan-accounts). */
   termsAcceptedAt: string | null;
   termsVersion: string | null;
+  /** Optionele toestemming voor marketing per e-mail. */
+  marketingConsent: boolean;
+  marketingConsentAt: string | null;
 }
 
 export interface Session {

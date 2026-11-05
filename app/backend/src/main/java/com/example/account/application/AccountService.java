@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class AccountService {
@@ -33,6 +34,8 @@ public class AccountService {
   private final LoginProtection loginProtection;
   private final LoginFailureStore loginFailures;
   private final QuickscanSettings quickscan;
+  @ConfigProperty(name = "app.marketing.consent-version", defaultValue = "2026-11")
+  String marketingConsentVersion;
 
   public AccountService(TokenService tokens, AuditService audit, LoginProtection loginProtection,
       LoginFailureStore loginFailures, QuickscanSettings quickscan) {
@@ -58,9 +61,10 @@ public class AccountService {
     }
     boolean quickscanEntry = AccountDtos.ENTRY_QUICKSCAN.equals(input.entry());
     boolean acceptedTerms = Boolean.TRUE.equals(input.acceptedTerms());
+    boolean marketingConsent = Boolean.TRUE.equals(input.marketingConsent());
     // Zonder entry blijft de vingerafdruk gelijk aan die van bestaande registraties (replays blijven geldig).
     String fingerprint = quickscanEntry
-        ? Hashing.fingerprint(identifier, input.entry(), acceptedTerms)
+        ? Hashing.fingerprint(identifier, input.entry(), acceptedTerms, marketingConsent)
         : Hashing.fingerprint(identifier);
 
     Optional<MemberEntity> replay = MemberEntity.byRegistrationKeyHash(keyHash);
@@ -96,11 +100,20 @@ public class AccountService {
       // Tijdstip van de server, niet van de browser; de versie maakt latere wijzigingen van de voorwaarden herleidbaar.
       member.termsAcceptedAt = member.createdAt;
       member.termsVersion = quickscan.termsVersion();
+      // Optioneel: tijdstip en versie van de tekst alleen bij gegeven toestemming.
+      member.marketingConsent = marketingConsent;
+      if (marketingConsent) {
+        member.marketingConsentAt = member.createdAt;
+        member.marketingConsentVersion = marketingConsentVersion;
+      }
     }
     member.persist();
     audit.success(member.id, "account.registered", "member", member.id, null);
     if (quickscanEntry) {
       audit.success(member.id, "account.terms.accepted", "member", member.id, null);
+    }
+    if (member.marketingConsent) {
+      audit.success(member.id, "account.marketing.consent.granted", "member", member.id, null);
     }
     return toMember(member);
   }
@@ -196,6 +209,7 @@ public class AccountService {
 
   private AccountDtos.Member toMember(MemberEntity member) {
     return new AccountDtos.Member(member.id, member.accountIdentifier, member.role, member.plan,
-        new AccountDtos.Features(quickscan.enabled()), member.termsAcceptedAt, member.termsVersion);
+        new AccountDtos.Features(quickscan.enabled()), member.termsAcceptedAt, member.termsVersion,
+        member.marketingConsent, member.marketingConsentAt);
   }
 }

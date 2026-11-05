@@ -14,8 +14,8 @@ export function text<T>(fixture: ComponentFixture<T>): string {
   return (fixture.nativeElement as HTMLElement).textContent?.replace(/\s+/g, ' ') ?? '';
 }
 
-export const member: Member = { id: 'm1', accountIdentifier: 'demo@pong.example', role: 'member', plan: 'full', features: { quickscan: true }, termsAcceptedAt: null, termsVersion: null };
-export const admin: Member = { id: 'm2', accountIdentifier: 'admin@pong.example', role: 'admin', plan: 'full', features: { quickscan: true }, termsAcceptedAt: null, termsVersion: null };
+export const member: Member = { id: 'm1', accountIdentifier: 'demo@pong.example', role: 'member', plan: 'full', features: { quickscan: true }, termsAcceptedAt: null, termsVersion: null, marketingConsent: false, marketingConsentAt: null };
+export const admin: Member = { id: 'm2', accountIdentifier: 'admin@pong.example', role: 'admin', plan: 'full', features: { quickscan: true }, termsAcceptedAt: null, termsVersion: null, marketingConsent: false, marketingConsentAt: null };
 
 export function session(overrides: Partial<Session> = {}): Session {
   return {
