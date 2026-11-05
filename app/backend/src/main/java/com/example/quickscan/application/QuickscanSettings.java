@@ -11,6 +11,8 @@ public class QuickscanSettings {
   boolean enabled;
   @ConfigProperty(name = "app.quickscan.max-per-account", defaultValue = "1")
   int maxPerAccount;
+  @ConfigProperty(name = "app.quickscan.terms-version", defaultValue = "2026-11")
+  String termsVersion;
 
   public boolean enabled() {
     return enabled;
@@ -18,6 +20,10 @@ public class QuickscanSettings {
 
   public int maxPerAccount() {
     return maxPerAccount;
+  }
+
+  public String termsVersion() {
+    return termsVersion;
   }
 
   /** 404 als de quickscan op deze installatie niet bestaat. */

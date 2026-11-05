@@ -668,6 +668,11 @@ components:
           type: [string, 'null']
           enum: [quickscan, null]
           description: Registratie via /quickscan levert een quickscan-account op (422 als de quickscan uit staat).
+        acceptedTerms:
+          type: [boolean, 'null']
+          description: >-
+            Akkoord met de voorwaarden en het privacybeleid. Verplicht true bij entry quickscan (anders 400); wordt met
+            tijdstip en versie bij het account opgeslagen.
     QuickscanDomains:
       type: object
       required: [domains]
@@ -691,7 +696,7 @@ components:
                 type: integer
     Member:
       type: object
-      required: [id, accountIdentifier, role, plan, features]
+      required: [id, accountIdentifier, role, plan, features, termsAcceptedAt, termsVersion]
       properties:
         id:
           type: string
@@ -710,6 +715,13 @@ components:
           properties:
             quickscan:
               type: boolean
+        termsAcceptedAt:
+          type: [string, 'null']
+          format: date-time
+          description: Moment van akkoord met de voorwaarden en het privacybeleid (alleen quickscan-accounts).
+        termsVersion:
+          type: [string, 'null']
+          maxLength: 32
     SessionInput:
       type: object
       required: [accountIdentifier, credential]

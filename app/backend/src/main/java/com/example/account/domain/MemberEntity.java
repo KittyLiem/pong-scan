@@ -27,6 +27,8 @@ public class MemberEntity extends PanacheEntityBase {
   @Column(name = "registration_key_hash", unique = true) public String registrationKeyHash;
   @Column(name = "registration_fingerprint") public String registrationFingerprint;
   @Column(name = "created_at", nullable = false) public OffsetDateTime createdAt;
+  @Column(name = "terms_accepted_at") public OffsetDateTime termsAcceptedAt;
+  @Column(name = "terms_version") public String termsVersion;
   @Column(name = "failed_login_count", nullable = false) public int failedLoginCount;
   @Column(name = "failed_login_window_ends") public OffsetDateTime failedLoginWindowEnds;
   @Version public long version;

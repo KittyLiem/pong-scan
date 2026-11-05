@@ -57,8 +57,11 @@ public class AccountService {
               "Een wachtwoord mag maximaal 72 bytes zijn.")));
     }
     boolean quickscanEntry = AccountDtos.ENTRY_QUICKSCAN.equals(input.entry());
+    boolean acceptedTerms = Boolean.TRUE.equals(input.acceptedTerms());
     // Zonder entry blijft de vingerafdruk gelijk aan die van bestaande registraties (replays blijven geldig).
-    String fingerprint = quickscanEntry ? Hashing.fingerprint(identifier, input.entry()) : Hashing.fingerprint(identifier);
+    String fingerprint = quickscanEntry
+        ? Hashing.fingerprint(identifier, input.entry(), acceptedTerms)
+        : Hashing.fingerprint(identifier);
 
     Optional<MemberEntity> replay = MemberEntity.byRegistrationKeyHash(keyHash);
     if (replay.isPresent()) {
@@ -70,6 +73,10 @@ public class AccountService {
     if (quickscanEntry && !quickscan.enabled()) {
       throw new ApiException(422, "Quickscan niet beschikbaar", "Op deze omgeving kan geen quickscan worden gestart.",
           List.of(new Problem.FieldError("entry", "quickscan is niet beschikbaar")));
+    }
+    if (quickscanEntry && !acceptedTerms) {
+      throw new ApiException(400, "Ongeldige invoer", "Een of meer velden zijn ontbrekend of ongeldig.",
+          List.of(new Problem.FieldError("acceptedTerms", "Ga akkoord met de voorwaarden en het privacybeleid.")));
     }
     if (MemberEntity.byIdentifier(identifier).isPresent()) {
       throw ApiException.conflict("Account bestaat al", "Er is al een account met dit e-mailadres.");
@@ -85,8 +92,16 @@ public class AccountService {
     member.registrationKeyHash = keyHash;
     member.registrationFingerprint = fingerprint;
     member.createdAt = OffsetDateTime.now(ZoneOffset.UTC);
+    if (quickscanEntry) {
+      // Tijdstip van de server, niet van de browser; de versie maakt latere wijzigingen van de voorwaarden herleidbaar.
+      member.termsAcceptedAt = member.createdAt;
+      member.termsVersion = quickscan.termsVersion();
+    }
     member.persist();
     audit.success(member.id, "account.registered", "member", member.id, null);
+    if (quickscanEntry) {
+      audit.success(member.id, "account.terms.accepted", "member", member.id, null);
+    }
     return toMember(member);
   }
 
@@ -181,6 +196,6 @@ public class AccountService {
 
   private AccountDtos.Member toMember(MemberEntity member) {
     return new AccountDtos.Member(member.id, member.accountIdentifier, member.role, member.plan,
-        new AccountDtos.Features(quickscan.enabled()));
+        new AccountDtos.Features(quickscan.enabled()), member.termsAcceptedAt, member.termsVersion);
   }
 }
