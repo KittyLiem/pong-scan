@@ -36,9 +36,9 @@ export class AuthService {
     return this.accessToken() !== null && (expiresAt === null || expiresAt > now);
   }
 
-  /** Met `entry: 'quickscan'` ontstaat een quickscan-account. */
-  register(accountIdentifier: string, credential: string, entry?: 'quickscan'): Observable<Member> {
-    const body = entry ? { accountIdentifier, credential, entry } : { accountIdentifier, credential };
+  /** Met `entry: 'quickscan'` ontstaat een quickscan-account; daarvoor is akkoord met de voorwaarden verplicht. */
+  register(accountIdentifier: string, credential: string, entry?: 'quickscan', acceptedTerms = false): Observable<Member> {
+    const body = entry ? { accountIdentifier, credential, entry, acceptedTerms } : { accountIdentifier, credential };
     return this.http
       .post<Member>('/v1/auth/registrations', body)
       .pipe(mapProblem('Account aanmaken mislukt'));

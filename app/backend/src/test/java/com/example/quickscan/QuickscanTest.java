@@ -3,6 +3,8 @@ package com.example.quickscan;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import com.example.support.Api;
 import io.agroal.api.AgroalDataSource;
@@ -40,11 +42,47 @@ class QuickscanTest {
   }
 
   @Test
+  void quickscanRegistrationRequiresAcceptedTerms() {
+    String email = Api.uniqueEmail("quick");
+    register(Api.key(), Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan"))
+        .statusCode(400).body("errors[0].field", equalTo("acceptedTerms"));
+    register(Api.key(), Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan",
+        "acceptedTerms", false))
+        .statusCode(400).body("errors[0].field", equalTo("acceptedTerms"));
+    // Er is geen account ontstaan: registreren met akkoord lukt nog steeds.
+    register(Api.key(), Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan",
+        "acceptedTerms", true)).statusCode(201);
+  }
+
+  @Test
+  void acceptedTermsAreSavedWithTheAccount() throws SQLException {
+    String token = quickscanToken();
+    String memberId = Api.as(token).when().get("/v1/me").then().statusCode(200)
+        .body("termsVersion", equalTo("2026-11")).body("termsAcceptedAt", notNullValue())
+        .extract().path("id");
+    try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(
+        "select count(*) from audit_events where actor_member_id = ? and action = 'account.terms.accepted'")) {
+      statement.setObject(1, UUID.fromString(memberId));
+      try (var rows = statement.executeQuery()) {
+        rows.next();
+        assertThat(rows.getInt(1)).isEqualTo(1);
+      }
+    }
+    // Een gewone registratie legt niets vast, ook niet als het veld wordt meegestuurd.
+    String email = Api.uniqueEmail("gewoon");
+    register(Api.key(), Map.of("accountIdentifier", email, "credential", PASSWORD, "acceptedTerms", true))
+        .statusCode(201).body("termsAcceptedAt", nullValue()).body("termsVersion", nullValue());
+  }
+
+  @Test
   void registrationReplayWithDifferentEntryConflicts() {
     String key = Api.key();
     String email = Api.uniqueEmail("quick");
-    register(key, Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan")).statusCode(201);
+    register(key, Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan",
+        "acceptedTerms", true)).statusCode(201);
     register(key, Map.of("accountIdentifier", email, "credential", PASSWORD)).statusCode(409);
+    register(key, Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan",
+        "acceptedTerms", false)).statusCode(409);
     register(Api.key(), Map.of("accountIdentifier", Api.uniqueEmail("quick"), "credential", PASSWORD,
         "entry", "volledig")).statusCode(400);
   }
@@ -208,12 +246,13 @@ class QuickscanTest {
 
   private static String quickscanToken() {
     String email = Api.uniqueEmail("quick");
-    register(Api.key(), Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan"))
+    register(Api.key(), Map.of("accountIdentifier", email, "credential", PASSWORD, "entry", "quickscan",
+        "acceptedTerms", true))
         .statusCode(201).body("plan", equalTo("quickscan"));
     return Api.login(email, PASSWORD).getString("accessToken");
   }
 
-  private static io.restassured.response.ValidatableResponse register(String key, Map<String, String> body) {
+  private static io.restassured.response.ValidatableResponse register(String key, Map<String, ?> body) {
     return given().contentType(ContentType.JSON).header("X-Idempotency-Key", key).body(body)
         .when().post("/v1/auth/registrations").then();
   }

@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Observable, finalize, switchMap } from 'rxjs';
 import { AuthService, safeInternalRoute } from '../core/auth/auth.service';
@@ -8,6 +8,7 @@ import { Problem, applyServerErrors } from '../core/http/problem';
 import { Session } from '../core/model/auth';
 import { OrganizationService } from '../core/organization/organization.service';
 import { FieldErrorComponent, showFieldError } from '../shared/field-error/field-error.component';
+import { TERMS_AND_PRIVACY_URL } from '../shared/links';
 
 type Mode = 'login' | 'register';
 
@@ -27,6 +28,10 @@ export class AccountAccessComponent {
   readonly quickscanEntry = this.query.get('entry') === 'quickscan';
 
   readonly mode = signal<Mode>(this.quickscanEntry ? 'register' : 'login');
+  /** Alleen bij een quickscan-account aanmaken; wordt met tijdstip en versie bij het account opgeslagen. */
+  readonly acceptedTerms = new FormControl(false, { nonNullable: true, validators: Validators.requiredTrue });
+  readonly termsUrl = TERMS_AND_PRIVACY_URL;
+  readonly asksTerms = computed(() => this.quickscanEntry && this.mode() === 'register');
   readonly showPassword = signal(false);
   readonly busy = signal(false);
   readonly submitted = signal(false);
@@ -81,14 +86,16 @@ export class AccountAccessComponent {
   submit(): void {
     this.submitted.set(true);
     this.problem.set(null);
-    if (this.form.invalid || this.busy()) {
+    const termsMissing = this.asksTerms() && this.acceptedTerms.invalid;
+    if (this.form.invalid || termsMissing || this.busy()) {
       this.form.markAllAsTouched();
+      this.acceptedTerms.markAsTouched();
       return;
     }
     const { accountIdentifier, credential } = this.form.getRawValue();
     const email = accountIdentifier.trim();
     const login$: Observable<Session> = this.mode() === 'register'
-      ? this.auth.register(email, credential, this.quickscanEntry ? 'quickscan' : undefined).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
+      ? this.auth.register(email, credential, this.quickscanEntry ? 'quickscan' : undefined, this.acceptedTerms.value).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
       : this.auth.login(email, credential, this.returnUrl);
 
     this.busy.set(true);

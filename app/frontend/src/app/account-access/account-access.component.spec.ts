@@ -159,13 +159,43 @@ describe('AccountAccessComponent', () => {
     const { fixture, navigate, http } = setup({ entry: 'quickscan', returnUrl: '/quickscan/start' });
     expect(text(fixture)).toContain('Start de quickscan');
     expect(text(fixture)).not.toContain('Meld je (opnieuw) aan');
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('#accepted-terms')!.click();
     fill(fixture, 'nieuw@pong.example', 'wachtwoord123');
 
     const registration = http.expectOne('/v1/auth/registrations');
-    expect(registration.request.body).toEqual({ accountIdentifier: 'nieuw@pong.example', credential: 'wachtwoord123', entry: 'quickscan' });
+    expect(registration.request.body).toEqual({ accountIdentifier: 'nieuw@pong.example', credential: 'wachtwoord123', entry: 'quickscan', acceptedTerms: true });
     registration.flush({ ...session().member, plan: 'quickscan' });
     http.expectOne('/v1/auth/sessions').flush(session({ desiredRoute: '/quickscan/start' }));
     http.expectOne('/v1/organizations').flush({ items: [organization] });
     expect(navigate).toHaveBeenCalledWith('/quickscan/start');
+  });
+
+  it('requires agreeing to the terms before a quickscan account is created', () => {
+    const { fixture, http } = setup({ entry: 'quickscan', returnUrl: '/quickscan/start' });
+    const root = fixture.nativeElement as HTMLElement;
+    const link = root.querySelector<HTMLAnchorElement>('label[for="accepted-terms"] a')!;
+    expect(root.querySelector('label[for="accepted-terms"]')!.textContent!.replace(/\s+/g, ' ').trim())
+      .toBe('Ik ga akkoord met de voorwaarden en het privacybeleid.');
+    expect(link.textContent).toBe('voorwaarden en het privacybeleid');
+    expect(link.getAttribute('href')).toBe('https://www.pong.nl');
+    expect(link.getAttribute('target')).toBe('_blank');
+
+    fill(fixture, 'nieuw@pong.example', 'wachtwoord123');
+    http.expectNone('/v1/auth/registrations');
+    expect(text(fixture)).toContain('Ga akkoord met de voorwaarden en het privacybeleid om de quickscan te starten.');
+  });
+
+  it('shows no terms checkbox when signing in or creating a normal account', () => {
+    const quickscanLogin = setup({ entry: 'quickscan' });
+    quickscanLogin.fixture.componentInstance.setMode('login');
+    render(quickscanLogin.fixture);
+    expect((quickscanLogin.fixture.nativeElement as HTMLElement).querySelector('#accepted-terms')).toBeNull();
+
+    const { fixture, http } = setup();
+    fixture.componentInstance.setMode('register');
+    render(fixture);
+    expect((fixture.nativeElement as HTMLElement).querySelector('#accepted-terms')).toBeNull();
+    fill(fixture, 'gewoon@pong.example', 'wachtwoord123');
+    expect(http.expectOne('/v1/auth/registrations').request.body).toEqual({ accountIdentifier: 'gewoon@pong.example', credential: 'wachtwoord123' });
   });
 });

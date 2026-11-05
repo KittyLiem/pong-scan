@@ -13,6 +13,9 @@ export interface Member {
   role: MemberRole;
   plan: MemberPlan;
   features: Features;
+  /** Akkoord met de voorwaarden en het privacybeleid (alleen quickscan-accounts). */
+  termsAcceptedAt: string | null;
+  termsVersion: string | null;
 }
 
 export interface Session {

@@ -46,6 +46,19 @@
               <p id="password-hint" class="form-hint">Minimaal 8 tekens.</p>
               <app-field-error fieldId="password-error" [control]="form.controls.credential" [submitted]="submitted()" />
             </div>
+            @if (asksTerms()) {
+              <div>
+                <div class="flex items-start gap-2">
+                  <input id="accepted-terms" type="checkbox" class="mt-0.5 h-5 w-5 shrink-0" [formControl]="acceptedTerms" required
+                    [attr.aria-invalid]="showError(acceptedTerms, submitted())" aria-describedby="accepted-terms-error" />
+                  <label for="accepted-terms" class="text-sm">Ik ga akkoord met de
+                    <a [href]="termsUrl" target="_blank" rel="noopener noreferrer" class="font-medium text-primary underline">voorwaarden en het privacybeleid</a>.</label>
+                </div>
+                <p id="accepted-terms-error" class="mt-1 text-sm font-medium text-error-text-emphasis" aria-live="polite">
+                  @if (showError(acceptedTerms, submitted())) { Ga akkoord met de voorwaarden en het privacybeleid om de quickscan te starten. }
+                </p>
+              </div>
+            }
             <button type="submit" class="btn btn-primary w-full" [disabled]="busy()">
               @if (busy()) { Bezig… } @else { {{ mode() === 'register' ? 'Account aanmaken' : 'Aanmelden' }} }
             </button>

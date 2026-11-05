@@ -14,10 +14,12 @@ public final class AccountDtos {
       @NotBlank @Email(message = "moet een geldig e-mailadres zijn") @Size(max = 320) String accountIdentifier,
       @NotBlank @Size(min = 8, message = "moet minimaal 8 tekens bevatten")
       @Size(max = 128, message = "mag maximaal 128 tekens bevatten") String credential,
-      @Pattern(regexp = ENTRY_QUICKSCAN, message = "moet quickscan zijn of ontbreken") String entry) {
+      @Pattern(regexp = ENTRY_QUICKSCAN, message = "moet quickscan zijn of ontbreken") String entry,
+      /** Verplicht {@code true} bij {@code entry = quickscan}; wordt met tijdstip en versie bij het account opgeslagen. */
+      Boolean acceptedTerms) {
 
     public RegistrationInput(String accountIdentifier, String credential) {
-      this(accountIdentifier, credential, null);
+      this(accountIdentifier, credential, null, null);
     }
   }
 
@@ -31,7 +33,8 @@ public final class AccountDtos {
       @Pattern(regexp = "^/(?![/\\\\]).*$", message = "moet een relatieve route zijn die met één '/' begint")
       String desiredRoute) {}
 
-  public record Member(UUID id, String accountIdentifier, String role, String plan, Features features) {}
+  public record Member(UUID id, String accountIdentifier, String role, String plan, Features features,
+      OffsetDateTime termsAcceptedAt, String termsVersion) {}
 
   /** Functies die op deze installatie beschikbaar zijn. */
   public record Features(boolean quickscan) {}
