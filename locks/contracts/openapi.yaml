@@ -673,6 +673,11 @@ components:
           description: >-
             Akkoord met de voorwaarden en het privacybeleid. Verplicht true bij entry quickscan (anders 400); wordt met
             tijdstip en versie bij het account opgeslagen.
+        marketingConsent:
+          type: [boolean, 'null']
+          description: >-
+            Optionele toestemming voor marketing per e-mail bij entry quickscan. Ontbreekt het veld, dan geldt geen
+            toestemming; bij toestemming worden tijdstip en versie van de tekst opgeslagen.
     QuickscanDomains:
       type: object
       required: [domains]
@@ -696,7 +701,7 @@ components:
                 type: integer
     Member:
       type: object
-      required: [id, accountIdentifier, role, plan, features, termsAcceptedAt, termsVersion]
+      required: [id, accountIdentifier, role, plan, features, termsAcceptedAt, termsVersion, marketingConsent, marketingConsentAt]
       properties:
         id:
           type: string
@@ -722,6 +727,11 @@ components:
         termsVersion:
           type: [string, 'null']
           maxLength: 32
+        marketingConsent:
+          type: boolean
+        marketingConsentAt:
+          type: [string, 'null']
+          format: date-time
     SessionInput:
       type: object
       required: [accountIdentifier, credential]

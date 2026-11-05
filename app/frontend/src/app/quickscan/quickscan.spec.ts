@@ -76,7 +76,7 @@ describe('QuickscanLandingComponent', () => {
     expect(items[1].textContent).toContain('1 vraag');
     const links = Array.from(root.querySelectorAll<HTMLAnchorElement>('a')).map(a => a.getAttribute('href'));
     expect(links).toContain('/start?entry=quickscan&returnUrl=%2Fquickscan%2Fstart');
-    expect(links).toContain('/start?returnUrl=%2Fquickscan%2Fstart');
+    expect(links).toContain('/start?entry=quickscan&mode=login&returnUrl=%2Fquickscan%2Fstart');
   });
 
   it('says the quickscan is not available on an installation without it', () => {

@@ -58,6 +58,10 @@
                   @if (showError(acceptedTerms, submitted())) { Ga akkoord met de voorwaarden en het privacybeleid om de quickscan te starten. }
                 </p>
               </div>
+              <div class="flex items-start gap-2">
+                <input id="marketing-consent" type="checkbox" class="mt-0.5 h-5 w-5 shrink-0" [formControl]="marketingConsent" />
+                <label for="marketing-consent" class="text-sm">Ik geef toestemming aan Pong om mij per e-mail op de hoogte te houden van persoonlijke aanbiedingen, acties en nieuwe producten. Ik kan deze toestemming altijd weer intrekken via de link onderaan de e-mails.</label>
+              </div>
             }
             <button type="submit" class="btn btn-primary w-full" [disabled]="busy()">
               @if (busy()) { Bezig… } @else { {{ mode() === 'register' ? 'Account aanmaken' : 'Aanmelden' }} }
@@ -65,6 +69,12 @@
           </form>
           @if (problem(); as p) {
             <div class="alert-error mt-5" role="alert"><strong>{{ p.title }}</strong>@if (p.detail) { <p>{{ p.detail }}</p> }</div>
+            @if (quickscanEntry && mode() === 'login' && p.status === 401) {
+              <div class="mt-3 flex flex-wrap items-center gap-3" data-testid="quickscan-register-hint">
+                <p class="text-sm">Nog geen account? Maak een quickscan-account aan.</p>
+                <button type="button" class="btn btn-secondary" (click)="setMode('register')">Quickscan-account aanmaken</button>
+              </div>
+            }
           }
         }
 

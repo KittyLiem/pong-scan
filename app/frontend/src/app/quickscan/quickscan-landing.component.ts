@@ -17,9 +17,13 @@ export class QuickscanLandingComponent {
   readonly loading = signal(true);
   readonly problem = signal<Problem | null>(null);
 
-  /** Na aanmelden en het vastleggen van de organisatie gaat de gebruiker door naar de quickscan. */
+  /**
+   * Na aanmelden en het vastleggen van de organisatie gaat de gebruiker door naar de quickscan. Beide links houden
+   * de quickscan-context vast, zodat ook wie na een mislukte aanmelding alsnog een account aanmaakt een
+   * quickscan-account krijgt.
+   */
   readonly registerParams = { entry: 'quickscan', returnUrl: '/quickscan/start' };
-  readonly loginParams = { returnUrl: '/quickscan/start' };
+  readonly loginParams = { entry: 'quickscan', mode: 'login', returnUrl: '/quickscan/start' };
 
   constructor() {
     this.load();

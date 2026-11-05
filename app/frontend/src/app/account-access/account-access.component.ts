@@ -27,9 +27,11 @@ export class AccountAccessComponent {
   /** Via de quickscan-landingspagina: registratie levert een quickscan-account op. */
   readonly quickscanEntry = this.query.get('entry') === 'quickscan';
 
-  readonly mode = signal<Mode>(this.quickscanEntry ? 'register' : 'login');
+  readonly mode = signal<Mode>(this.quickscanEntry && this.query.get('mode') !== 'login' ? 'register' : 'login');
   /** Alleen bij een quickscan-account aanmaken; wordt met tijdstip en versie bij het account opgeslagen. */
   readonly acceptedTerms = new FormControl(false, { nonNullable: true, validators: Validators.requiredTrue });
+  /** Optioneel en standaard niet aangevinkt; wordt bij het account opgeslagen. */
+  readonly marketingConsent = new FormControl(false, { nonNullable: true });
   readonly termsUrl = TERMS_AND_PRIVACY_URL;
   readonly asksTerms = computed(() => this.quickscanEntry && this.mode() === 'register');
   readonly showPassword = signal(false);
@@ -95,7 +97,7 @@ export class AccountAccessComponent {
     const { accountIdentifier, credential } = this.form.getRawValue();
     const email = accountIdentifier.trim();
     const login$: Observable<Session> = this.mode() === 'register'
-      ? this.auth.register(email, credential, this.quickscanEntry ? 'quickscan' : undefined, this.acceptedTerms.value).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
+      ? this.auth.register(email, credential, this.quickscanEntry ? 'quickscan' : undefined, this.acceptedTerms.value, this.marketingConsent.value).pipe(switchMap(() => this.auth.login(email, credential, this.returnUrl)))
       : this.auth.login(email, credential, this.returnUrl);
 
     this.busy.set(true);
