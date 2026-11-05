@@ -1,0 +1,97 @@
+<div class="mx-auto w-full max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <header>
+    <a routerLink="/admin" class="text-sm font-medium underline underline-offset-4">← Beheer scaninhoud</a>
+    <h1 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Quickscan-opvolging</h1>
+    <p class="mt-1 max-w-3xl text-sm text-secondary-color">
+      Accounts die een quickscan deden en toestemming gaven voor marketing per e-mail. Mail ieder account één keer
+      vanuit uw eigen mailprogramma en leg dat daarna hier vast; een account kan maar één keer worden benaderd.
+    </p>
+  </header>
+
+  @if (declinedCount() !== null) {
+    <div class="alert-info mt-4 text-sm" data-testid="followup-declined">
+      <p><strong>{{ declinedCount() }}</strong> {{ declinedCount() === 1 ? 'quickscan-account wil' : 'quickscan-accounts willen' }} niet benaderd worden
+        (geen toestemming voor marketing per e-mail gegeven, of ingetrokken). Deze accounts staan niet in de lijst.</p>
+    </div>
+  }
+
+  <div class="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter">
+    <button type="button" class="btn" [class]="status() === 'pending' ? 'btn-primary' : 'btn-secondary'" [attr.aria-pressed]="status() === 'pending'" (click)="show('pending')">Te benaderen</button>
+    <button type="button" class="btn" [class]="status() === 'contacted' ? 'btn-primary' : 'btn-secondary'" [attr.aria-pressed]="status() === 'contacted'" (click)="show('contacted')">Benaderd</button>
+  </div>
+
+  <div aria-live="polite">
+    @if (notice(); as text) { <p class="alert-success mt-4" role="status">{{ text }}</p> }
+  </div>
+
+  <section class="mt-6" aria-labelledby="followup-list-heading">
+    <h2 id="followup-list-heading" class="sr-only">{{ status() === 'pending' ? 'Te benaderen' : 'Benaderd' }}</h2>
+    @if (loading() && !loaded()) {
+      <p role="status">Accounts laden…</p>
+    } @else if (loadProblem() && !loaded()) {
+      <div class="alert-error" role="alert"><strong>{{ loadProblem()!.title }}</strong>@if (loadProblem()!.detail) { <p>{{ loadProblem()!.detail }}</p> }</div>
+      <button type="button" class="btn btn-secondary mt-3" (click)="load()">Opnieuw proberen</button>
+    } @else if (!accounts().length) {
+      <p class="text-secondary-color" data-testid="followup-empty">
+        {{ status() === 'pending' ? 'Er zijn geen accounts om te benaderen.' : 'Er zijn nog geen accounts benaderd.' }}
+      </p>
+    } @else {
+      <ul class="space-y-4">
+        @for (account of accounts(); track account.memberId) {
+          <li class="card p-4" data-testid="followup-account">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="break-all font-semibold">{{ account.accountIdentifier }}</p>
+                <p class="text-sm text-secondary-color">{{ account.organizationName ?? 'Geen organisatie' }} · geregistreerd {{ formatDate(account.registeredAt) }}</p>
+                @if (account.quickscan; as scan) {
+                  <p class="mt-2 text-sm">
+                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold" [class]="statusBadge[scan.status]">{{ statusLabel(scan.status) }}</span>
+                    <span class="ml-2">{{ scan.progress }}% · gestart {{ formatDate(scan.createdAt) }}</span>
+                    @if (scan.completedAt) { <span> · afgerond {{ formatDate(scan.completedAt) }}</span> }
+                  </p>
+                }
+                <p class="mt-1 text-xs text-secondary-color">
+                  @if (account.marketingConsentWithdrawnAt) {
+                    Toestemming ingetrokken op {{ formatDateTime(account.marketingConsentWithdrawnAt) }}
+                  } @else if (account.marketingConsent) {
+                    Toestemming gegeven op {{ formatDateTime(account.marketingConsentAt) }} (versie {{ account.marketingConsentVersion }})
+                  } @else {
+                    Geen toestemming voor marketing
+                  }
+                </p>
+                @if (account.contact; as contact) {
+                  <p class="mt-1 text-sm" data-testid="followup-contact">
+                    Benaderd op {{ formatDateTime(contact.contactedAt) }}
+                    {{ contact.channel === 'manual' ? 'door ' + (contact.contactedBy ?? 'een beheerder') : '(automatisch)' }}
+                  </p>
+                }
+              </div>
+
+              @if (status() === 'pending') {
+                <div class="flex flex-wrap items-center gap-2">
+                  @if (confirming() === account.memberId) {
+                    <span class="text-sm">Heeft u dit account gemaild?</span>
+                    <button type="button" class="btn btn-primary" [disabled]="marking() === account.memberId" (click)="markContacted(account)">
+                      {{ marking() === account.memberId ? 'Vastleggen…' : 'Ja, vastleggen' }}
+                    </button>
+                    <button type="button" class="btn btn-secondary" [disabled]="marking() === account.memberId" (click)="cancelConfirm()">Annuleren</button>
+                  } @else {
+                    <button type="button" class="btn btn-primary" (click)="askConfirm(account)">Markeer als gemaild<span class="sr-only"> {{ account.accountIdentifier }}</span></button>
+                  }
+                </div>
+              }
+            </div>
+            @if (markProblem(); as failed) {
+              @if (failed.memberId === account.memberId) {
+                <div class="alert-error mt-3" role="alert"><strong>{{ failed.problem.title }}</strong>@if (failed.problem.detail) { <p>{{ failed.problem.detail }}</p> }</div>
+              }
+            }
+          </li>
+        }
+      </ul>
+      @if (nextCursor()) {
+        <button type="button" class="btn btn-secondary mt-4" [disabled]="loading()" (click)="loadMore()">{{ loading() ? 'Laden…' : 'Meer laden' }}</button>
+      }
+    }
+  </section>
+</div>

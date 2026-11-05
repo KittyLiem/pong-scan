@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, finalize, switchMap } from 'rxjs';
 import { AuthService, safeInternalRoute } from '../core/auth/auth.service';
 import { SubmissionKey } from '../core/http/idempotency';
@@ -14,7 +14,7 @@ type Mode = 'login' | 'register';
 
 @Component({
   selector: 'app-account-access',
-  imports: [ReactiveFormsModule, RouterLink, FieldErrorComponent],
+  imports: [ReactiveFormsModule, FieldErrorComponent],
   templateUrl: './account-access.component.html',
 })
 export class AccountAccessComponent {
@@ -57,7 +57,8 @@ export class AccountAccessComponent {
     if (!this.auth.isAuthenticated()) return 'account' as const;
     if (this.loadingOrganizations()) return 'loading' as const;
     if (this.organizationsProblem()) return 'organizations-error' as const;
-    return this.organizations.hasOrganization() ? ('ready' as const) : ('organization' as const);
+    // Met een organisatie is er niets meer te doen op deze pagina: er wordt direct doorgestuurd.
+    return this.organizations.hasOrganization() ? ('continuing' as const) : ('organization' as const);
   });
 
   readonly form = this.fb.group({
@@ -77,6 +78,8 @@ export class AccountAccessComponent {
   constructor() {
     // Aangemeld maar organisatie nog onbekend (bv. na een 401-redirect binnen dezelfde sessie): opnieuw ophalen.
     if (this.auth.isAuthenticated() && !this.organizations.hasOrganization()) this.loadOrganizations();
+    // Al aangemeld met een organisatie (bv. via de terugknop of een bladwijzer): meteen door, zonder tussenstap.
+    else if (this.auth.isAuthenticated()) this.continue();
   }
 
   setMode(mode: Mode): void {
@@ -159,7 +162,13 @@ export class AccountAccessComponent {
       });
   }
 
+  /** Stuurt door naar de gevraagde route of de eigen startpagina; /start verdwijnt uit de geschiedenis. */
   continue(): void {
-    void this.router.navigateByUrl(this.pendingRoute() ?? '/scans');
+    void this.router.navigateByUrl(this.pendingRoute() ?? this.homeRoute(), { replaceUrl: true });
+  }
+
+  /** Een quickscan-account heeft één scan; een volledig account begint in het scanoverzicht. */
+  homeRoute(): string {
+    return this.auth.isQuickscanAccount() ? '/quickscan/start' : '/scans';
   }
 }
